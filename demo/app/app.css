@@ -1,0 +1,19 @@
+﻿.title {
+    font-weight: bold;
+    horizontal-align: center;
+    margin: 20;
+}
+
+button {
+    horizontal-align: center;
+    width: 50;
+}
+
+.status {
+    horizontal-align: center;
+}
+.location {
+    font-size: 12;
+    color: #284848;
+    margin: 0 20;
+}
