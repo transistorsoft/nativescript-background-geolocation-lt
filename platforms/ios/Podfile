@@ -1,0 +1,1 @@
+pod 'nativescript-background-geolocation-lt', :path => '../../node_modules/nativescript-background-geolocation-lt/platforms/ios'
