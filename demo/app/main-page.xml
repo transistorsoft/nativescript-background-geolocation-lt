@@ -9,7 +9,7 @@
 		
 		<DockLayout dock="bottom" class="toolbar toolbar-bottom" stretchLastChild="true">
 			<Button text="{{'ion-navigate'| fonticon}}" class="button ion" tap="{{ onGetCurrentPosition }}" dock="left"/>
-			<Button text="{{'ion-play' | fonticon}}" dock="right" class="button ion" />
+			<Button text="{{'ion-play' | fonticon}}" dock="right" class="button ion" tap="{{onChangePace}}" />
 			<Label text="Status" class="status" />
 		</DockLayout>
 
