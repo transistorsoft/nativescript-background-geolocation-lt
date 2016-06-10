@@ -50,7 +50,7 @@ import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 
 ## Example
 
-```
+```Javascript
 export class HelloWorldModel extends observable.Observable {
   private _bgGeo: BackgroundGeolocation;
   private _state: any:
