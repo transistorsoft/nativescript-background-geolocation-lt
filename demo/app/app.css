@@ -1,7 +1,16 @@
-﻿.title {
+﻿@import url("~/css/platform.css");
+
+/**
+* nativescript-fonticon
+*/
+.ion {
+  font-family: Ionicons, ionicons;
+  font-size:24;
+}
+
+.title {
     font-weight: bold;
     horizontal-align: center;
-    margin: 20;
 }
 
 button {
@@ -16,4 +25,17 @@ button {
     font-size: 12;
     color: #284848;
     margin: 0 20;
+}
+
+.toolbar {
+    background-color: #fff;
+    height: 44;
+}
+.toolbar-top {
+    padding-right: 5;
+}
+.workspace {
+    background-color: #eee;
+    margin: 0;
+    padding: 0;
 }

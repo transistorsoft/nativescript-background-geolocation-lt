@@ -1,20 +1,19 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
 	<DockLayout stetchLastChild="true">
 		
-		<DockLayout dock="top" style="background-color: red;" stretchLastChild="true">
-			<Button text="[...]" dock="left" />
-			<Button text="(*)" tap="{{ onToggleEnabled }}" dock="right" />
+		<DockLayout dock="top" class="toolbar toolbar-top" stretchLastChild="true">
+			<Button text="{{'ion-ios-settings' | fonticon}}" dock="left" class="ion button" />
+			<Switch checked="{{ isEnabled }}" tap="{{ onToggleEnabled }}" dock="right" />
 			<Label class="title" text="Background Geolocation" />			
 		</DockLayout>
 		
-		<DockLayout dock="bottom" style="background-color: blue" stretchLastChild="true">
-			<Button text="(*)" tap="{{ onGetCurrentPosition }}" dock="left"/>
-			<Button text="[>]" tap="{{ onChangePace }}" dock="right" />
+		<DockLayout dock="bottom" class="toolbar toolbar-bottom" stretchLastChild="true">
+			<Button text="{{'ion-navigate'| fonticon}}" class="button ion" tap="{{ onGetCurrentPosition }}" dock="left"/>
+			<Button text="{{'ion-play' | fonticon}}" dock="right" class="button ion" />
 			<Label text="Status" class="status" />
 		</DockLayout>
 
-		<StackLayout style="background-color: white;">
-			<Label text="{{ locationData }}" class="location" textWrap="true" />
-		</StackLayout>
+		<HtmlView html="{{ locationData }}" class="workspace location" textWrap="false" />
+
 	</DockLayout>
 </Page>
