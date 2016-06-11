@@ -2,7 +2,9 @@ import observable = require("data/observable");
 import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 import {fonticon} from 'nativescript-fonticon';
 import Platform = require('platform');
+
 var mapsModule = require("nativescript-google-maps-sdk");
+var Color = require("color").Color;
 
 const ICON_PLAY = "ion-play";
 const ICON_PAUSE = "ion-pause";
@@ -25,14 +27,15 @@ export class HelloWorldModel extends observable.Observable {
 
   private _mapView: any;
   private _zoom = 20;
+  private _polyline;
 
   public onMapReady(args) {
     this._mapView = args.object;
-    
-    /*
-    console.log("Setting a marker...");
-    
-    */
+    this._polyline = new mapsModule.Polyline();
+    this._polyline.color = new Color('#bf2677FF');
+    this._polyline.geodesic = true;
+    this._polyline.width = 6;
+    this._mapView.addPolyline(this._polyline);
   }
 
 
@@ -79,6 +82,7 @@ export class HelloWorldModel extends observable.Observable {
         this._bgGeo.stop();
         this.activityType = "off";
         this._mapView.removeAllMarkers();
+        this._polyline.removeAllPoints();
       }
     }
     this.notifyPropertyChange("isEnabled", value);
@@ -194,12 +198,19 @@ export class HelloWorldModel extends observable.Observable {
     if (!location.sample) {
       this.odometer = (location.odometer/1000).toFixed(1);
 
+      var position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
       var marker = new mapsModule.Marker();
-      marker.position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
+      marker.position = position;
       marker.title = "Position";
       marker.snippet = location.timestamp;
+      marker.icon = 'markers/green-dot';
+      marker.flat = true;
+      marker.anchor = [0.5, 0.5];
+
       marker.userData = { index : location.uuid};
       this._mapView.addMarker(marker);
+      this._polyline.addPoint(position);
+      
     }
     this.set('latitude', location.coords.latitude);
     this.set('longitude', location.coords.longitude);
