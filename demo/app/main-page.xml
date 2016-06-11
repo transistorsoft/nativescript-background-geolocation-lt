@@ -1,4 +1,4 @@
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:maps="nativescript-google-maps-sdk" navigatingTo="navigatingTo">
 	<DockLayout stetchLastChild="true">
 		
 		<DockLayout dock="top" class="toolbar toolbar-top" stretchLastChild="true">
@@ -16,7 +16,17 @@
 			</StackLayout>
 		</DockLayout>
 
-		<HtmlView html="{{ locationData }}" class="workspace location" textWrap="false" />
+		<!-- <HtmlView html="{{ locationData }}" class="workspace location" textWrap="false" /> -->
+		<maps:mapView latitude="{{ latitude }}" longitude="{{ longitude }}" 
+    	zoom="{{ zoom }}" bearing="{{ bearing }}" 
+      tilt="{{ tilt }}" padding="{{ padding }}" 
+      mapReady="onMapReady"  
+      markerSelect="onMarkerSelect" 
+      markerBeginDragging="onMarkerBeginDragging"
+      markerEndDragging="onMarkerEndDragging" 
+      markerDrag="onMarkerDrag"
+      cameraChanged="onCameraChanged" />
+
 
 	</DockLayout>
 </Page>
