@@ -1,5 +1,8 @@
 import observable = require("data/observable");
 import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
+import {fonticon} from 'nativescript-fonticon';
+const ICON_PLAY = "ion-play";
+const ICON_PAUSE = "ion-pause";
 
 require("globals");
 
@@ -13,18 +16,33 @@ export class HelloWorldModel extends observable.Observable {
     private _isMoving: boolean;
     private _locationData: string = "DEFAULT";
     private _emptyFn: Function;
+    private _paceButtonIcon = ICON_PLAY;
+    private _odometer: string = '0';
+    private _activityType: string = '';
 
-    get message(): string {
-        return this._message;
+
+    get activityType(): string {
+        return this._activityType;
     }
-    set message(value: string) {
-        if (this._message !== value) {
-            this._message = value;
-            this.notifyPropertyChange("message", value)
+    set activityType(value:string) {
+        if (value === 'unknown') {
+            value = (this._isMoving) ? 'moving' : 'still';
+        }
+        value = value;
+        this._activityType = value;
+        this.notifyPropertyChange("activityType", value);
+    }
+
+    get odometer(): string {
+        return this._odometer;
+    }
+    set odometer(value:string) {
+        if (this._odometer !== value) {
+            this._odometer = value;
+            this.notifyPropertyChange("odometer", value);
         }
     }
     get isMoving(): boolean {
-        console.log('---------------- get isMoving() -------------------');
         return this._isMoving;
     }
     set isMoving(value:boolean) {
@@ -34,14 +52,13 @@ export class HelloWorldModel extends observable.Observable {
         }
     }
     get isEnabled(): boolean {
-        console.log('---------------- get isEnabled() -------------------');
         return this._enabled;
     }
     set isEnabled(value:boolean) {
-        console.log('---------------- set isEnabled()', value, this._enabled, ' -------------------');
         if (this._enabled !== value) {
             this._enabled = value;
             if (value) {
+                this._bgGeo.resetOdometer();
                 this._bgGeo.start();
             } else {
                 this._bgGeo.stop();
@@ -52,6 +69,7 @@ export class HelloWorldModel extends observable.Observable {
     }
     set locationData(value: string) {
         if (this._locationData !== value) {
+            value = '<pre>' + value + '</pre>';
             this._locationData = value;
             this.notifyPropertyChange("locationData", value);
         }        
@@ -59,18 +77,28 @@ export class HelloWorldModel extends observable.Observable {
     get locationData(): string {
         return this._locationData;
     }
+
+    get paceButtonIcon(): string {
+        return this._paceButtonIcon;
+    }
+
+    set paceButtonIcon(value:string) {
+        if (this._paceButtonIcon !== value) {
+            this._paceButtonIcon = value;
+            this.notifyPropertyChange("paceButtonIcon", value);
+        }
+    }
     constructor() {
         super();
         this._bgGeo = new BackgroundGeolocation();
-        this.locationData = "START";
+
         this._emptyFn = function(){};
         
-        
-
         //this._bgGeo.on('location', this.onLocation.bind(this));
         this._bgGeo.on({
             location: this.onLocation.bind(this),
             motionchange: this.onMotionChange.bind(this),
+            activitychange: this.onActivityChange.bind(this),
             http: this.onHttp.bind(this),
             heartbeat: this.onHeartbeat.bind(this),
             schedule: this.onSchedule.bind(this),
@@ -82,21 +110,18 @@ export class HelloWorldModel extends observable.Observable {
            stationaryRadius: 25,
            distanceFilter: 50,
            activityRecognitionInterval: 10000,
-           url: 'http://localhost:8080/locations',
-           autoSync: true
+           preventSuspend: false,
+           heartbeatInterval: 60,
+           url: 'http://192.168.11.120:8080/locations',
+           autoSync: false,
+           maxRecordsToPersist: 100
         });
 
         console.log(this._state);
 
-        console.log('#constructor------------------- ', this._state.enabled);
-
         this._enabled = this._state.objectForKey("enabled");
         this.notifyPropertyChange("isEnabled", this._enabled);
         this._isMoving  = this._state.objectForKey("isMoving");
-
-        // Initialize default values.
-        this._counter = 42;
-        this.updateMessage();
     }
 
     public onSetConfig() {
@@ -106,57 +131,64 @@ export class HelloWorldModel extends observable.Observable {
         };
         this._bgGeo.setConfig(config);
     }
+
     public onChangePace() {
         this._isMoving = !this._isMoving;
         this._bgGeo.changePace(this._isMoving);
+        this.paceButtonIcon = (this._isMoving) ? ICON_PAUSE : ICON_PLAY;
     }
 
     public onGetCurrentPosition() {
         this._bgGeo.getCurrentPosition(function(location) {
-            console.log('----------- getCurrentPosition SUCCESS: ', location);
+            console.log('[js] getCurrentPosition: ', location);
         }.bind(this), function(error) {
-            console.log('----------- getCurrentPosition FAIL: ', error);
+            console.warn('[js] getCurrentPosition FAIL: ', error);
         }.bind(this), {
             timeout: 10,
+            samples: 3,
+            desiredAccuracy: 10,
             persist: false
         });
     }
-    private updateMessage() {
-        if (this._counter <= 0) {
-            this.message = "Hoorraaay! You unlocked the NativeScript clicker achievement!";
-        } else {
-            this.message = this._counter + " taps left";
+    
+    private onLocation(location:any) {
+        var json = JSON.stringify(location, null, 2);
+        this._bgGeo.getCount(function(count) {
+            console.info('- count: ', count);
+        });
+        console.info('[js] location: ', json);
+
+        this.activityType = location.activity.type;        
+        this.locationData = json;
+
+        if (!location.sample) {
+            this.odometer = (location.odometer/1000).toFixed(1);
         }
     }
 
-    public onTap() {
-        this._counter--;
-        this.updateMessage();
+    private onMotionChange(isMoving:boolean, location: any) {
+        console.info('[js] motionchange', isMoving, location);
+        this.isMoving = isMoving;
+        this.activityType = location.activity.type;
+        this.paceButtonIcon = (isMoving) ? ICON_PAUSE : ICON_PLAY;
     }
 
-    private onLocation(location:any) {
-        console.log('----------- LOCATION: ', location);
-
-        this.locationData = "<pre>" + JSON.stringify(location, null, 2) + "</pre>";
+    private onActivityChange(activityType:string) {
+        this.activityType = activityType;
     }
-
-    private onMotionChange(location: any) {
-        console.log('----------- MOTIONCHANGE received', location);
-    }
-
     private onHttp(statusCode: number, responseText: string) {
-        console.log('----------- HTTP: ', statusCode, ', responseText: ', responseText);
+        console.info('[js] http: ', statusCode, ', responseText: ', responseText);
     }
 
     private onHeartbeat(params: Object) {
-        console.log('----------- HEARTBEAT: ', params);
+        console.info('[js] heartbeat: ', params);
     }
 
     private onSchedule(state: Object) {
-        console.log('----------- SCHEDULE: ', state);
+        console.info('[js] schedule: ', state);
     }
 
     private onError(errorCode: number) {
-        console.log('----------- ERROR: ', errorCode);
+        console.warn('[js] error: ', errorCode);
     }
 }

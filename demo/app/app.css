@@ -20,6 +20,7 @@ button {
 
 .status {
     horizontal-align: center;
+    padding: 0;
 }
 .location {
     font-size: 12;
@@ -38,4 +39,30 @@ button {
     background-color: #eee;
     margin: 0;
     padding: 0;
+}
+
+.status .activity-type {
+    margin-left: 5;
+    background-color: #eee;
+    border-radius: 5;
+    padding: 0 5 0 5;
+    height: 24;
+}
+.status .activity-type-on_foot {
+    background-color: #0e0;
+    background-color: #0c0;
+}
+.status .activity-type-still {
+    background-color: #c00;
+    color: #fff;
+}
+.status .activity-type-running {
+    background-color: #0c0;
+}
+.status .activity-type-in_vehiclce {
+    background-color: #0c0;
+}
+.status .activity-type-moving {
+    background-color: #0c0;
+    border: 1 solid red;
 }

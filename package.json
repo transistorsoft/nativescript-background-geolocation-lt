@@ -1,6 +1,6 @@
 {
   "name": "nativescript-background-geolocation-lt",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Sophisticated, battery-conscious, cross-platform background-geolocation with motion-detection and geofencing",
   "main": "background-geolocation.js",
   "nativescript": {

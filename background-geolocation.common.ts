@@ -17,7 +17,8 @@ export class AbstractBackgroundGeolocation {
       motionchange: [],
       error: [],
       heartbeat: [],
-      schedule: []
+      schedule: [],
+      activitychange: []
     };
     this.currentPositionCallbacks = [];
     this.syncCallback = null;

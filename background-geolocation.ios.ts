@@ -22,6 +22,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       this.locationManager.locationChangedBlock   = this.onLocation.bind(this);
       this.locationManager.httpResponseBlock      = this.onHttp.bind(this);
       this.locationManager.motionChangedBlock     = this.onMotionChange.bind(this);
+      this.locationManager.activityChangedBlock   = this.onActivityChange.bind(this);
       this.locationManager.errorBlock             = this.onError.bind(this);
       this.locationManager.heartbeatBlock         = this.onHeartbeat.bind(this);
       this.locationManager.syncCompleteBlock      = this.onSyncComplete.bind(this);
@@ -71,6 +72,29 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
 	}
 
+  public startSchedule(success: any, failure: any) {
+    console.log('Start');
+    this.locationManager.startSchedule();
+    if (typeof(success) === 'function') {
+      success();
+    }
+  }
+
+  public stopSchedule(success: any, failure: any) {
+    console.log('Start');
+    this.locationManager.stopSchedule();
+    if (typeof(success) === 'function') {
+      success();
+    }
+  }
+
+  public resetOdometer(success: any) {
+    this.locationManager.resetOdometer();
+    if (typeof(success) === 'function') {
+      success();
+    }
+  }
+
   public sync(success: Function, failure: any) {
     this.syncCallback = {
       success: success,
@@ -86,6 +110,13 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.locationManager.updateCurrentPosition(options||{});
   }
 
+  public getCount(success: Function) {
+    var count = this.locationManager.getCount();
+    if (typeof(success) === 'function') {
+      success(count);
+    }
+  }
+  
   private onLocation(location, type, isMoving) {
     var callbacks = this.listeners.location;
     var locationData = this.locationToObject(this.locationManager.locationToDictionaryType(location, type));
@@ -104,8 +135,15 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     var callbacks   = this.listeners.motionchange;
     var locationData = this.locationToObject(this.locationManager.locationToDictionary(location));
     for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n](locationData);
+      callbacks[n](isMoving, locationData);
     }
+  }
+
+  private onActivityChange(activityName) {
+    var callbacks   = this.listeners.activitychange;
+    for (var n=0,len=callbacks.length;n<len;n++) {
+      callbacks[n](activityName);
+    }  
   }
 
   private onHttp(statusCode, requestData, responseData, error) {
@@ -166,6 +204,9 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     var activity  = location.objectForKey("activity");
     var battery   = location.objectForKey("battery");
     var event     = location.objectForKey("event");
+    var sample    = location.objectForKey("sample");
+    var heartbeat = location.objectForKey("is_heartbeat");
+
     return {
       coords: {
         speed: coords.objectForKey("speed"),
@@ -184,9 +225,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
         level: battery.objectForKey("level"),
         is_charging: battery.objectForKey("is_charging")
       },
-      event: (event) ? event : undefined,
+      event: event || undefined,
+      sample: sample || undefined,
       is_moving: location.objectForKey("is_moving"),
-      is_heartbeat: (location["is_heartbeat"]) ? location.objectForKey("is_heartbeat") : undefined,
+      is_heartbeat: heartbeat || undefined,
       uuid: location.objectForKey("uuid"),
       odometer: location.objectForKey("odometer"),
       timestamp: location.objectForKey("timestamp")
