@@ -193,17 +193,18 @@ export class HelloWorldModel extends observable.Observable {
 
     if (!location.sample) {
       this.odometer = (location.odometer/1000).toFixed(1);
+
+      var marker = new mapsModule.Marker();
+      marker.position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
+      marker.title = "Position";
+      marker.snippet = location.timestamp;
+      marker.userData = { index : location.uuid};
+      this._mapView.addMarker(marker);
     }
     this.set('latitude', location.coords.latitude);
     this.set('longitude', location.coords.longitude);
 
-    var marker = new mapsModule.Marker();
-    marker.position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
-    marker.title = "Position";
-    marker.snippet = location.timestamp;
-    marker.userData = { index : location.uuid};
-    this._mapView.addMarker(marker);
-
+    
   }
 
   private onMotionChange(isMoving:boolean, location: any) {
