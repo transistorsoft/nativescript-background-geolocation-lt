@@ -34,7 +34,7 @@ export class HelloWorldModel extends observable.Observable {
     this._polyline = new mapsModule.Polyline();
     this._polyline.color = new Color('#bf2677FF');
     this._polyline.geodesic = true;
-    this._polyline.width = 6;
+    this._polyline.width = 5;
     this._mapView.addPolyline(this._polyline);
   }
 
