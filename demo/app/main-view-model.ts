@@ -11,6 +11,16 @@ const ICON_PAUSE = "ion-pause";
 
 require("globals");
 
+const ICONS = {
+  activity_unknown: 'ion-ios-help',
+  activity_still: 'ion-man',
+  activity_on_foot: 'ion-android-walk',
+  activity_walking: 'ion-android-walk',
+  activity_running: 'ion-android-walk',
+  activity_in_vehicle: 'ion-android-car',
+  activity_on_bicycle: 'ion-android-bicycle'
+};
+
 export class HelloWorldModel extends observable.Observable {
 
   private _counter: number;
@@ -24,17 +34,22 @@ export class HelloWorldModel extends observable.Observable {
   private _paceButtonIcon = ICON_PLAY;
   private _odometer: string = '0';
   private _activityType: string = '';
+  private _activityIcon: string = ICONS.activity_still
+
+  private _providerGps: string = "visible";
+  private _providerWifi: string = "visible";
+  private _providerDisabled: string = "visible";
 
   private _mapView: any;
-  private _zoom = 20;
+  private _zoom = 15;
   private _polyline;
 
-  public onMapReady(args) {
+  public onMapReady(args) {  
     this._mapView = args.object;
     this._polyline = new mapsModule.Polyline();
     this._polyline.color = new Color('#bf2677FF');
     this._polyline.geodesic = true;
-    this._polyline.width = 5;
+    this._polyline.width = 4;
     this._mapView.addPolyline(this._polyline);
   }
 
@@ -49,6 +64,42 @@ export class HelloWorldModel extends observable.Observable {
     value = value;
     this._activityType = value;
     this.notifyPropertyChange("activityType", value);
+  }
+
+  get activityIcon(): string {
+    return this._activityIcon;
+  }
+  set activityIcon(value:string) {
+    if (value === 'unknown') {
+      value = (this._isMoving) ? 'moving' : 'still';
+    }
+    value = value;
+    this._activityIcon = value;
+    this.notifyPropertyChange("activityIcon", value);
+  }
+
+  get providerGps(): string {
+    return this._providerGps;
+  }
+  set providerGps(value:string) {
+    this._providerGps = value;
+    this.notifyPropertyChange("providerGps", value);
+  }
+
+  get providerWifi(): string {
+    return this._providerWifi;
+  }
+  set providerWifi(value:string) {
+    this._providerWifi = value;
+    this.notifyPropertyChange("providerWifi", value);
+  }
+
+  get providerDisabled(): string {
+    return this._providerDisabled;
+  }
+  set providerDisabled(value:string) {
+    this._providerDisabled = value;
+    this.notifyPropertyChange("providerDisabled", value);
   }
 
   get odometer(): string {
@@ -78,6 +129,7 @@ export class HelloWorldModel extends observable.Observable {
       if (value) {
         this._bgGeo.resetOdometer();
         this._bgGeo.start();
+        this.set('zoom', this._zoom);
       } else {
         this._bgGeo.stop();
         this.activityType = "off";
@@ -115,35 +167,46 @@ export class HelloWorldModel extends observable.Observable {
 
     this._emptyFn = function(){};
 
-    //this._bgGeo.on('location', this.onLocation.bind(this));
-    this._bgGeo.on({
-      location: this.onLocation.bind(this),
-      motionchange: this.onMotionChange.bind(this),
-      activitychange: this.onActivityChange.bind(this),
-      http: this.onHttp.bind(this),
-      heartbeat: this.onHeartbeat.bind(this),
-      schedule: this.onSchedule.bind(this),
-      error: this.onError.bind(this)
-    });
-    this._state = this._bgGeo.configure(this.getConfig());
+    this._bgGeo.on('location', this.onLocation.bind(this), this.onLocationError.bind(this));
+    this._bgGeo.on('motionchange', this.onMotionChange.bind(this));
+    this._bgGeo.on('activitychange', this.onActivityChange.bind(this));
+    this._bgGeo.on('http', this.onHttp.bind(this));
+    this._bgGeo.on('heartbeat', this.onHeartbeat.bind(this));
+    this._bgGeo.on('schedule', this.onSchedule.bind(this));
+    this._bgGeo.on('providerchange', this.onProviderChange.bind(this));
+
+    this._bgGeo.configure(this.getConfig(), function(state) {
+      this._state = state;
+      this._enabled = this._state.enabled;
+      this.notifyPropertyChange("isEnabled", this._enabled);
+      this._isMoving  = this._state.isMoving;
+    }.bind(this));
+
+    this.providerGps = 'visible';
+    this.providerWifi = 'visible';
+    this.providerDisabled = 'collapsed';
 
     console.log(this._state);
-
-    this._enabled = this._state.objectForKey("enabled");
-    this.notifyPropertyChange("isEnabled", this._enabled);
-    this._isMoving  = this._state.objectForKey("isMoving");
   }
 
   private getConfig() {
     return {
-      debug: true,
+      // Geolocation
       desiredAccuracy: 0,
-      stationaryRadius: 25,
       distanceFilter: 50,
+      locationUpdateInterval: 1000,
+      // Activity Recognition
+      stopTimeout: 1,
+      stationaryRadius: 25,
       activityRecognitionInterval: 10000,
+      // Application
+      license: "88457817dcffc2cd2258565a72eeb5f9452903c38d7672b74d9d0a4a0c72eddd",
+      foregroundService: true,
+      debug: true,
       preventSuspend: false,
       heartbeatInterval: 60,
-      url: 'http://192.168.11.120:8080/locations',
+      // Http
+      url: 'http://192.168.11.100:8080/locations',
       params: {
         device: {
           platform: Platform.device.deviceType,
@@ -168,12 +231,17 @@ export class HelloWorldModel extends observable.Observable {
 
   public onChangePace() {
     this._isMoving = !this._isMoving;
-    this._bgGeo.changePace(this._isMoving);
+    this._bgGeo.changePace(this._isMoving, function(result) {
+      console.log('- changePace SUCCESS: ', result);
+    }, function(error) {
+      console.warn('- changePace FAILURE: ', error);
+    });
     this.paceButtonIcon = (this._isMoving) ? ICON_PAUSE : ICON_PLAY;
   }
 
   public onGetCurrentPosition() {
-    this._bgGeo.getCurrentPosition(function(location) {
+    var bgGeo = this._bgGeo;
+    bgGeo.getCurrentPosition(function(location) {
       console.log('[js] getCurrentPosition: ', location);
     }.bind(this), function(error) {
       console.warn('[js] getCurrentPosition FAIL: ', error);
@@ -185,11 +253,11 @@ export class HelloWorldModel extends observable.Observable {
     });
   }
 
-  private onLocation(location:any) {
+  public onLocation(location:any) {
+    //location = this._bgGeo.toObject(location);
+
+    var bgGeo = this._bgGeo;
     var json = JSON.stringify(location, null, 2);
-    this._bgGeo.getCount(function(count) {
-      console.info('- count: ', count);
-    });
     console.info('[js] location: ', json);
 
     this.activityType = location.activity.type;        
@@ -203,22 +271,29 @@ export class HelloWorldModel extends observable.Observable {
       marker.position = position;
       marker.title = "Position";
       marker.snippet = location.timestamp;
-      marker.icon = 'markers/green-dot';
+      //marker.icon = 'markers/green-dot';
       marker.flat = true;
       marker.anchor = [0.5, 0.5];
 
       marker.userData = { index : location.uuid};
       this._mapView.addMarker(marker);
       this._polyline.addPoint(position);
-      
     }
     this.set('latitude', location.coords.latitude);
     this.set('longitude', location.coords.longitude);
 
-    
+    bgGeo.getCount(function(count) {
+      console.log('************ count: ', count);
+    });
   }
 
-  private onMotionChange(isMoving:boolean, location: any) {
+  public onLocationError(error:any) {
+    console.error('- onLocationError: ', error);
+  }
+
+  public onMotionChange(isMoving:boolean, location: any) {
+    //location = this._bgGeo.toObject(location);
+
     console.info('[js] motionchange', isMoving, location);
     this.isMoving = isMoving;
     this.activityType = location.activity.type;
@@ -226,22 +301,31 @@ export class HelloWorldModel extends observable.Observable {
     this.set('zoom', 15);
   }
 
-  private onActivityChange(activityType:string) {
-    this.activityType = activityType;
+  public onActivityChange(activityType:string) {
+    this.activityIcon = ICONS['activity_' + activityType];
   }
-  private onHttp(statusCode: number, responseText: string) {
-    console.info('[js] http: ', statusCode, ', responseText: ', responseText);
+  
+  public onProviderChange(provider:any) {
+    console.log('------------ providerchange: ', provider);
+    
+    this.providerDisabled = (provider.enabled) ? 'collapsed' : 'visible';
+    this.providerWifi = (provider.enabled && provider.network) ? 'visible' : 'collapsed';
+    this.providerGps = (provider.enabled && provider.gps) ? 'visible' : 'collapsed';
   }
 
-  private onHeartbeat(params: Object) {
+  public onHttp(response:any) {
+    console.info('[js] http: ', response);
+  }
+
+  public onHeartbeat(params: any) {
     console.info('[js] heartbeat: ', params);
   }
 
-  private onSchedule(state: Object) {
+  public onSchedule(state: any) {
     console.info('[js] schedule: ', state);
   }
 
-  private onError(errorCode: number) {
+  public onError(errorCode: number) {
     console.warn('[js] error: ', errorCode);
   }
 }

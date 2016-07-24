@@ -3,6 +3,8 @@
         "module": "commonjs",
         "target": "es5",
         "sourceMap": true,
+        "noImplicitAny": false,
+        "noLib": false,
         "declaration": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
@@ -13,7 +15,8 @@
         "demo/node_modules/tns-core-modules/tns-core-modules.d.ts",
         "background-geolocation.common.ts",
         "background-geolocation.ios.ts",
-        "background-geolocation.android.ts"
+        "background-geolocation.android.ts",
+        "node_modules/tns-platform-declarations/android17.d.ts"
     ],
     "exclude": [
         "node_modules",
