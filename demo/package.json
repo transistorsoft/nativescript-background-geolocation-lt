@@ -1,33 +1,36 @@
 {
-	"description": "BackgroundGeolocation SampleApp",
-	"license": "SEE LICENSE IN <your-license-filename>",
-	"readme": "NativeScript Application",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/transistorsoft/nativescript-background-geolocation-lt.git"
-	},
-	"nativescript": {
-		"id": "com.transistorsoft.nativescript.demo",
-		"tns-ios": {
-			"version": "2.0.1"
-		}
-	},
-	"dependencies": {
-		"@angular/core": "^2.0.0-rc.1",
-		"nativescript-background-geolocation-lt": "file:..",
-		"nativescript-fonticon": "^1.1.0",
-		"nativescript-google-maps-sdk": "^1.3.1",
-		"rxjs": "^5.0.0-beta.6",
-		"tns-core-modules": "2.0.1",
-		"zone.js": "^0.6.12"
-	},
-	"devDependencies": {
-		"babel-traverse": "6.7.6",
-		"babel-types": "6.7.7",
-		"babylon": "6.7.0",
-		"filewalker": "0.1.2",
-		"lazy": "1.0.11",
-		"nativescript-dev-typescript": "^0.3.2",
-		"typescript": "^1.8.10"
-	}
+  "description": "BackgroundGeolocation SampleApp",
+  "license": "SEE LICENSE IN <your-license-filename>",
+  "readme": "NativeScript Application",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transistorsoft/nativescript-background-geolocation-lt.git"
+  },
+  "nativescript": {
+    "id": "com.transistorsoft.nativescript.demo",
+    "tns-ios": {
+      "version": "2.1.1"
+    },
+    "tns-android": {
+      "version": "2.1.1"
+    }
+  },
+  "dependencies": {
+    "@angular/core": "^2.0.0-rc.1",
+    "nativescript-background-geolocation-lt": "file:..",
+    "nativescript-fonticon": "^1.1.0",
+    "nativescript-google-maps-sdk": "^1.3.1",
+    "rxjs": "^5.0.0-beta.6",
+    "tns-core-modules": "2.1.0",
+    "zone.js": "^0.6.12"
+  },
+  "devDependencies": {
+    "babel-traverse": "6.7.6",
+    "babel-types": "6.7.7",
+    "babylon": "6.7.0",
+    "filewalker": "0.1.2",
+    "lazy": "1.0.11",
+    "nativescript-dev-typescript": "^0.3.2",
+    "typescript": "^1.8.10"
+  }
 }

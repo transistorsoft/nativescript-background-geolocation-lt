@@ -7,65 +7,62 @@
   font-family: Ionicons, ionicons;
   font-size:24;
 }
-
+.hidden {
+    display:none;
+}
 .title {
     font-weight: bold;
     horizontal-align: center;
+    padding: 0 5 0 5;
+    height: 24;
 }
 
 button {
     horizontal-align: center;
     width: 50;
 }
-
-.status {
-    horizontal-align: center;
-    padding: 0;
-}
-.location {
-    font-size: 12;
-    color: #284848;
-    margin: 0 20;
-}
-
 .toolbar {
     background-color: #fff;
     height: 44;
 }
 .toolbar-top {
     padding-right: 5;
+    vertical-align: middle;
 }
 .workspace {
     background-color: #eee;
     margin: 0;
     padding: 0;
 }
-
-.status .activity-type {
-    margin-left: 5;
-    background-color: #eee;
-    border-radius: 5;
-    padding: 0 5 0 5;
+.navigate {
+    width: 80;
+}
+.navigate .provider {
     height: 24;
 }
-.status .activity-type-on_foot {
-    background-color: #0e0;
-    background-color: #0c0;
+.navigate .provider .ion {
+    font-size: 12;
+    margin-right: 3;
 }
-.status .activity-type-still {
-    background-color: #c00;
-    color: #fff;
+.navigate .provider .disabled {
+    color: red;
 }
-.status .activity-type-running {
-    background-color: #0c0;
+.status {
+    horizontal-align: center;
+    text-align: center;        
+    padding: 0;
+    font-size: 12;
+    height: 24;
 }
-.status .activity-type-in_vehiclce {
-    background-color: #0c0;
+.status .activity-type {
+    margin-left: 5;    
+    width: 24;
+    font-size: 20;
+    color: #000;
 }
-.status .activity-type-moving {
-    background-color: #0c0;
-    border: 1 solid red;
+.status .odometer {
+    width: 75;
 }
-.status .activity-type-off {
-    background-color: #eee;
+.pace {
+    width: 80;
 }

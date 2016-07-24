@@ -1,5 +1,7 @@
 import * as app from 'application';
 
+import observable = require("data/observable");
+
 export class AbstractBackgroundGeolocation {
   protected listeners: any;
   protected currentPositionCallbacks: any;
@@ -18,10 +20,11 @@ export class AbstractBackgroundGeolocation {
       error: [],
       heartbeat: [],
       schedule: [],
-      activitychange: []
+      activitychange: [],
+      providerchange: []
     };
     this.currentPositionCallbacks = [];
     this.syncCallback = null;
     this.emptyFn = function() {};
-  }
+  }  
 }

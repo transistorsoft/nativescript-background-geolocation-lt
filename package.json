@@ -5,8 +5,8 @@
   "main": "background-geolocation.js",
   "nativescript": {
     "platforms": {
-      "ios": "2.0.0",
-      "android": "2.0.0"
+      "ios": "2.1.1",
+      "android": "2.1.1"
     }
   },
   "scripts": {
@@ -37,6 +37,10 @@
   },
   "homepage": "http://shop.transistorsoft.com/pages/nativescript-background-geolocation",
   "devDependencies": {
+    "tns-platform-declarations": "^2.0.0",
     "typescript": "^1.8.10"
+  },
+  "dependencies": {
+    "nativescript-permissions": "^1.0.1"
   }
 }
