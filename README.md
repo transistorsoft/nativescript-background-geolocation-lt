@@ -70,7 +70,7 @@ export class HelloWorldModel extends observable.Observable {
     });
 
     // Configure it.
-    this._state = this._bgGeo.configure({
+    this._bgGeo.configure({
       debug: true,
       desiredAccuracy: 0,
       stationaryRadius: 25,
@@ -78,12 +78,12 @@ export class HelloWorldModel extends observable.Observable {
       activityRecognitionInterval: 10000,
       url: 'http://localhost:8080/locations',
       autoSync: true
+    }, function(state) {
+      // Plugin is ready
+      if (!this._state.enabled) {
+        this._bgGeo.start();
+      }
     });
-
-    // Start tracking!
-    if (!this._state.enabled) {
-      this._bgGeo.start();
-    }
   }
 ```
 
