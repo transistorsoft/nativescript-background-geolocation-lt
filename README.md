@@ -83,7 +83,7 @@ export class HelloWorldModel extends observable.Observable {
       if (!this._state.enabled) {
         this._bgGeo.start();
       }
-    });
+    }.bind(this));
   }
 ```
 
