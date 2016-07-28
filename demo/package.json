@@ -8,10 +8,10 @@
   },
   "nativescript": {
     "id": "com.transistorsoft.nativescript.demo",
-    "tns-ios": {
+    "tns-android": {
       "version": "2.1.1"
     },
-    "tns-android": {
+    "tns-ios": {
       "version": "2.1.1"
     }
   },
