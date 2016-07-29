@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = "nativescript-background-geolocation-lt"
-  s.version = "1.0.0"
+  s.version = "1.0.1"
   s.summary = "Background Geolocation for NativeScript"
   s.author = "Chris Scott, Transistor Software"
   s.homepage = "https://github.com/transistorsoft/nativescript-background-geolocation-lt"

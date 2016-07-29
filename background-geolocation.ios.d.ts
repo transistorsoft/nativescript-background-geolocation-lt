@@ -3,6 +3,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     constructor();
     configure(config: any, success: any, failure: any): void;
     setConfig(config: Object, success: any, failure: any): void;
+    getState(success: Function): void;
     on(event: any, success: Function, failure?: (param: any) => void): void;
     changePace(value: boolean, success: any, failure: any): void;
     start(success: any, failure: any): void;
@@ -36,6 +37,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private onActivityChange(activityName);
     private onProviderChange(status);
     private onSchedule(schedule);
-    private toObject(object);
-    private locationToObject(location);
+    private getJsObjectFromNSDictionary(dictionary);
+    private getJsArrayFromNSArray(array);
+    private getJsObject(object);
 }

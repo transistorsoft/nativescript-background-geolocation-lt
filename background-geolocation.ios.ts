@@ -2,8 +2,10 @@ import {AbstractBackgroundGeolocation} from './background-geolocation.common';
 
 declare var TSLocationManager: any;
 declare var NSString: any;
+declare var NSDictionary: any;
+declare var NSArray: any;
 declare var NSUTF8StringEncoding: any;
-declare var NSError: any;
+
 
 let TS_LOCATION_TYPE_MOTIONCHANGE   = 0;
 let TS_LOCATION_TYPE_CURRENT        = 1;
@@ -38,7 +40,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.isMoving  = this.state.isMoving;
     this.enabled   = this.state.enabled;
     
-    success(this.state);
+    success(this.getJsObjectFromNSDictionary(this.state));
 	}
 
   public setConfig(config:Object, success:any, failure:any) {
@@ -47,7 +49,9 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.locationManager.setConfig(config);
     success(this.locationManager.getState());
   }
-
+  public getState(success:Function) {
+    success(this.getJsObjectFromNSDictionary(this.locationManager.getState()));
+  }
   public on(event:any, success:Function, failure=function(param){}) {
     console.log('#on ', event, typeof(event));
 
@@ -249,7 +253,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   private onLocation(location, type, isMoving) {
     var callbacks = this.listeners.location;
-    var locationData = this.locationToObject(this.locationManager.locationToDictionaryType(location, type));
+    var locationData = this.getJsObjectFromNSDictionary(this.locationManager.locationToDictionaryType(location, type));
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(locationData);
     }
@@ -263,7 +267,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   private onMotionChange(location, isMoving) {
     var callbacks   = this.listeners.motionchange;
-    var locationData = this.locationToObject(this.locationManager.locationToDictionary(location));
+    var locationData = this.getJsObjectFromNSDictionary(this.locationManager.locationToDictionary(location));
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(isMoving, locationData);
     }
@@ -291,10 +295,12 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
         }
         this.currentPositionCallbacks = [];
       }
+      /* TODO broken
       listeners = this.listeners.location;
       for (var n=0,len=listeners.length;n<len;n++) {
         listeners[n].error[n](errorCode);
       }
+      */
     }
   }
 
@@ -302,8 +308,8 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     var params = {
       shakes: shakeCount,
       motionType: motionType,
-      location: this.locationToObject(location)
-    }
+      location: this.getJsObjectFromNSDictionary(location)
+    };
     var callbacks = this.listeners.heartbeat;
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(params);
@@ -333,11 +339,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       gps: enabled,
       network: enabled
     };
-    console.log('********************* onProviderChange: ', result);
     var callbacks   = this.listeners.providerchange;
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(result);
-    }  
+    }
   }
 
   private onSchedule(schedule: Object) {
@@ -349,43 +354,38 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  private toObject(object) {
-    return JSON.parse(JSON.stringify(object));
+  private getJsObjectFromNSDictionary(dictionary:any) {
+    let keys = dictionary.allKeys;
+    let result = {};
+    
+    for (let loop = 0; loop < keys.count; loop++) {
+        let key = keys[loop];
+        let item = dictionary.objectForKey(key);
+        
+        result[key] = this.getJsObject(item);
+    }
+    
+    return result;
   }
 
-  private locationToObject(location) {
-    var coords    = location.objectForKey("coords");
-    var activity  = location.objectForKey("activity");
-    var battery   = location.objectForKey("battery");
-    var event     = location.objectForKey("event");
-    var sample    = location.objectForKey("sample");
-    var heartbeat = location.objectForKey("is_heartbeat");
-
-    return {
-      coords: {
-        speed: coords.objectForKey("speed"),
-        longitude: coords.objectForKey("longitude"),
-        latitude: coords.objectForKey("latitude"),
-        accuracy: coords.objectForKey("accuracy"),
-        heading: coords.objectForKey("heading"),
-        altitude: coords.objectForKey("altitude"),
-        altitudeAccuracy: coords.objectForKey("altitudeAccuracy")
-      },
-      activity: {
-        type: activity.objectForKey("type"),
-        confidence: activity.objectForKey("confidence")
-      },
-      battery: {
-        level: battery.objectForKey("level"),
-        is_charging: battery.objectForKey("is_charging")
-      },
-      event: event || undefined,
-      sample: sample || undefined,
-      is_moving: location.objectForKey("is_moving"),
-      is_heartbeat: heartbeat || undefined,
-      uuid: location.objectForKey("uuid"),
-      odometer: location.objectForKey("odometer"),
-      timestamp: location.objectForKey("timestamp")
-    };
+  private getJsArrayFromNSArray(array: any): Array<Object> {
+    let result = [];
+    
+    for (let loop = 0; loop < array.count; loop ++) {
+        result.push(this.getJsObject(array.objectAtIndex(loop)));
+    }
+    
+    return result;
   }
+
+  private getJsObject(object: any): any {
+    if (object instanceof NSDictionary) {
+        return this.getJsObjectFromNSDictionary(object);
+    }
+    
+    if (object instanceof NSArray) {
+        return this.getJsArrayFromNSArray(object);
+    }    
+    return object;
+  }  
 }

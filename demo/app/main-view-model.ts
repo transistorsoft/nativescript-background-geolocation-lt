@@ -32,7 +32,7 @@ export class HelloWorldModel extends observable.Observable {
   private _locationData: string = "DEFAULT";
   private _emptyFn: Function;
   private _paceButtonIcon = ICON_PLAY;
-  private _odometer: string = '0';
+  private _odometer: string = '1000';
   private _activityType: string = '';
   private _activityIcon: string = ICONS.activity_still
 
@@ -177,8 +177,8 @@ export class HelloWorldModel extends observable.Observable {
 
     this._bgGeo.configure(this.getConfig(), function(state) {
       this._state = state;
-      this._enabled = this._state.enabled;
-      this.notifyPropertyChange("isEnabled", this._enabled);
+      this._enabled = state.enabled;
+      this.notifyPropertyChange("isEnabled", state.enabled);
       this._isMoving  = this._state.isMoving;
     }.bind(this));
 
@@ -229,13 +229,9 @@ export class HelloWorldModel extends observable.Observable {
     this._bgGeo.setConfig(config);
   }
 
-  public onChangePace() {
+  public onChangePace(ev) {
     this._isMoving = !this._isMoving;
-    this._bgGeo.changePace(this._isMoving, function(result) {
-      console.log('- changePace SUCCESS: ', result);
-    }, function(error) {
-      console.warn('- changePace FAILURE: ', error);
-    });
+    this._bgGeo.changePace(this._isMoving);
     this.paceButtonIcon = (this._isMoving) ? ICON_PAUSE : ICON_PLAY;
   }
 
@@ -252,6 +248,7 @@ export class HelloWorldModel extends observable.Observable {
       persist: false
     });
   }
+
 
   public onLocation(location:any) {
     //location = this._bgGeo.toObject(location);
@@ -283,7 +280,7 @@ export class HelloWorldModel extends observable.Observable {
     this.set('longitude', location.coords.longitude);
 
     bgGeo.getCount(function(count) {
-      console.log('************ count: ', count);
+      console.log('- count: ', count);
     });
   }
 
@@ -306,8 +303,6 @@ export class HelloWorldModel extends observable.Observable {
   }
   
   public onProviderChange(provider:any) {
-    console.log('------------ providerchange: ', provider);
-    
     this.providerDisabled = (provider.enabled) ? 'collapsed' : 'visible';
     this.providerWifi = (provider.enabled && provider.network) ? 'visible' : 'collapsed';
     this.providerGps = (provider.enabled && provider.gps) ? 'visible' : 'collapsed';
