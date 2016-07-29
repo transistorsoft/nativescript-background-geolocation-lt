@@ -100,8 +100,8 @@ Yes it does.  [See the Wiki](https://github.com/transistorsoft/nativescript-back
 - When in doubt, **nuke everything**:  First delete the app from your device (or simulator)
 
 ```
-$ tns plugin remove com.transistorsoft.cordova.background-geolocation
-$ tbns plugin add git@github.com:transistorsoft/nativescript-background-geolocation-lt.git
+$ tns plugin remove nativescript-background-geolocation-lt
+$ tns plugin add nativescript-background-geolocation-lt
 
 ```
 
