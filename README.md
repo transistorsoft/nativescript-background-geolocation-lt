@@ -23,15 +23,20 @@ $ tns plugin add nativescript-background-geolocation-lt
 $ tns plugin add https://github.com/transistorsoft/nativescript-background-geolocation-lt.git
 ```
 
-#### Installing a tagged version.
+## Demo app
+The plugin hosts its own demo app in the `/demo` folder.  Install it like this:
+```Bash
+$ cd nativescript-background-geolocation-lt
+$ npm install
+$ npm run setup
 
-This plugin has tagged stable versions.  To install a particular version, append a version code to the github url prefixed by `#`.
-
+$ npm run demo.android
+or
+$ npm run demo.ios
 ```
-$ tns plugin add https://github.com/transistorsoft/nativescript-background-geolocation-lt.git#1.0.1
-```
 
-![](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/screenshot-github-tagged-branches.png)
+Simulating the location with `City Drive` works well:
+![](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/simulate-location.png)
 
 ## Using the plugin
 
@@ -99,12 +104,6 @@ $ tns plugin remove com.transistorsoft.cordova.background-geolocation
 $ tbns plugin add git@github.com:transistorsoft/nativescript-background-geolocation-lt.git
 
 ```
-
-## [Advanced Sample Application](demo)
-
-## TODO
-
-![](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/simulate-location.png)
 
 ## Simple Testing Server
 
