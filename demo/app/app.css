@@ -1,5 +1,15 @@
 ﻿@import url("~/css/platform.css");
 
+
+button.ion-play {
+    color: white;
+    background-color: green;
+}
+button.ion-pause {
+    color: white;
+    background-color: red;
+}
+
 /**
 * nativescript-fonticon
 */
@@ -52,16 +62,16 @@ button {
     text-align: center;        
     padding: 0;
     font-size: 12;
-    height: 24;
+    height: 24;    
+    width: 150;
 }
 .status .activity-type {
-    margin-left: 5;    
     width: 24;
     font-size: 20;
     color: #000;
 }
 .status .odometer {
-    width: 75;
+    overflow: visible;
 }
 .pace {
     width: 80;
