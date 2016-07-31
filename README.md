@@ -1,7 +1,7 @@
 # nativescript-background-geolocation-lt
 Sophisticated, battery-conscious, cross-platform background-geolocation with motion-detection and geofencing
 
-[Premium Version (iOS)](http://shop.transistorsoft.com/pages/cordova-background-geolocation-premium)
+[Premium Version (iOS)](http://shop.transistorsoft.com/pages/nativescript-background-geolocation-premium)
 ==========================
 
 This repo hosts the **iOS** platform available in the **[Premium Version](http://shop.transistorsoft.com/pages/cordova-background-geolocation-premium)**.  **Android** functionality is available only in the **[Premium Version](http://shop.transistorsoft.com/pages/cordova-background-geolocation-premium)**.
