@@ -4,7 +4,7 @@ Sophisticated, battery-conscious, cross-platform background-geolocation with mot
 [Premium Version (iOS)](http://shop.transistorsoft.com/pages/nativescript-background-geolocation-premium)
 ==========================
 
-This repo hosts the **iOS** platform available in the **[Premium Version](http://shop.transistorsoft.com/pages/cordova-background-geolocation-premium)**.  **Android** functionality is available only in the **[Premium Version](http://shop.transistorsoft.com/pages/nativescript-background-geolocation-premium)**.
+This repo hosts the **iOS** platform available in the **[Premium Version](http://shop.transistorsoft.com/pages/nativescript-background-geolocation-premium)**.  **Android** functionality is available only in the **[Premium Version](http://shop.transistorsoft.com/pages/nativescript-background-geolocation-premium)**.
 
 ![Home](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/screenshot-iphone5-geofences-framed-README.png)
 ![Settings](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/screenshot-iphone5-settings-framed-README.png)
@@ -138,7 +138,7 @@ Using the [ActivityRecognition API](https://developer.android.com/reference/com/
 
 ## Licence ##
 ```
-cordova-background-geolocation
+nativescript-background-geolocation
 Copyright (c) 2015, Transistor Software (9224-2932 Quebec Inc)
 All rights reserved.
 sales@transistorsoft.com
