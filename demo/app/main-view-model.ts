@@ -126,7 +126,6 @@ export class HelloWorldModel extends observable.Observable {
       this._enabled = value;
       if (value) {
         this._bgGeo.resetOdometer();
-        this._polyline = this._createPolyline();
         this._bgGeo.start();
         this.set('zoom', this._zoom);
       } else {
@@ -134,6 +133,10 @@ export class HelloWorldModel extends observable.Observable {
         this.activityType = "off";
         this._mapView.removeAllMarkers();
         this._mapView.removeAllShapes();
+        // clear marker references.
+        this._polyline = null;
+        this._currentLocationMarker = null;
+        this._stationaryCircle = null;
       }
     }
     this.notifyPropertyChange("isEnabled", value);
@@ -291,11 +294,11 @@ export class HelloWorldModel extends observable.Observable {
 
     if (!this._currentLocationMarker) {
       this._currentLocationMarker = this._createCurrentLocationMarker(position);
-      this._polyline.addPoint(position);
+      this._getPolyline().addPoint(position);
     } else if (!location.sample) {
       this._currentLocationMarker.icon = 'map_marker_green_dot';
       this._currentLocationMarker = this._createCurrentLocationMarker(position);
-      this._polyline.addPoint(position);
+      this._getPolyline().addPoint(position);
     } else {
       // update currentLocation marker with new position
       this._currentLocationMarker.position = position;
@@ -366,6 +369,13 @@ export class HelloWorldModel extends observable.Observable {
 
   public onError(errorCode: number) {
     console.warn('[js] error: ', errorCode);
+  }
+
+  private _getPolyline() {
+    if (!this._polyline) {
+      this._polyline = this._createPolyline();
+    }
+    return this._polyline;
   }
 }
 
