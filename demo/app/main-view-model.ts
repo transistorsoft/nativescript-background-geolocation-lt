@@ -44,13 +44,11 @@ export class HelloWorldModel extends observable.Observable {
   private _zoom = 15;
   private _polyline;
 
+  private _stationaryCircle: any;
+  private _currentLocationMarker: any;
+
   public onMapReady(args) {  
     this._mapView = args.object;
-    this._polyline = new mapsModule.Polyline();
-    this._polyline.color = new Color('#bf2677FF');
-    this._polyline.geodesic = true;
-    this._polyline.width = 4;
-    this._mapView.addPolyline(this._polyline);
   }
 
 
@@ -128,13 +126,14 @@ export class HelloWorldModel extends observable.Observable {
       this._enabled = value;
       if (value) {
         this._bgGeo.resetOdometer();
+        this._polyline = this._createPolyline();
         this._bgGeo.start();
         this.set('zoom', this._zoom);
       } else {
         this._bgGeo.stop();
         this.activityType = "off";
         this._mapView.removeAllMarkers();
-        this._polyline.removeAllPoints();
+        this._mapView.removeAllShapes();
       }
     }
     this.notifyPropertyChange("isEnabled", value);
@@ -248,10 +247,38 @@ export class HelloWorldModel extends observable.Observable {
       persist: false
     });
   }
-
-
+  private _createPolyline() {
+    var polyline = new mapsModule.Polyline();
+    polyline.color = new Color('#bf2677FF');
+    polyline.geodesic = true;
+    polyline.width = 4;
+    this._mapView.addPolyline(polyline);
+    return polyline;
+  }
+  private _createCurrentLocationMarker(position:any) {
+    var marker = new mapsModule.Marker();
+    marker.position = position;
+    marker.title = "Position";
+    marker.icon = 'map_marker_current_location';
+    marker.flat = true;
+    marker.anchor = [0.5, 0.5];
+    this._mapView.addMarker(marker);
+    return marker;
+  }
+  private _createLocationMarker(position: any) {
+    var marker = new mapsModule.Marker();
+    marker.position = position;
+    marker.title = "Position";
+    marker.icon = 'map_marker_green_dot';
+    marker.flat = true;
+    marker.anchor = [0.5, 0.5];
+    this._mapView.addMarker(marker);
+    return marker;
+  }
   public onLocation(location:any) {
     //location = this._bgGeo.toObject(location);
+    this.set('latitude', location.coords.latitude);
+    this.set('longitude', location.coords.longitude);
 
     var bgGeo = this._bgGeo;
     var json = JSON.stringify(location, null, 2);
@@ -260,25 +287,23 @@ export class HelloWorldModel extends observable.Observable {
     this.activityType = location.activity.type;        
     this.locationData = json;
 
+    var position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
+
+    if (!this._currentLocationMarker) {
+      this._currentLocationMarker = this._createCurrentLocationMarker(position);
+      this._polyline.addPoint(position);
+    } else if (!location.sample) {
+      this._currentLocationMarker.icon = 'map_marker_green_dot';
+      this._currentLocationMarker = this._createCurrentLocationMarker(position);
+      this._polyline.addPoint(position);
+    } else {
+      // update currentLocation marker with new position
+      this._currentLocationMarker.position = position;
+    }
     if (!location.sample) {
       this.odometer = (location.odometer/1000).toFixed(1);
-
-      var position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
-      var marker = new mapsModule.Marker();
-      marker.position = position;
-      marker.title = "Position";
-      marker.snippet = location.timestamp;
-      //marker.icon = 'markers/green-dot';
-      marker.flat = true;
-      marker.anchor = [0.5, 0.5];
-
-      marker.userData = { index : location.uuid};
-      this._mapView.addMarker(marker);
-      this._polyline.addPoint(position);
     }
-    this.set('latitude', location.coords.latitude);
-    this.set('longitude', location.coords.longitude);
-
+    
     bgGeo.getCount(function(count) {
       console.log('- count: ', count);
     });
@@ -291,11 +316,30 @@ export class HelloWorldModel extends observable.Observable {
   public onMotionChange(isMoving:boolean, location: any) {
     //location = this._bgGeo.toObject(location);
 
+    if (!isMoving) {
+      var circle = new mapsModule.Circle();
+      circle.center = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
+      circle.visible = true;
+      circle.radius = 50;//this._state.stationaryRadius;
+      circle.fillColor = new Color('#ff0000');
+      circle.strokeColor = new Color('#aa0000');
+      circle.fillOpacity = 0.5;
+      circle.strokeOpacity = 0.5;
+      circle.strokeWidth = 2;
+      this._mapView.addCircle(circle);
+      this._stationaryCircle = circle;
+    } else {
+      if (this._stationaryCircle) {
+        this._mapView.removeShape(this._stationaryCircle);
+        this._stationaryCircle = null;
+      }
+    }
     console.info('[js] motionchange', isMoving, location);
     this.isMoving = isMoving;
     this.activityType = location.activity.type;
     this.paceButtonIcon = (isMoving) ? ICON_PAUSE : ICON_PLAY;
-    this.set('zoom', 15);
+    this.set('zoom', 17);
+
   }
 
   public onActivityChange(activityType:string) {
@@ -324,3 +368,17 @@ export class HelloWorldModel extends observable.Observable {
     console.warn('[js] error: ', errorCode);
   }
 }
+
+/**
+SVG Icons for Map
+  current_location
+    <svg width="50" height="50">
+      <circle cx="25" cy="25" r="20" fill="#2677FF" stroke="#fff" stroke-width="10" />
+    </svg>
+  green_dot:
+    <svg width="24" height="24">
+      <circle cx="12" cy="12" r="10" fill="#11b700" stroke="#0d6104" stroke-width="2" />
+    </svg>
+*
+*
+*/
