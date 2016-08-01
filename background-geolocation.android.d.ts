@@ -34,6 +34,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private setEnabled(value, success, failure);
     private createHttpCallback(success?, failure?);
     private createMotionChangeCallback(callback);
+    private createActivityChangeCallback(callback);
     private onGooglePlayServicesConnectError(errorCode);
     private hasPermission();
     private getAdapter();

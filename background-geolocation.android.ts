@@ -72,6 +72,9 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       case 'motionchange':
         cb = this.createMotionChangeCallback(success);
         break;
+      case 'activitychange':
+        cb = this.createActivityChangeCallback(success);
+        break;
       default:
         cb = new Callback({
           success: function(response) {
@@ -253,6 +256,14 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
         var location = params.getJSONObject("location");
         var moving = params.getBoolean("isMoving");
         callback(moving, JSON.parse(location.toString()));
+      },
+      error: function(error){}
+    });
+  }
+  private createActivityChangeCallback(callback) {
+    return new Callback({
+      success: function(activityName: string) {
+        callback(activityName);
       },
       error: function(error){}
     });
