@@ -24,7 +24,7 @@ $ tns plugin add https://github.com/transistorsoft/nativescript-background-geolo
 
 ## iOS Setup
 
-Since iOS is more strict with app running in the background, this plugin includes the dependency [nativescript-background-fetch](https://github.com/transistorsoft/nativescript-background-fetch) (also created by Transistor Software).  This plugin automatically awakens a suspended app in the background, providing *exactly* 30s of running-time.  `nativescript-background-geolocation`.  Actually implementing **`background-fetch`** in your application code is **optional** -- `background-geolocation` uses it automatically under-the-hood for its own purposes.  However, you perform the plugin's [setup process](https://github.com/transistorsoft/nativescript-background-fetch#setup) in your **`app.ts`**:
+Since iOS is more strict with apps running in the background, this plugin includes the dependency [nativescript-background-fetch](https://github.com/transistorsoft/nativescript-background-fetch) (also created by [Transistor Software](http://transistorsoft.com)).  This plugin automatically awakens a suspended app in the background, providing *exactly* 30s of running-time.  Actually implementing **`background-fetch`** in your application code is **optional** -- `background-geolocation` uses it automatically under-the-hood for its own purposes.  However, you **must** perform the plugin's [setup process](https://github.com/transistorsoft/nativescript-background-fetch#setup) in your **`app.ts`**:
 
 ```diff
 import application = require("application");
