@@ -204,11 +204,13 @@ export class HelloWorldModel extends observable.Observable {
       // Application
       license: "88457817dcffc2cd2258565a72eeb5f9452903c38d7672b74d9d0a4a0c72eddd",
       foregroundService: true,
+      stopOnTerminate: false,
       debug: true,
       preventSuspend: false,
       heartbeatInterval: 60,
       // Http
-      url: 'http://192.168.11.100:8080/locations',
+      //url: 'http://192.168.11.100:8080/locations',
+      url: 'http://localhost:8080/locations',
       params: {
         device: {
           platform: Platform.device.deviceType,
@@ -218,8 +220,7 @@ export class HelloWorldModel extends observable.Observable {
           uuid: Platform.device.uuid
         }
       },
-      autoSync: false,
-      maxRecordsToPersist: 100
+      autoSync: true
     }
   }
 

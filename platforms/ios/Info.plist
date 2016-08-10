@@ -5,15 +5,11 @@
     	<key>UIBackgroundModes</key>
 		<array>
 			<string>location</string>
+			<string>fetch</string>
 		</array>
 
 		<key>NSLocationAlwaysUsageDescription</key>
         <string>App requires background location tracking</string>
-        
-		<key>NSAppTransportSecurity</key>
-		<dict>
-			<key>NSAllowsArbitraryLoads</key><true/>
-		</dict>
 	</dict>
 </plist>
 
