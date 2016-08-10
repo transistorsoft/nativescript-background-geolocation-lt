@@ -87,14 +87,12 @@ export class HelloWorldModel extends observable.Observable {
     this._bgGeo = new BackgroundGeolocation();
 
     // Listen to events
-    this._bgGeo.on({
-      location: this.onLocation.bind(this),
-      motionchange: this.onMotionChange.bind(this),
-      http: this.onHttp.bind(this),
-      heartbeat: this.onHeartbeat.bind(this),
-      schedule: this.onSchedule.bind(this),
-      error: this.onError.bind(this)
-    });
+    this._bgGeo.on("location", this.onLocation.bind(this));
+    this._bgGeo.on("motionchange", this.onMotionChange.bind(this));
+    this._bgGeo.on("http", this.onHttp.bind(this));
+    this._bgGeo.on("heartbeat", this.onHeartbeat.bind(this));
+    this._bgGeo.on("schedule", this.onSchedule.bind(this));
+    this._bgGeo.on("error", this.onError.bind(this));
 
     // Configure it.
     this._bgGeo.configure({
