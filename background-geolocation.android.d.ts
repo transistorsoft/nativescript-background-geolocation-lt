@@ -1,3 +1,4 @@
+/// <reference path="node_modules/tns-platform-declarations/tns-core-modules/android17.d.ts" />
 import { AbstractBackgroundGeolocation } from './background-geolocation.common';
 export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     private mConfig;

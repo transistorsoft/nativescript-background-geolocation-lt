@@ -1,14 +1,12 @@
+/// <reference path="./node_modules/tns-platform-declarations/tns-core-modules/android17.d.ts" />
+
 import {AbstractBackgroundGeolocation} from './background-geolocation.common';
 
 var permissions = require("nativescript-permissions");
 
 import app = require('application');
 
-declare var Manifest: any;
-declare var ContextCompat: any;
 declare var com: any;
-declare var de: any;
-declare var org: any;
 
 let Callback = com.transistorsoft.locationmanager.adapter.TSCallback;
 let TAG = "TSLocationnManager";
