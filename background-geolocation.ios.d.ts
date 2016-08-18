@@ -15,7 +15,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     getCount(success: Function): void;
     clearDatabase(success: any, failure: any): void;
     insertLocation(data: any, success: any, failure: any): any;
-    addGeofence(geofence: any, success: any, failure: any): void;
+    addGeofence(params: any, success: any, failure: any): void;
     addGeofences(geofences: any, success: any, failure: any): void;
     removeGeofence(identifier: any, success: any, failure: any): void;
     getGeofences(success: any, failure: any): void;
@@ -30,6 +30,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     emailLog(email: string): void;
     private onLocation(location, type, isMoving);
     private onMotionChange(location, isMoving);
+    private onGeofence(region, location, action);
     private onHttp(statusCode, requestData, responseData, error);
     private onError(type, error);
     private onHeartbeat(shakeCount, motionType, location);

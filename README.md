@@ -22,6 +22,29 @@ $ tns plugin add nativescript-background-geolocation-lt
 $ tns plugin add https://github.com/transistorsoft/nativescript-background-geolocation-lt.git
 ```
 
+## iOS Setup
+
+Since iOS is more strict with apps running in the background, this plugin includes the dependency [nativescript-background-fetch](https://github.com/transistorsoft/nativescript-background-fetch) (also created by [Transistor Software](http://transistorsoft.com)).  This plugin automatically awakens a suspended app in the background, providing *exactly* 30s of running-time.  Actually implementing **`background-fetch`** in your application code is **optional** -- `background-geolocation` uses it automatically under-the-hood for its own purposes.  However, you **must** perform the plugin's [setup process](https://github.com/transistorsoft/nativescript-background-fetch#setup) in your **`app.ts`**:
+
+**`app.ts`**
+```diff
+import application = require("application");
+
++ if (application.ios) {
++  class MyDelegate extends UIResponder {
++    public static ObjCProtocols = [UIApplicationDelegate];      
++      // BackgroundFetch delegate method
++      public applicationPerformFetchWithCompletionHandler(application: UIApplication, completionHandler:any) {
++        TSBackgroundFetch.sharedInstance().performFetchWithCompletionHandler(completionHandler);
++      }
++    }
++    application.ios.delegate = MyDelegate;
++}    
+
+application.start({ moduleName: "main-page" });
+```
+
+
 ## Demo app
 The plugin hosts its own demo app in the `/demo` folder.  Install it like this:
 ```Bash
@@ -64,14 +87,12 @@ export class HelloWorldModel extends observable.Observable {
     this._bgGeo = new BackgroundGeolocation();
 
     // Listen to events
-    this._bgGeo.on({
-      location: this.onLocation.bind(this),
-      motionchange: this.onMotionChange.bind(this),
-      http: this.onHttp.bind(this),
-      heartbeat: this.onHeartbeat.bind(this),
-      schedule: this.onSchedule.bind(this),
-      error: this.onError.bind(this)
-    });
+    this._bgGeo.on("location", this.onLocation.bind(this));
+    this._bgGeo.on("motionchange", this.onMotionChange.bind(this));
+    this._bgGeo.on("http", this.onHttp.bind(this));
+    this._bgGeo.on("heartbeat", this.onHeartbeat.bind(this));
+    this._bgGeo.on("schedule", this.onSchedule.bind(this));
+    this._bgGeo.on("error", this.onError.bind(this));
 
     // Configure it.
     this._bgGeo.configure({

@@ -25,12 +25,13 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     resetOdometer(): void;
     addGeofence(params: any, success?: (param: any) => void, failure?: (error: any) => void): void;
     addGeofences(geofences: any, success?: (param: any) => void, failure?: (error: any) => void): void;
-    getGeofences(): any;
+    getGeofences(success: Function, failure?: () => void): any;
     removeGeofences(success?: (result: any) => void, failure?: (error: any) => void): void;
     removeGeofence(identifier: any, success?: (result: any) => void, failure?: (error: any) => void): void;
     clearDatabase(success?: (result: any) => void, failure?: (error: any) => void): void;
     sync(success: Function, failure?: (error: any) => void): void;
     insertLocation(params: any, success?: (result: any) => void, failure?: (error: any) => void): void;
+    playSound(soundId: any): void;
     private setEnabled(value, success, failure);
     private createHttpCallback(success?, failure?);
     private createMotionChangeCallback(callback);
