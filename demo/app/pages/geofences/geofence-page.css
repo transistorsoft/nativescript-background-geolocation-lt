@@ -1,0 +1,41 @@
+.toolbar {
+  padding-left: 5;
+  padding-right: 5;
+}
+.toolbar Label {
+  font-weight: bold;
+  text-align: center;
+}
+.edit {
+  background-color: 'red';
+}
+Button {
+  font-size: 16; 
+  width: auto;
+}
+.form {
+  padding: 10;
+}
+.form-item {
+  padding: 14;
+  border-bottom-width: 1;
+  border-bottom-color: #eee;
+}
+.form-item Label {
+  width: 50%;
+}
+.form-item TextField {
+  width: 50%;
+}
+.form-item-separator {
+  height:1;
+  background-color:#eee;
+}
+
+Button.delete {
+  background-color: #ef473a;
+  color: #fff;
+  width: 100%;
+  margin-top: 10;
+  padding: 15;
+}

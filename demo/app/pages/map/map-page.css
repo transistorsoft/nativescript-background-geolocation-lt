@@ -1,0 +1,45 @@
+button.ion-play {
+    color: white;
+    background-color: green;
+}
+button.ion-pause {
+    color: white;
+    background-color: red;
+}
+.workspace {
+    background-color: #eee;
+    margin: 0;
+    padding: 0;
+}
+.navigate {
+    width: 80;
+}
+.navigate .provider {
+    height: 24;
+}
+.navigate .provider .ion {
+    font-size: 12;
+    margin-right: 3;
+}
+.navigate .provider .disabled {
+    color: red;
+}
+.status {
+    horizontal-align: center;
+    text-align: center;        
+    padding: 0;
+    font-size: 12;
+    height: 24;    
+    width: 150;
+}
+.status .activity-type {
+    width: 24;
+    font-size: 20;
+    color: #000;
+}
+.status .odometer {
+    overflow: visible;
+}
+.pace {
+    width: 80;
+}

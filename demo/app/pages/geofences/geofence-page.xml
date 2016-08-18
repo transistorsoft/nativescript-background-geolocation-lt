@@ -1,0 +1,51 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:maps="nativescript-google-maps-sdk" showingModally="onShow">
+	<StackLayout orientation="vertical">
+		<DockLayout class="toolbar" stretchLastChild="true">
+			<Button text="Cancel" dock="left" tap="onCancel" class="red" />
+			<Button text="Done" dock="right" tap="onDone" class="green" visibility="{{action==='new' ? 'visible' : 'collapsed'}}" />			
+			<Label text="{{title}}" class="{{action}}" />
+		</DockLayout>
+
+		<StackLayout orientation="horizontal" class="form-item">
+			<Label text="Identifier"/>
+			<TextField hint="eg: Home" text="{{identifier}}" />
+		</StackLayout>
+		<Label text="" class="form-item-separator" />
+
+		<StackLayout orientation="horizontal" class="form-item">
+			<Label text="Radius" />
+			<TextField text="{{radius}}" keyboardType="number" />
+		</StackLayout>
+		<Label text="" class="form-item-separator" />
+
+		<StackLayout visibility="{{action === 'new' ? 'visible' : 'collapsed'}}">
+			<StackLayout orientation="horizontal" class="form-item">			
+				<Label text="Notify on ENTRY" />
+				<Switch checked="true" />			
+			</StackLayout>
+			<Label text="" class="form-item-separator" />
+
+			<StackLayout orientation="horizontal" class="form-item">			
+				<Label text="Notify on EXIT" />
+				<Switch checked="false" />			
+			</StackLayout>
+			<Label text="" class="form-item-separator" />
+
+			<StackLayout orientation="horizontal" class="form-item">			
+				<Label text="Notify on DWELL" />
+				<Switch checked="false" />			
+			</StackLayout>
+			<Label text="" class="form-item-separator" />
+
+			<StackLayout orientation="horizontal" class="form-item">
+				<Label text="Loitering delay (ms)" />
+				<TextField hint="Delay before DWELL" />
+			</StackLayout>
+			<Label text="" class="form-item-separator" />
+		</StackLayout>
+
+		<Button text="Delete" tap="onRemove" class="delete" visibility="{{action === 'edit' ? 'visible' : 'collapsed'}}" />
+
+	</StackLayout>
+
+</Page>

@@ -183,8 +183,14 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     });
     this.getAdapter().addGeofences(new org.json.JSONArray(JSON.stringify(geofences)), callback);
   }
-  public getGeofences(): any {
-    return JSON.parse(this.getAdapter().getGeofences().toString());
+  public getGeofences(success:Function, failure=function(){}): any {
+    var callback = new Callback({
+      success: function(rs) {
+        success(JSON.parse(rs.toString()));
+      },
+      error: failure
+    });
+    this.getAdapter().getGeofences(callback);
   }
   public removeGeofences(success=function(result){}, failure=function(error){}) {
     var callback = new Callback({
@@ -227,6 +233,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.getAdapter().insertLocation(new org.json.JSONArray(JSON.stringify(params)), callback);
   }
 
+  public playSound(soundId) {
+    com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.startTone(soundId);
+  }
+
   private setEnabled(value: boolean, success:Function, failure:Function) {
     var adapter = this.getAdapter();
     if (value) {
@@ -242,12 +252,14 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  private createHttpCallback(success=function(status, responseText){}, failure=function(error){}) {
+  private createHttpCallback(success=function(status, responseText){}, failure=function(status, rseponseText){}) {
     return new Callback({
       success: function(response) {
         success(response.getInt("status"), response.getString("responseText"));
       },
-      error: failure
+      error: function(response) {
+        failure(response.getInt("status"), response.getString("responseText"));
+      }
     });
   }
   private createMotionChangeCallback(callback) {

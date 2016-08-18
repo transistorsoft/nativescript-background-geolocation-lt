@@ -5,7 +5,7 @@ declare var NSString: any;
 declare var NSDictionary: any;
 declare var NSArray: any;
 declare var NSUTF8StringEncoding: any;
-
+declare var CLCircularRegion: any;
 
 let TS_LOCATION_TYPE_MOTIONCHANGE   = 0;
 let TS_LOCATION_TYPE_CURRENT        = 1;
@@ -29,6 +29,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       this.locationManager.locationChangedBlock   = this.onLocation.bind(this);
       this.locationManager.httpResponseBlock      = this.onHttp.bind(this);
       this.locationManager.motionChangedBlock     = this.onMotionChange.bind(this);
+      this.locationManager.geofenceBlock          = this.onGeofence.bind(this);
       this.locationManager.activityChangedBlock   = this.onActivityChange.bind(this);
       this.locationManager.authorizationChangedBlock   = this.onProviderChange.bind(this);
       this.locationManager.errorBlock             = this.onError.bind(this);
@@ -168,25 +169,47 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  public addGeofence(geofence, success:any, failure:any) {
+  public addGeofence(params, success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.locationManager.addGeofenceIdentifierRadiusLatitudeLongitudeNotifyOnEntryNotifyOnExit(
-      geofence.identifier,
-      geofence.radius,
-      geofence.latitude,
-      geofence.longitude,
-      geofence.notifyOnEntry || true,
-      geofence.notifyOnExit || true
+
+    if (!params.identifier) {
+      throw "#addGeofence requires an 'identifier'";
+    }
+    if (!(params.latitude && params.longitude)) {
+        throw "#addGeofence requires a #latitude and #longitude";
+    } 
+    if (!params.radius) {
+        throw "#addGeofence requires a #radius";
+    }
+    if ( (typeof(params.notifyOnEntry) === 'undefined') && (typeof(params.notifyOnExit) === 'undefined') ) {
+        throw "#addGeofence requires at least notifyOnEntry {Boolean} and/or #notifyOnExit {Boolean}";
+    }
+    if (typeof(params.notifyOnEntry) === 'undefined') {
+      params.notifyOnEntry = false;
+    }
+    if (typeof(params.notifyOnExit) === 'undefined') {
+      params.notifyOnEntry = false;
+    }
+
+    this.locationManager.addGeofenceRadiusLatitudeLongitudeNotifyOnEntryNotifyOnExit(
+      params.identifier,
+      params.radius,
+      params.latitude,
+      params.longitude,
+      params.notifyOnEntry,
+      params.notifyOnExit
     );
-    success(geofence.identifier);
+    success(params.identifier);
   }
+
   public addGeofences(geofences:any, success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
     this.locationManager.addGeofences(geofences);
     success(true);
   }
+  
   public removeGeofence(identifier, success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
@@ -196,12 +219,26 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       failure(false);
     }
   }
+
   public getGeofences(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var rs = this.locationManager.getGeofences();
+
+    var geofences = this.locationManager.getGeofences();   
+    var rs = [];
+
+    for (let loop = 0; loop < geofences.count; loop ++) {
+      var geofence = geofences.objectAtIndex(loop);
+      rs.push({
+        identifier: geofence.identifier,
+        radius: geofence.radius,
+        latitude: geofence.center.latitude,
+        longitude: geofence.center.longitude
+      });
+    }
     success(rs);
   }
+
   public removeGeofences(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
@@ -270,6 +307,19 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     var locationData = this.getJsObjectFromNSDictionary(this.locationManager.locationToDictionary(location));
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(isMoving, locationData);
+    }
+  }
+
+  private onGeofence(region, location, action) {
+    var callbacks   = this.listeners.geofence;
+    var locationData = this.getJsObjectFromNSDictionary(this.locationManager.locationToDictionary(location));
+    var params = {
+      identifier: region.identifier,
+      action: action,
+      location: locationData
+    };
+    for (var n=0,len=callbacks.length;n<len;n++) {
+      callbacks[n].success(params);
     }
   }
 
@@ -348,7 +398,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   private onSchedule(schedule: Object) {
     var state = this.locationManager.getState();
 
-    var callbacks = this.listeners.heartbeat;
+    var callbacks = this.listeners.schedule;
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(state);
     }
