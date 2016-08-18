@@ -9,17 +9,16 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "noEmitHelpers": true,
-        "noEmitOnError": true
+        "noEmitOnError": false
     },
     "files": [
         "demo/node_modules/tns-core-modules/tns-core-modules.d.ts",
         "background-geolocation.common.ts",
         "background-geolocation.ios.ts",
-        "background-geolocation.android.ts",
-        "node_modules/tns-platform-declarations/android17.d.ts"
+        "background-geolocation.android.ts"
     ],
     "exclude": [
-        "node_modules",
+        "node_modules/**/*",
         "platforms"
     ]
 }

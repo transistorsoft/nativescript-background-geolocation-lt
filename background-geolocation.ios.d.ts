@@ -1,3 +1,4 @@
+/// <reference path="node_modules/tns-platform-declarations/tns-core-modules/ios.d.ts" />
 import { AbstractBackgroundGeolocation } from './background-geolocation.common';
 export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     constructor();
