@@ -18,7 +18,7 @@
         "background-geolocation.android.ts"
     ],
     "exclude": [
-        "node_modules/**/*",
+        "node_modules",
         "platforms"
     ]
 }
