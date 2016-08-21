@@ -1,7 +1,7 @@
 ﻿import * as application from "application";
 
 if(application.ios) {
-  GMSServices.provideAPIKey("AIzaSyAeLPdkfLFWLFStQDxr4gZM6thzQXJHTx0");
+  GMSServices.provideAPIKey("AIzaSyAttgr9w-Wwu4TWkeMAPsYwaYvH2ibSPjQ");
 }
 
 // fonticon setup

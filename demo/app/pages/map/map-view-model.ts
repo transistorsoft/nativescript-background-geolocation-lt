@@ -234,11 +234,19 @@ export class MapModel extends observable.Observable {
     var topMost = frames.topmost();
     var mapView = this._mapView;
 
+    // Play a UI sound when opening.
+    var os = Platform.device.os;
+    var soundId = (os.toUpperCase() == 'ANDROID') ? 27 : 1113;
+    this._bgGeo.playSound(soundId);
+
     topMost.currentPage.showModal('./pages/geofences/geofence-page', {
       backgroundGeolocation: this._bgGeo, 
       position: position
     }, function(geofenceModel) {
       if (!geofenceModel) { return; }
+      var soundId = (os.toUpperCase() == 'ANDROID') ? 28 : 1114;
+      this._bgGeo.playSound(soundId);
+
       this._createGeofenceMarker({
         identifier: geofenceModel.identifier,
         radius: geofenceModel.radius,
@@ -259,7 +267,7 @@ export class MapModel extends observable.Observable {
       stationaryRadius: 25,
       activityRecognitionInterval: 10000,
       // Application
-      license: "88457817dcffc2cd2258565a72eeb5f9452903c38d7672b74d9d0a4a0c72eddd",
+      license: "5647026b5a15ced50fcd3adcb2b743ab32abf2374c40d0aff875e53b15f93b60",
       foregroundService: true,
       stopOnTerminate: false,
       debug: true,

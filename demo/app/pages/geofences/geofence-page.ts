@@ -20,11 +20,6 @@ export function onShow(args: any) {
 
     bgGeo = args.context.backgroundGeolocation;
 
-    // Play a UI sound when opening.
-    var os = Platform.device.os;
-    var soundId = (os.toUpperCase() == 'ANDROID') ? 27 : 1113;
-    bgGeo.playSound(soundId);
-
     if (args.context.position) {
     	position = args.context.position;
     	model.set('action', 'new');
