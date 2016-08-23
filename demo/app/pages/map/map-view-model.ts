@@ -13,10 +13,13 @@ SVG Icons for Map
 */
 
 import observable = require("data/observable");
+import {SettingsViewModel} from "../settings/settings-view-model";
+
 import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 import {fonticon} from 'nativescript-fonticon';
 import Platform = require('platform');
 import frames = require("ui/frame");
+import * as Settings from "application-settings";
 
 var mapsModule = require("nativescript-google-maps-sdk");
 var Color = require("color").Color;
@@ -192,7 +195,9 @@ export class MapModel extends observable.Observable {
   public onMapReady(args) {
     this._mapView = args.object;
     
-    // Configure BackgroundGeolocation
+    // If _state already exists, we're probably returning from a navigation-event.  just ignore: we're already configured.
+    if (this._state) { return };
+
     this._bgGeo.configure(this.getConfig(), function(state) {
       this._state = state;
       this._enabled = state.enabled;
@@ -257,36 +262,52 @@ export class MapModel extends observable.Observable {
   }
 
   private getConfig() {
-    return {
-      // Geolocation
-      desiredAccuracy: 0,
-      distanceFilter: 50,
-      locationUpdateInterval: 1000,
-      // Activity Recognition
-      stopTimeout: 1,
-      stationaryRadius: 25,
-      activityRecognitionInterval: 10000,
-      // Application
-      license: "5647026b5a15ced50fcd3adcb2b743ab32abf2374c40d0aff875e53b15f93b60",
-      foregroundService: true,
-      stopOnTerminate: false,
-      debug: true,
-      preventSuspend: false,
-      heartbeatInterval: 60,
-      // Http
-      //url: 'http://192.168.11.100:8080/locations',
-      url: 'http://192.168.11.100:8080/locations',
-      params: {
-        device: {
-          platform: Platform.device.os,
-          manufacturer: Platform.device.manufacturer,
-          model: Platform.device.model,
-          version: Platform.device.osVersion,
-          uuid: Platform.device.uuid
+    var config = {};
+    if (Settings.hasKey('config')) {
+      config = JSON.parse(Settings.getString('config'));
+    } else {
+      // Fetch default config with overrides.
+      config = SettingsViewModel.getDefaultConfig({
+        license: "5647026b5a15ced50fcd3adcb2b743ab32abf2374c40d0aff875e53b15f93b60",
+        url: 'http://192.168.11.100:8080/locations',
+        params: {
+          device: {
+            platform: Platform.device.os,
+            manufacturer: Platform.device.manufacturer,
+            model: Platform.device.model,
+            version: Platform.device.osVersion,
+            uuid: Platform.device.uuid
+          }
         }
-      },
-      autoSync: true
+      });
+      // Cache current settings
+      Settings.setString('config', JSON.stringify(config));
     }
+    return config;
+  }
+
+  public onClickSettings() {
+    console.log('- onClickSettings');
+
+    var topMost = frames.topmost();
+    
+    // Play a UI sound when opening.
+    var os = Platform.device.os;
+    var soundId = (os.toUpperCase() == 'ANDROID') ? 27 : 1113;
+    //this._bgGeo.playSound(soundId);
+
+    var navigationEntry = {
+      moduleName: "./pages/settings/settings-page",
+      animated: true,
+      transition: {
+        name: "flip",
+        backstackVisible: true
+      },
+      context: this._bgGeo
+    };
+
+    topMost.navigate(navigationEntry);
+
   }
 
   public onSetConfig() {

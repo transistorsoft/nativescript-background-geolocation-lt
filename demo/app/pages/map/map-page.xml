@@ -1,16 +1,9 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:maps="nativescript-google-maps-sdk" navigatingTo="navigatingTo" actionBarHidden="true">
 
-	<GridLayout>
-		<ScrollView id="scrollView">
-		</ScrollView>
-		<AbsoluteLayout id="dialog" width="80%" height="80%" backgroundColor="white" >
-		</AbsoluteLayout>
-	</GridLayout>
-
 	<DockLayout stetchLastChild="true">
 		
 		<DockLayout dock="top" class="toolbar toolbar-top" stretchLastChild="true">
-			<Button id="btnSettings" text="{{'ion-ios-settings' | fonticon}}" dock="left" class="ion button" />
+			<Button id="btnSettings" text="{{'ion-ios-settings' | fonticon}}" dock="left" class="ion button" tap="{{onClickSettings}}" />
 			<Switch id="btnEnabled" checked="{{ isEnabled }}" tap="{{ onToggleEnabled }}" dock="right" />
 			<Label class="title" text="Background Geolocation" />			
 		</DockLayout>

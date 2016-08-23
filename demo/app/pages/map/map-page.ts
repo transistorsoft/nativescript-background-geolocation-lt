@@ -1,13 +1,18 @@
 import { EventData } from "data/observable";
 import { Page } from "ui/page";
 import { MapModel } from "./map-view-model";
+import * as Settings from "application-settings";
 
 var page;
 // Event handler for Page "navigatingTo" event attached in main-page.xml
 export function navigatingTo(args: EventData) {
     // Get the event sender
     page = <Page>args.object;
-    page.bindingContext = new MapModel();
+    if (!page.bindingContext) {
+    	page.bindingContext = new MapModel();
+    } else {
+      console.log('------- return from Settings?', Settings.getString('config'));
+    }
 }
 
 export function onMapReady(args:any) {
