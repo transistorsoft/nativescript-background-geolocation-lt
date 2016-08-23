@@ -33,8 +33,7 @@ const SETTINGS = {
     {name: 'preventSuspend', group: 'application', dataType: 'boolean', inputType: 'select', values: [true, false], defaultValue: false},
     {name: 'pausesLocationUpdatesAutomatically', group: 'geolocation', dataType: 'boolean', inputType: 'select', values: [true, false], defaultValue: undefined},
     {name: 'useSignificantChangesOnly', group: 'geolocation', dataType: 'boolean', inputType: 'select', values: [true, false], defaultValue: false},
-    {name: 'disableMotionActivityUpdates', group: 'activity_recognition', dataType: 'boolean', inputType: 'select', values: [true, false], defaultValue: false},
-    {name: 'triggerActivities', group: 'activity_recognition', dataType: 'string', inputType: 'multiselect', values: ['in_vehicle', 'on_bicycle', 'on_foot', 'running', 'walking'], defaultValue: 'in_vehicle,on_bicycle,running,walking,on_foot'}
+    {name: 'disableMotionActivityUpdates', group: 'activity_recognition', dataType: 'boolean', inputType: 'select', values: [true, false], defaultValue: false}
   ],
   ANDROID: [
     {name: 'desiredAccuracy', group: 'geolocation', dataType: 'integer', inputType: 'select', values: [0, 10, 100, 1000], defaultValue: 0 },
