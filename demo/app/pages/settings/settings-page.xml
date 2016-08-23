@@ -1,3 +1,73 @@
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:maps="nativescript-google-maps-sdk" navigatingTo="navigatingTo" actionBarHidden="true">
-	<Label text="Settings">Settings</Label>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" class="settings" actionBarHidden="false" navigatingTo="navigatingTo">
+	<ActionBar title="Settings">
+		<NavigationButton text="Back" android.systemIcon="ic_menu_back"/>
+	</ActionBar>
+	<ScrollView>
+		<StackLayout orientation="vertical" class="container">
+			<StackLayout orientation="horizontal" class="group">
+				<Label text="{{'ion-pinpoint'|fonticon}}" class="ion" />
+				<Label text="Geolocation Settings" class="title" />
+			</StackLayout>
+			<Repeater items="{{ settings('geolocation') }}">
+			    <Repeater.itemTemplate>
+			    	<DockLayout class="setting" orientation="horizontal" stretchLastChild="true" tap="onRowClick">
+			    		<Label text="{{ name }}" dock="left" textWrap="true" class="name" />
+			       		<DockLayout orientation="horizontal" dock="right" stretchLastChild="true">
+			       			<Label text="{{'ion-ios-arrow-right'|fonticon}}" class="ion disclosure" dock="right"/>
+			       			<Label text="{{displayValue}}" class="value" />
+			       		</DockLayout>		       		
+			       	</DockLayout>
+			    </Repeater.itemTemplate>
+		 	</Repeater>
+
+		 	<StackLayout orientation="horizontal" class="group">
+				<Label text="{{'ion-android-walk'|fonticon}}" class="ion" />
+		 		<Label text="Activity Recognition Settings" class="title" />
+		 	</StackLayout>
+			<Repeater items="{{ settings('activity_recognition') }}" class="settings">
+			    <Repeater.itemTemplate>
+			    	<DockLayout class="setting" orientation="horizontal" stretchLastChild="true" tap="onRowClick">
+			    		<Label text="{{ name }}" dock="left" textWrap="true" class="name" />
+			       		<DockLayout orientation="horizontal" dock="right" stretchLastChild="true">
+			       			<Label text="{{'ion-ios-arrow-right'|fonticon}}" class="ion disclosure" dock="right"/>
+			       			<Label text="{{displayValue}}" class="value" />
+			       		</DockLayout>		       		
+			       	</DockLayout>
+			    </Repeater.itemTemplate>
+		 	</Repeater>
+
+		 	<StackLayout orientation="horizontal" class="group">
+				<Label text="{{'ion-ios-gear'|fonticon}}" class="ion" />
+		 		<Label text="Application Settings" class="title" />
+		 	</StackLayout>
+			<Repeater items="{{ settings('application') }}" class="settings">
+			    <Repeater.itemTemplate>
+			    	<DockLayout class="setting" orientation="horizontal" stretchLastChild="true" tap="onRowClick">
+			    		<Label text="{{ name }}" dock="left" textWrap="true" class="name" />
+			       		<DockLayout orientation="horizontal" dock="right" stretchLastChild="true">
+			       			<Label text="{{'ion-ios-arrow-right'|fonticon}}" class="ion disclosure" dock="right"/>
+			       			<Label text="{{ displayValue }}" class="value" />
+			       		</DockLayout>		       		
+			       	</DockLayout>
+			    </Repeater.itemTemplate>
+		 	</Repeater>
+
+		 	<StackLayout orientation="horizontal" class="group">
+				<Label text="{{'ion-ios-cloud-upload'|fonticon}}" class="ion" />
+		 		<Label text="HTTP Settings" class="title" />
+		 	</StackLayout>
+			<Repeater items="{{ settings('http') }}" class="settings">
+			    <Repeater.itemTemplate>
+			    	<DockLayout class="setting" orientation="horizontal" stretchLastChild="true" tap="onRowClick">
+			    		<Label text="{{ name }}" dock="left" textWrap="true" class="name" />
+			       		<DockLayout orientation="horizontal" dock="right" stretchLastChild="true">
+			       			<Label text="{{'ion-ios-arrow-right'|fonticon}}" class="ion disclosure" dock="right"/>
+			       			<Label text="{{displayValue}}" class="value" />
+			       		</DockLayout>		       		
+			       	</DockLayout>
+			    </Repeater.itemTemplate>
+		 	</Repeater>
+
+		 </StackLayout>
+	</ScrollView>
 </Page>

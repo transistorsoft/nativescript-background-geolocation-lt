@@ -1,1 +1,38 @@
-settings-page.css
+Page {
+  background-color: #eee;
+}
+TextField {
+  background-color: #fafafa;
+  padding: 15 10 15 10;
+}
+.settings .group {
+  
+  padding: 20 10 10 10;
+  font-size: 14;
+}
+.settings .group .ion {
+  color: #aaa;
+}
+.settings .group .title {
+  font-weight: bold;
+  color: #000;
+}
+.settings .setting {
+  padding: 15 10 15 10;
+  margin-bottom: 1;
+  background-color: #fafafa;
+}
+
+.settings .setting .name {
+  font-size: 14;
+}
+.settings .setting .value {
+  text-align: right;
+  font-size: 14;
+}
+.settings .setting .disclosure {
+  color: #06e;
+  text-align: right;
+  margin-left: 10;
+  font-size: 16;
+}

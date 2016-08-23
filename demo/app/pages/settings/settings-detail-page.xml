@@ -1,0 +1,23 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" class="settings" actionBarHidden="false" navigatingTo="navigatingTo" cssFile="~/pages/settings/settings-page.css">
+	<ActionBar title="{{name}}">
+		<NavigationButton text="Back" android.systemIcon="ic_menu_back"/>
+	</ActionBar>
+	<StackLayout>
+		<Repeater id="list" items="{{ items }}" class="settings">
+		    <Repeater.itemTemplate>
+		    	<StackLayout orientation="vertical" tap="onSelectValue">
+			    	<DockLayout class="setting" orientation="horizontal" stretchLastChild="true" >
+			    		<Label text="{{ value }}" dock="left" textWrap="true" class="name" />
+			    		<Label text="{{'ion-checkmark'|fonticon}}" class="ion disclosure" dock="right" visibility="{{checked ? 'visible' : 'collapsed'}}"/>
+			       	</DockLayout>
+			   	</StackLayout>
+		    </Repeater.itemTemplate>
+	 	</Repeater>
+
+	 	<StackLayout orientation="vertical" visibility="{{inputType === 'text' ? 'visible' : 'collapsed'}}">
+	 		<TextField text="{{value}}"  />
+	 		<Label text="" class="hr" />
+	 	</StackLayout>
+	 </StackLayout>
+ 		
+</Page>

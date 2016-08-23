@@ -29,3 +29,8 @@ button {
     padding-right: 5;
     vertical-align: middle;
 }
+
+Label.hr {
+    background-color: #ccc;
+    height: 1;
+}
