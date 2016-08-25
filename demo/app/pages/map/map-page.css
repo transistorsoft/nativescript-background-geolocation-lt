@@ -6,6 +6,9 @@ button.ion-pause {
     color: white;
     background-color: red;
 }
+button.ion {
+    width: 50;
+}
 .workspace {
     background-color: #eee;
     margin: 0;

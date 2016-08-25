@@ -13,13 +13,12 @@ var setting: Observable;
 var textChangeBuffer;
 
 function commitTextValue() {
-    var config = {};
-    config[setting.name] = setting.value;
+  var config = {};
+  config[setting.name] = setting.value;
 
-    bgGeo.setConfig(config, function(state) {
-      console.log('- setConfig success', JSON.stringify(config));
-    });
-  }
+  bgGeo.setConfig(config, function(state) {
+    console.log('- setConfig success', JSON.stringify(config));
+  });
 }
 
 function onTextChange(event) {
@@ -78,6 +77,11 @@ export function navigatingTo(args: any) {
   }
 }
 
+// Seems this is only required for Android
+export function onClickBack(event: EventData) {
+  frames.topmost().goBack();
+}
+
 export function onSelectValue(event) {
 
   var setting = <Observable>page.bindingContext;
@@ -92,6 +96,7 @@ export function onSelectValue(event) {
     } else {
       options.push(currentValue);
     }
+
     setting.get('items').forEach(function(item) {
       item.set('checked', options.indexOf(item.value) >= 0);
     });
@@ -106,7 +111,8 @@ export function onSelectValue(event) {
     } else {
       setting.set('value', '');
       setting.set('displayValue', 'NONE');
-    }    
+    }
+    currentValue = setting.value;
   } else {
     setting.set('value', currentValue);
     setting.set('displayValue', currentValue);

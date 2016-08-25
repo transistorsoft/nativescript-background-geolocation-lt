@@ -223,6 +223,16 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.getAdapter().sync(callback);
   }
 
+  public getLocations(success:Function, failure:any) {
+    var callback = new Callback({
+      success: function(rs) {
+        success(JSON.parse(rs.toString()));
+      },
+      error: failure
+    });
+    this.getAdapter().getLocations(callback);
+  }
+
   public insertLocation(params, success=function(result){}, failure=function(error){}) {
     var callback = new Callback({
       success: success,

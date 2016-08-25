@@ -1,6 +1,6 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" class="settings" actionBarHidden="false" navigatingTo="navigatingTo" cssFile="~/pages/settings/settings-page.css">
 	<ActionBar title="{{name}}">
-		<NavigationButton text="Back" android.systemIcon="ic_menu_back"/>
+		<NavigationButton text="Back" android.systemIcon="ic_menu_back" tap="onClickBack" />
 	</ActionBar>
 	<StackLayout>
 		<Repeater id="list" items="{{ items }}" class="settings">
@@ -15,9 +15,8 @@
 	 	</Repeater>
 
 	 	<StackLayout orientation="vertical" visibility="{{inputType === 'text' ? 'visible' : 'collapsed'}}">
-	 		<TextField text="{{value}}"  />
+	 		<TextField text="{{value}}" />
 	 		<Label text="" class="hr" />
 	 	</StackLayout>
 	 </StackLayout>
- 		
 </Page>

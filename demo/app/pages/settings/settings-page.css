@@ -5,13 +5,12 @@ TextField {
   background-color: #fafafa;
   padding: 15 10 15 10;
 }
-.settings .group {
-  
+.settings .group {  
   padding: 20 10 10 10;
   font-size: 14;
 }
 .settings .group .ion {
-  color: #aaa;
+  color: #06e;
 }
 .settings .group .title {
   font-weight: bold;
@@ -35,4 +34,11 @@ TextField {
   text-align: right;
   margin-left: 10;
   font-size: 16;
+}
+.toolbar-bottom {
+  height: 50;
+}
+.toolbar-bottom Button {
+  width: 70;
+  height: 50;  
 }
