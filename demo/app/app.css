@@ -17,20 +17,31 @@
     height: 24;
 }
 
-button {
-    horizontal-align: center;
-    width: 50;
+Button {
+    horizontal-align: center;    
 }
 .toolbar {
     background-color: #fff;
-    height: 44;
+    height: 50
 }
 .toolbar-top {
     padding-right: 5;
     vertical-align: middle;
 }
-
+.toolbar-bottom {
+    background-color: #fff;
+}
 Label.hr {
-    background-color: #ccc;
+    background-color: #eee;
     height: 1;
 }
+
+.btn-blue {
+  background-color: #06e;
+  color: #fff;
+}
+.btn-red {
+  background-color: #e03;
+  color: #fff;
+}
+

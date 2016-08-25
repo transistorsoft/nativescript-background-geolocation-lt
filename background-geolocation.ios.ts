@@ -16,6 +16,8 @@ var emptyFn = function(param:any) {};
 
 export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
+  private syncTaskId;
+
   constructor() {
     super();
   }
@@ -38,6 +40,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       this.locationManager.syncCompleteBlock      = this.onSyncComplete.bind(this);
       this.locationManager.scheduleBlock          = this.onSchedule.bind(this);
     }
+    this.syncTaskId = null;
     this.state     = this.locationManager.configure(config);
     this.isMoving  = this.state.isMoving;
     this.enabled   = this.state.enabled;
@@ -77,7 +80,6 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 	public changePace(value: boolean, success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-		console.log('ChangePace')
     this.locationManager.changePace(value);
     success(value);
 	}
@@ -85,7 +87,6 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 	public start(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-		console.log('Start');
     this.locationManager.start();
     if (typeof(success) === 'function') {
       success(true);
@@ -95,7 +96,6 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 	public stop(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-		console.log('Stop');
     this.locationManager.stop();
     if (typeof(success) === 'function') {
       success(true);
@@ -105,7 +105,6 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public startSchedule(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    console.log('Start');
     this.locationManager.startSchedule();
     success(true);
   }
@@ -113,7 +112,6 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public stopSchedule(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    console.log('Start');
     this.locationManager.stopSchedule();
     if (typeof(success) === 'function') {
       success(true);
@@ -121,10 +119,26 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   public sync(success=Function, failure:any) {
+    if (this.syncCallback) {
+        failure("A sync action is already in progress");
+        return;
+    }
     failure = failure || emptyFn;
-    this.syncCallback = {
-      success: success,
-      error: failure || this.emptyFn
+
+    // Important to set these before we execute #sync since this fires a *very fast* async NSNotification event!
+    this.syncTaskId = this.locationManager.createBackgroundTask();
+    var locations   = this.locationManager.sync();
+    if (locations == null) {
+        this.locationManager.stopBackgroundTask(this.syncTaskId);
+        this.syncCallback = null;
+        this.syncTaskId = null;
+        failure("Sync failed.  Is there a network connection or previous sync-task pending?");
+        return;
+    } else {
+      this.syncCallback = {
+        success: success,
+        error: failure || this.emptyFn
+      }
     }
   }
 
@@ -371,8 +385,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     if (this.syncCallback == null) {
       return;
     }
-    this.syncCallback(locations);
+    this.syncCallback.success(this.getJsArrayFromNSArray(locations));
+    this.locationManager.stopBackgroundTask(this.syncTaskId);
     this.syncCallback = null;
+    this.syncTaskId = null;
   }
 
   private onActivityChange(activityName) {

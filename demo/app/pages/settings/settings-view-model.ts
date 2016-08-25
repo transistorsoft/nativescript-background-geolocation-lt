@@ -90,6 +90,10 @@ export class SettingsViewModel extends Observable {
     return items;
   }
 
+  public onClickSync(event) {
+    console.log('-- onClickSync');
+    
+  }
   constructor() {
   	super();
     if (Settings.hasKey("config")) {
@@ -105,7 +109,7 @@ export class SettingsViewModel extends Observable {
     var setting;
     var config = this._config;
     settings.forEach(function(setting:Observable) {
-      if (config[setting.get('name')]) {
+      if (config.hasOwnProperty(setting.get('name'))) {
         setting.set('value', config[setting.get('name')]);
         setting.set('displayValue', setting.value);
       }

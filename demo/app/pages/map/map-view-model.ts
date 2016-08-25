@@ -57,7 +57,7 @@ export class MapModel extends observable.Observable {
 
   // Map properties
   private _mapView: any;
-  private _zoom = 15;
+  private _defaultZoom = 16;
   private _polyline;
 
   // Map-marker references.
@@ -141,18 +141,33 @@ export class MapModel extends observable.Observable {
       if (value) {
         this._bgGeo.start();
         this._loadGeofences();
-        this.set('zoom', this._zoom);
+        
+        // Reload cached positions from plugin
+        var polyline = this._getPolyline();
+        var me = this;
+        this._bgGeo.getLocations(function(rs) {
+          rs.forEach(function(location) {
+            var marker = me._createLocationMarker(location);
+            polyline.addPoint(marker.position);
+          });
+        });
+
+        if (this.zoom < this._defaultZoom) {
+          this.set('zoom', this._defaultZoom);
+        }
       } else {
         this._bgGeo.stop();
         this._bgGeo.resetOdometer();
-        //this._bgGeo.removeGeofences();
+
+        // Remove Map markers & shapes
         this._geofenceMarkers = {};
         this.activityType = "off";
         this._mapView.removeAllMarkers();
         this._mapView.removeAllShapes();
-        // clear marker references.
+        // Clear marker references.
         this._polyline = null;
         this._currentLocationMarker = null;
+        this._currentLocationAccuracyMarker = null;
         this._stationaryCircle = null;
       }
     }
@@ -194,7 +209,7 @@ export class MapModel extends observable.Observable {
 
   public onMapReady(args) {
     this._mapView = args.object;
-    
+       
     // If _state already exists, we're probably returning from a navigation-event.  just ignore: we're already configured.
     if (this._state) { return };
 
@@ -265,6 +280,8 @@ export class MapModel extends observable.Observable {
     var config = {};
     if (Settings.hasKey('config')) {
       config = JSON.parse(Settings.getString('config'));
+      console.log('-------- confgi: ', JSON.stringify(config, null, 2));
+
     } else {
       // Fetch default config with overrides.
       config = SettingsViewModel.getDefaultConfig({
@@ -287,14 +304,7 @@ export class MapModel extends observable.Observable {
   }
 
   public onClickSettings() {
-    console.log('- onClickSettings');
-
     var topMost = frames.topmost();
-    
-    // Play a UI sound when opening.
-    var os = Platform.device.os;
-    var soundId = (os.toUpperCase() == 'ANDROID') ? 27 : 1113;
-    //this._bgGeo.playSound(soundId);
 
     var navigationEntry = {
       moduleName: "./pages/settings/settings-page",
@@ -305,7 +315,6 @@ export class MapModel extends observable.Observable {
       },
       context: this._bgGeo
     };
-
     topMost.navigate(navigationEntry);
 
   }
@@ -338,10 +347,11 @@ export class MapModel extends observable.Observable {
     });
   }
   private _createPolyline() {
+    var os = Platform.device.os.toUpperCase();
     var polyline = new mapsModule.Polyline();
-    polyline.color = new Color(150, 38, 119, 255);//;
+    polyline.color = new Color(150, 38, 119, 255);
     polyline.geodesic = true;
-    polyline.width = 5;
+    polyline.width = (os.toUpperCase() == 'ANDROID') ? 17 : 5;
     this._mapView.addPolyline(polyline);
     return polyline;
   }
@@ -366,6 +376,7 @@ export class MapModel extends observable.Observable {
       this._currentLocationAccuracyMarker = circle;
     } else {
       this._currentLocationAccuracyMarker.center = position;
+      this._currentLocationAccuracyMarker.radius = location.coords.accuracy;
     }      
     return marker;
   }
@@ -393,14 +404,16 @@ export class MapModel extends observable.Observable {
     this._mapView.addCircle(circle);
   }
 
-  private _createLocationMarker(position: any) {
+  private _createLocationMarker(location: any) {
+    var position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
     var marker = new mapsModule.Marker();
     marker.position = position;
-    marker.title = "Position";
+    marker.title = location.timestamp;
     marker.icon = 'map_marker_green_dot';
     marker.flat = true;
     marker.anchor = [0.5, 0.5];
     this._mapView.addMarker(marker);
+    console.log('- createLocationMarker: ', location.timetamp);
     return marker;
   }
 
@@ -433,7 +446,9 @@ export class MapModel extends observable.Observable {
     if (!this._currentLocationMarker) {
       this._currentLocationMarker = this._createCurrentLocationMarker(location);
       this._getPolyline().addPoint(position);
-      this.set('zoom', 15);
+      if (this.zoom < this._defaultZoom) {
+        this.set('zoom', this._defaultZoom);
+      }
     } else if (!location.sample) {
       this._currentLocationMarker.icon = 'map_marker_green_dot';
       this._currentLocationMarker = this._createCurrentLocationMarker(location);
@@ -462,7 +477,10 @@ export class MapModel extends observable.Observable {
     this.isMoving = isMoving;
     this.activityType = location.activity.type;
     this.paceButtonIcon = (isMoving) ? ICON_PAUSE : ICON_PLAY;
-    this.set('zoom', 15);
+
+    if (this.zoom < this._defaultZoom) {
+      this.set('zoom', this._defaultZoom);
+    }
   }
 
   public onActivityChange(activityType:string) {
