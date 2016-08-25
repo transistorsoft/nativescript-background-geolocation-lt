@@ -9,7 +9,7 @@
 			<Label text="" class="hr" dock="top"/>
 			<Button text="Logs" dock="left" class="btn btn-blue" tap="onClickLogs" />
 			<Button text="Sync" dock="right" class="btn btn-red" tap="onClickSync" />
-			<Label text="Title" class="title"/>
+			<Label text="" class="title"/>
 		</DockLayout>
 		<ScrollView>
 			<StackLayout orientation="vertical" class="container">
