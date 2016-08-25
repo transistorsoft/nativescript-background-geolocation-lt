@@ -36,9 +36,8 @@ TextField {
   font-size: 16;
 }
 .toolbar-bottom {
-  height: 50;
+
 }
 .toolbar-bottom Button {
   width: 70;
-  height: 50;  
 }

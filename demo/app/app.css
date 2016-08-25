@@ -5,7 +5,7 @@
 */
 .ion {
   font-family: Ionicons, ionicons;
-  font-size:24;
+  font-size:18;
 }
 .hidden {
     display:none;
@@ -22,7 +22,7 @@ Button {
 }
 .toolbar {
     background-color: #fff;
-    height: 50
+    height: 44;
 }
 .toolbar-top {
     padding-right: 5;
