@@ -1,4 +1,5 @@
-/// <reference path="./node_modules/tns-platform-declarations/tns-core-modules/ios.d.ts" />
+
+
 import {AbstractBackgroundGeolocation} from './background-geolocation.common';
 
 declare var TSLocationManager: any;
@@ -303,7 +304,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.locationManager.emailLog(email);
   }
 
-  private onLocation(location, type, isMoving) {
+  private onLocation(location, type, isMoving) {     
     var callbacks = this.listeners.location;
     var locationData = this.getJsObjectFromNSDictionary(this.locationManager.locationToDictionaryType(location, type));
     for (var n=0,len=callbacks.length;n<len;n++) {
