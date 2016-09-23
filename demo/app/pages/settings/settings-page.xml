@@ -24,7 +24,7 @@
 				       		<DockLayout orientation="horizontal" dock="right" stretchLastChild="true">
 				       			<Label text="{{'ion-ios-arrow-right'|fonticon}}" class="ion disclosure" dock="right"/>
 				       			<Label text="{{displayValue}}" class="value" />
-				       		</DockLayout>		       		
+				       		</DockLayout>
 				       	</DockLayout>
 				    </Repeater.itemTemplate>
 			 	</Repeater>
@@ -40,7 +40,7 @@
 				       		<DockLayout orientation="horizontal" dock="right" stretchLastChild="true">
 				       			<Label text="{{'ion-ios-arrow-right'|fonticon}}" class="ion disclosure" dock="right"/>
 				       			<Label text="{{displayValue}}" class="value" />
-				       		</DockLayout>		       		
+				       		</DockLayout>
 				       	</DockLayout>
 				    </Repeater.itemTemplate>
 			 	</Repeater>
@@ -56,7 +56,7 @@
 				       		<DockLayout orientation="horizontal" dock="right" stretchLastChild="true">
 				       			<Label text="{{'ion-ios-arrow-right'|fonticon}}" class="ion disclosure" dock="right"/>
 				       			<Label text="{{ displayValue }}" class="value" />
-				       		</DockLayout>		       		
+				       		</DockLayout>
 				       	</DockLayout>
 				    </Repeater.itemTemplate>
 			 	</Repeater>
@@ -72,12 +72,12 @@
 				       		<DockLayout orientation="horizontal" dock="right" stretchLastChild="true">
 				       			<Label text="{{'ion-ios-arrow-right'|fonticon}}" class="ion disclosure" dock="right"/>
 				       			<Label text="{{displayValue}}" class="value" />
-				       		</DockLayout>		       		
+				       		</DockLayout>
 				       	</DockLayout>
 				    </Repeater.itemTemplate>
 			 	</Repeater>
 
 			 </StackLayout>
 		</ScrollView>
-	</DockLayout>		
+	</DockLayout>
 </Page>

@@ -92,14 +92,14 @@ export class SettingsViewModel extends Observable {
 
   public onClickSync(event) {
     console.log('-- onClickSync');
-    
+
   }
   constructor() {
   	super();
     if (Settings.hasKey("config")) {
       this._config = JSON.parse(Settings.getString("config"));
     } else {
-      this._config = {};      
+      this._config = {};
     }
 
   }

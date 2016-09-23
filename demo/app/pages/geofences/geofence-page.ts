@@ -62,5 +62,5 @@ export function onDone(args: EventData) {
 		longitude: position.longitude
 	}, function() {
 		page.closeModal(model);
-	});	
+	});
 }

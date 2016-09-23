@@ -30,7 +30,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.startCallback = null;
     this.getCountCallbacks = [];
 
-    
+
     var adapter = this.getAdapter();
     adapter.on("playservicesconnecterror", new Callback({
       success: this.onGooglePlayServicesConnectError.bind(this),
@@ -292,7 +292,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   private onGooglePlayServicesConnectError(errorCode:number) {
     com.google.android.gms.common.GoogleApiAvailability.GoogleApiAvailability.getInstance().getErrorDialog(app.android.foregroundActivity, errorCode, 1001).show();
   }
-  
+
   private hasPermission() {
     var result = android.os.Build.VERSION.SDK_INT < 23;
     if (!result) {

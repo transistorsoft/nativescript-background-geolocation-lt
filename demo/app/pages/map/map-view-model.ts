@@ -46,6 +46,7 @@ export class MapModel extends observable.Observable {
   private _enabled: boolean;
   private _isMoving: boolean;
   private _paceButtonIcon = ICON_PLAY;
+  private _watchingPosition: boolean;
 
   // Status bar properties
   private _odometer: string = '1000';
@@ -58,6 +59,7 @@ export class MapModel extends observable.Observable {
   // Map properties
   private _mapView: any;
   private _defaultZoom = 16;
+  private _zoom: number;
   private _polyline;
 
   // Map-marker references.
@@ -66,6 +68,13 @@ export class MapModel extends observable.Observable {
   private _currentLocationAccuracyMarker: any;
   private _geofenceMarkers;
 
+  get zoom(): number {
+    return this._zoom;
+  }
+  set zoom(value:number) {
+    this._zoom = value;
+    this.notifyPropertyChange("zoom", value);
+  }
   get activityType(): string {
     return this._activityType;
   }
@@ -123,6 +132,15 @@ export class MapModel extends observable.Observable {
       this.notifyPropertyChange("odometer", value);
     }
   }
+  get watchingPosition(): boolean {
+    return this._watchingPosition;
+  }
+  set watchingPosition(value:boolean) {
+    if (this._watchingPosition !== value) {
+      this._watchingPosition = value;
+      this.notifyPropertyChange("watchingPosition", value);
+    }
+  }
   get isMoving(): boolean {
     return this._isMoving;
   }
@@ -141,7 +159,7 @@ export class MapModel extends observable.Observable {
       if (value) {
         this._bgGeo.start();
         this._loadGeofences();
-        
+
         // Reload cached positions from plugin
         var polyline = this._getPolyline();
         var me = this;
@@ -188,7 +206,7 @@ export class MapModel extends observable.Observable {
     super();
     this._geofenceMarkers = {};
     this._bgGeo = new BackgroundGeolocation();
-
+    this._zoom = 0;
     // Listen to BackgroundGeolocation events
     this._bgGeo.on('location', this.onLocation.bind(this), this.onLocationError.bind(this));
     this._bgGeo.on('motionchange', this.onMotionChange.bind(this));
@@ -197,19 +215,18 @@ export class MapModel extends observable.Observable {
     this._bgGeo.on('heartbeat', this.onHeartbeat.bind(this));
     this._bgGeo.on('schedule', this.onSchedule.bind(this));
     this._bgGeo.on('providerchange', this.onProviderChange.bind(this));
-    this._bgGeo.on('geofence', this.onGeofence.bind(this));    
+    this._bgGeo.on('geofence', this.onGeofence.bind(this));
     this._bgGeo.on('schedule', this.onSchedule.bind(this));
 
     this.providerGps = 'visible';
     this.providerWifi = 'visible';
     this.providerDisabled = 'collapsed';
-
-    console.log(this._state);
+    this.watchingPosition = false;
   }
 
   public onMapReady(args) {
     this._mapView = args.object;
-       
+
     // If _state already exists, we're probably returning from a navigation-event.  just ignore: we're already configured.
     if (this._state) { return };
 
@@ -237,7 +254,7 @@ export class MapModel extends observable.Observable {
     if (shape.shape === 'circle') {
       var data = shape.userData;
       var topMost = frames.topmost();
-      
+
       topMost.currentPage.showModal('./pages/geofences/geofence-page', {
         backgroundGeolocation: this._bgGeo,
         geofence: data
@@ -260,7 +277,7 @@ export class MapModel extends observable.Observable {
     this._bgGeo.playSound(soundId);
 
     topMost.currentPage.showModal('./pages/geofences/geofence-page', {
-      backgroundGeolocation: this._bgGeo, 
+      backgroundGeolocation: this._bgGeo,
       position: position
     }, function(geofenceModel) {
       if (!geofenceModel) { return; }
@@ -272,7 +289,7 @@ export class MapModel extends observable.Observable {
         radius: geofenceModel.radius,
         latitude: position.latitude,
         longitude: position.longitude
-      });      
+      });
     }.bind(this));
   }
 
@@ -280,8 +297,6 @@ export class MapModel extends observable.Observable {
     var config = {};
     if (Settings.hasKey('config')) {
       config = JSON.parse(Settings.getString('config'));
-      console.log('-------- confgi: ', JSON.stringify(config, null, 2));
-
     } else {
       // Fetch default config with overrides.
       config = SettingsViewModel.getDefaultConfig({
@@ -335,6 +350,7 @@ export class MapModel extends observable.Observable {
 
   public onGetCurrentPosition() {
     var bgGeo = this._bgGeo;
+
     bgGeo.getCurrentPosition(function(location) {
       console.log('[js] getCurrentPosition: ', location);
     }.bind(this), function(error) {
@@ -356,7 +372,7 @@ export class MapModel extends observable.Observable {
     return polyline;
   }
   private _createCurrentLocationMarker(location:any) {
-    var position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);   
+    var position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
     var marker = new mapsModule.Marker();
     marker.position = position;
     marker.title = "Position";
@@ -377,7 +393,7 @@ export class MapModel extends observable.Observable {
     } else {
       this._currentLocationAccuracyMarker.center = position;
       this._currentLocationAccuracyMarker.radius = location.coords.accuracy;
-    }      
+    }
     return marker;
   }
 
@@ -390,7 +406,7 @@ export class MapModel extends observable.Observable {
   }
 
   private _createGeofenceMarker(geofence) {
-    var position = mapsModule.Position.positionFromLatLng(geofence.latitude, geofence.longitude);   
+    var position = mapsModule.Position.positionFromLatLng(geofence.latitude, geofence.longitude);
     var circle = new mapsModule.Circle();
     circle.userData = geofence;
     circle.center = position;
@@ -439,7 +455,7 @@ export class MapModel extends observable.Observable {
 
     console.info('[js] location: ', JSON.stringify(location, null, 2));
 
-    this.activityType = location.activity.type;        
+    this.activityType = location.activity.type;
 
     var position = mapsModule.Position.positionFromLatLng(location.coords.latitude, location.coords.longitude);
 
@@ -486,14 +502,14 @@ export class MapModel extends observable.Observable {
   public onActivityChange(activityType:string) {
     this.activityIcon = ICONS['activity_' + activityType];
   }
-  
+
   public onProviderChange(provider:any) {
     this.providerDisabled = (provider.enabled) ? 'collapsed' : 'visible';
     this.providerWifi = (provider.enabled && provider.network) ? 'visible' : 'collapsed';
     this.providerGps = (provider.enabled && provider.gps) ? 'visible' : 'collapsed';
   }
 
-  public onGeofence(geofence:any) {    
+  public onGeofence(geofence:any) {
     var circle = this._geofenceMarkers[geofence.identifier];
     if (circle) {
       circle.fillColor = new Color(100, 128,128,128);

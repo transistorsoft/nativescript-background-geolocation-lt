@@ -2,7 +2,7 @@
 	<StackLayout orientation="vertical">
 		<DockLayout class="toolbar" stretchLastChild="true">
 			<Button text="Cancel" dock="left" tap="onCancel" class="red" />
-			<Button text="Done" dock="right" tap="onDone" class="green" visibility="{{action==='new' ? 'visible' : 'collapsed'}}" />			
+			<Button text="Done" dock="right" tap="onDone" class="green" visibility="{{action==='new' ? 'visible' : 'collapsed'}}" />
 			<Label text="{{title}}" class="{{action}}" />
 		</DockLayout>
 
@@ -19,21 +19,21 @@
 		<Label text="" class="form-item-separator" />
 
 		<StackLayout visibility="{{action === 'new' ? 'visible' : 'collapsed'}}">
-			<StackLayout orientation="horizontal" class="form-item">			
+			<StackLayout orientation="horizontal" class="form-item">
 				<Label text="Notify on ENTRY" />
-				<Switch checked="true" />			
+				<Switch checked="true" />
 			</StackLayout>
 			<Label text="" class="form-item-separator" />
 
-			<StackLayout orientation="horizontal" class="form-item">			
+			<StackLayout orientation="horizontal" class="form-item">
 				<Label text="Notify on EXIT" />
-				<Switch checked="false" />			
+				<Switch checked="false" />
 			</StackLayout>
 			<Label text="" class="form-item-separator" />
 
-			<StackLayout orientation="horizontal" class="form-item">			
+			<StackLayout orientation="horizontal" class="form-item">
 				<Label text="Notify on DWELL" />
-				<Switch checked="false" />			
+				<Switch checked="false" />
 			</StackLayout>
 			<Label text="" class="form-item-separator" />
 

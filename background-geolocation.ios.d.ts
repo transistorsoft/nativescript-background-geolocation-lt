@@ -23,7 +23,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     removeGeofences(success: any, failure: any): void;
     getCurrentPosition(success: Function, failure: any, options: any): void;
     watchPosition(success: Function, failure: any, options: any): void;
-    stopWatchPosition(): void;
+    stopWatchPosition(success: any, failure: any): void;
     getOdometer(success: FunctionConstructor, failure: any): void;
     resetOdometer(success: any): void;
     playSound(soundId: number): void;
@@ -34,7 +34,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private onGeofence(region, location, action);
     private onHttp(statusCode, requestData, responseData, error);
     private onError(type, error);
-    private onHeartbeat(shakeCount, motionType, location);
+    private onHeartbeat(motionType, location);
     private onSyncComplete(locations);
     private onActivityChange(activityName);
     private onProviderChange(status);

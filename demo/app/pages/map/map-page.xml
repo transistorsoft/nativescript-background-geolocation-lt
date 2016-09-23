@@ -1,13 +1,13 @@
 <Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:maps="nativescript-google-maps-sdk" navigatingTo="navigatingTo" actionBarHidden="true">
 
 	<DockLayout stetchLastChild="true">
-		
+
 		<DockLayout dock="top" class="toolbar toolbar-top" stretchLastChild="true">
 			<Button id="btnSettings" text="{{'ion-ios-settings' | fonticon}}" dock="left" class="ion button" tap="{{onClickSettings}}" />
 			<Switch id="btnEnabled" checked="{{ isEnabled }}" tap="{{ onToggleEnabled }}" dock="right" />
-			<Label class="title" text="Background Geolocation" />			
+			<Label class="title" text="Background Geolocation" />
 		</DockLayout>
-		
+
 		<DockLayout dock="bottom" class="toolbar toolbar-bottom" stretchLastChild="true">
 			<StackLayout orientation="horizontal" class="navigate" dock="left">
 				<Button id="btnCurrentPosition" text="{{'ion-navigate'| fonticon}}" class="button ion" tap="{{ onGetCurrentPosition }}" dock="left"/>
@@ -17,7 +17,7 @@
 					<Label text="{{'ion-alert-circled'|fonticon}}" visibility="{{providerDisabled}}" class="disabled ion" />
 				</StackLayout>
 			</StackLayout>
-	
+
 			<StackLayout class="pace" orientation="horizontal" horizontalAlignment="right" dock="right">
 				<Button id="btnPace" text="{{paceButtonIcon | fonticon}}" class="{{'button ion ' + paceButtonIcon}}" tap="{{onChangePace}}" />
 			</StackLayout>
@@ -30,16 +30,16 @@
 
 		</DockLayout>
 
-		<maps:mapView 
-			latitude="{{ latitude }}" 
-			longitude="{{ longitude }}" 
-    		zoom="{{ zoom }}" bearing="{{ bearing }}" 
-      		tilt="{{ tilt }}" padding="{{ padding }}" 
-      		mapReady="onMapReady"  
+		<maps:mapView
+			latitude="{{ latitude }}"
+			longitude="{{ longitude }}"
+    		zoom="{{ zoom }}" bearing="{{ bearing }}"
+      		tilt="{{ tilt }}" padding="{{ padding }}"
+      		mapReady="onMapReady"
       		markerSelect="onMarkerSelect"
       		shapeSelect="onShapeSelect"
       		markerBeginDragging="onMarkerBeginDragging"
-      		markerEndDragging="onMarkerEndDragging" 
+      		markerEndDragging="onMarkerEndDragging"
       		markerDrag="onMarkerDrag"
       		coordinateTapped="onCoordinateTapped"
       		coordinateLongPress="onCoordinateLongPress"
