@@ -15,7 +15,8 @@
     "demo.android": "npm run preparedemo && cd demo && tns run android",
     "preparedemo": "npm run build && cd demo && tns plugin remove nativescript-background-geolocation-lt && tns plugin add .. && tns install",
     "setup": "cd demo && npm install && cd .. && npm run build && cd demo && tns plugin add .. && cd ..",
-    "uninstall": "rm -r ../../lib/iOS/TSLocationManager.framework"
+    "uninstall": "rm -r ../../lib/iOS/TSLocationManager.framework",
+    "fix-xcode": "xcproj --project 'demo/platforms/ios/demo.xcodeproj' touch && xcproj --project 'demo/platforms/ios/Pods/Pods.xcodeproj' touch"
   },
   "repository": {
     "type": "git",
@@ -39,7 +40,7 @@
   "homepage": "http://shop.transistorsoft.com/pages/nativescript-background-geolocation",
   "devDependencies": {
     "tns-platform-declarations": "^2.3.0",
-    "typescript": "^1.8.10"
+    "typescript": "^2.0.3"
   },
   "dependencies": {
     "nativescript-permissions": "^1.0.1",

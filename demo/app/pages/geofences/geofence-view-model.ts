@@ -53,7 +53,7 @@ export class GeofenceViewModel extends observable.Observable {
   }
   set identifier(value:string) {
   	if (value !== this._identifier) {
-    	this._identifier = value;    
+    	this._identifier = value;
     }
   }
 
@@ -91,6 +91,6 @@ export class GeofenceViewModel extends observable.Observable {
   	if (value !== this._loiteringDelay) {
   		this._loiteringDelay = value;
   	}
-  }  
+  }
 
 }

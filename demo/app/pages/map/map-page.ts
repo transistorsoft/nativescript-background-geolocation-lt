@@ -11,7 +11,6 @@ export function navigatingTo(args: EventData) {
     if (!page.bindingContext) {
     	page.bindingContext = new MapModel();
     } else {
-      console.log('------- return from Settings?', Settings.getString('config'));
     }
 }
 
@@ -19,7 +18,7 @@ export function onMapReady(args:any) {
 	page.bindingContext.onMapReady(args);
 }
 
-export function onCoordinateTapped(args: any) {	
+export function onCoordinateTapped(args: any) {
 	page.bindingContext.onCoordinateTapped(args);
 }
 

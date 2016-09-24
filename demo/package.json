@@ -15,17 +15,17 @@
   "dependencies": {
     "nativescript-background-geolocation-lt": "file:..",
     "nativescript-fonticon": "^1.1.0",
-    "nativescript-google-maps-sdk": "^1.3.8",
+    "nativescript-google-maps-sdk": "^1.3.13",
     "tns-core-modules": "2.3.0",
     "zone.js": "^0.6.12"
   },
   "devDependencies": {
     "babel-traverse": "6.15.0",
-    "babel-types": "6.15.0",
-    "babylon": "6.10.0",
-    "filewalker": "0.1.2",
+    "babel-types": "6.14.0",
+    "babylon": "6.11.2",
+    "filewalker": "0.1.3",
     "lazy": "1.0.11",
-    "nativescript-dev-typescript": "^0.3.0",
-    "typescript": "^1.8.10"
+    "nativescript-dev-typescript": "^0.3.2",
+    "typescript": "^2.0.3"
   }
 }

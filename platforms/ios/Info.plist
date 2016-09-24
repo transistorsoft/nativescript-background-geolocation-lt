@@ -10,6 +10,10 @@
 
 		<key>NSLocationAlwaysUsageDescription</key>
         <string>App requires background location tracking</string>
+
+        <key>NSMotionUsageDescription</key>
+        <string>Accelerometer increases battery efficiency by intelligently toggling location-services when device is stationary</string>
+
 	</dict>
 </plist>
 

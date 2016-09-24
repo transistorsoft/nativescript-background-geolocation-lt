@@ -28,7 +28,7 @@ function onTextChange(event) {
   setting.set('displayValue', setting.value);
   // Reset key-buffer
   if (textChangeBuffer) {
-    clearTimeout(textChangeBuffer);    
+    clearTimeout(textChangeBuffer);
   }
   // Buffer key-presses so we don't #setConfig too quickly
   textChangeBuffer = setTimeout(commitTextValue, 1000);
@@ -88,7 +88,7 @@ export function onSelectValue(event) {
   var name = setting.get('name');
   var currentValue = event.view.bindingContext.value;
 
-  if (setting.inputType === 'multiselect') {    
+  if (setting.inputType === 'multiselect') {
     var options = (setting.value != '') ? setting.value.split(',') : [];
     var index = options.indexOf(currentValue);
     if (index >= 0) {
@@ -120,7 +120,7 @@ export function onSelectValue(event) {
       item.set('checked', item.get('value') == currentValue);
     });
   }
-  
+
   var config = {};
   if (Settings.hasKey('config')) {
     config = JSON.parse(Settings.getString('config'));

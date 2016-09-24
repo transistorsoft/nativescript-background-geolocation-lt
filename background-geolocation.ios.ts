@@ -10,8 +10,10 @@ declare var NSUTF8StringEncoding: any;
 declare var CLCircularRegion: any;
 
 let TS_LOCATION_TYPE_MOTIONCHANGE   = 0;
-let TS_LOCATION_TYPE_CURRENT        = 1;
-let TS_LOCATION_TYPE_SAMPLE         = 2;
+let TS_LOCATION_TYPE_TRACKING       = 1;
+let TS_LOCATION_TYPE_CURRENT        = 2;
+let TS_LOCATION_TYPE_SAMPLE         = 3;
+let TS_LOCATION_TYPE_WATCH          = 4;
 
 var emptyFn = function(param:any) {};
 
@@ -45,7 +47,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.state     = this.locationManager.configure(config);
     this.isMoving  = this.state.isMoving;
     this.enabled   = this.state.enabled;
-    
+
     success(this.getJsObjectFromNSDictionary(this.state));
 	}
 
@@ -61,7 +63,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public on(event:any, success:Function, failure=function(param){}) {
     console.log('#on ', event, typeof(event));
 
-    // Handle {Object} form #on({foo: fooHandler, bar: barHandler});
+    // Handle {Object} form #on({foo: fooHandler, ≠bar: barHandler});
     if (typeof(event) === 'object') {
       var listener, key;
       for (key in event) {
@@ -194,7 +196,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
     if (!(params.latitude && params.longitude)) {
         throw "#addGeofence requires a #latitude and #longitude";
-    } 
+    }
     if (!params.radius) {
         throw "#addGeofence requires a #radius";
     }
@@ -225,7 +227,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.locationManager.addGeofences(geofences);
     success(true);
   }
-  
+
   public removeGeofence(identifier, success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
@@ -240,7 +242,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
 
-    var geofences = this.locationManager.getGeofences();   
+    var geofences = this.locationManager.getGeofences();
     var rs = [];
 
     for (let loop = 0; loop < geofences.count; loop ++) {
@@ -274,12 +276,19 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   public watchPosition(success:Function, failure:any, options:any) {
-    console.error('#watchPosition net yet implemented');
-    failure('#watchPosition not yet implemented');
+    this.watchPositionCallbacks.push({
+      success: success,
+      error: failure || emptyFn
+    });
+    this.locationManager.watchPosition(options||{});
   }
-  
-  public stopWatchPosition() {
+
+  public stopWatchPosition(success: any, failure: any) {
+    this.watchPositionCallbacks = [];
     this.locationManager.stopWatchPosition();
+    if (typeof(success) === 'function') {
+      success();
+    }
   }
 
   public getOdometer(success=Function, failure:any) {
@@ -304,13 +313,18 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.locationManager.emailLog(email);
   }
 
-  private onLocation(location, type, isMoving) {     
+  private onLocation(location, type, isMoving) {
+    var locationData = this.getJsObjectFromNSDictionary(location);
     var callbacks = this.listeners.location;
-    var locationData = this.getJsObjectFromNSDictionary(this.locationManager.locationToDictionaryType(location, type));
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(locationData);
     }
-    if (type != TS_LOCATION_TYPE_SAMPLE && this.currentPositionCallbacks.length) {
+    if (type == TS_LOCATION_TYPE_WATCH) {
+        for (var n=0,len=this.watchPositionCallbacks.length;n<len;n++) {
+          this.watchPositionCallbacks[n].success(locationData);
+        }
+    }
+    else if (type != TS_LOCATION_TYPE_SAMPLE && this.currentPositionCallbacks.length) {
       for (var n=0,len=this.currentPositionCallbacks.length;n<len;n++) {
         this.currentPositionCallbacks[n].success(locationData);
       }
@@ -320,7 +334,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   private onMotionChange(location, isMoving) {
     var callbacks   = this.listeners.motionchange;
-    var locationData = this.getJsObjectFromNSDictionary(this.locationManager.locationToDictionary(location));
+    var locationData = this.getJsObjectFromNSDictionary(location);
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(isMoving, locationData);
     }
@@ -328,7 +342,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   private onGeofence(region, location, action) {
     var callbacks   = this.listeners.geofence;
-    var locationData = this.getJsObjectFromNSDictionary(this.locationManager.locationToDictionary(location));
+    var locationData = this.getJsObjectFromNSDictionary(location)
     var params = {
       identifier: region.identifier,
       action: action,
@@ -370,9 +384,8 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  private onHeartbeat(shakeCount:number, motionType:string, location:any) {
+  private onHeartbeat(motionType:string, location:any) {
     var params = {
-      shakes: shakeCount,
       motionType: motionType,
       location: this.getJsObjectFromNSDictionary(location)
     };
@@ -396,12 +409,12 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     var callbacks   = this.listeners.activitychange;
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(activityName);
-    }  
+    }
   }
 
   private onProviderChange(status:any) {
     var enabled = (status == 3);
-    
+
     var result = {
       enabled: enabled,
       gps: enabled,
@@ -425,24 +438,24 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   private getJsObjectFromNSDictionary(dictionary:any) {
     let keys = dictionary.allKeys;
     let result = {};
-    
+
     for (let loop = 0; loop < keys.count; loop++) {
         let key = keys[loop];
         let item = dictionary.objectForKey(key);
-        
+
         result[key] = this.getJsObject(item);
     }
-    
+
     return result;
   }
 
   private getJsArrayFromNSArray(array: any): Array<Object> {
     let result = [];
-    
+
     for (let loop = 0; loop < array.count; loop ++) {
         result.push(this.getJsObject(array.objectAtIndex(loop)));
     }
-    
+
     return result;
   }
 
@@ -450,10 +463,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     if (object instanceof NSDictionary) {
         return this.getJsObjectFromNSDictionary(object);
     }
-    
+
     if (object instanceof NSArray) {
         return this.getJsArrayFromNSArray(object);
-    }    
+    }
     return object;
-  }  
+  }
 }

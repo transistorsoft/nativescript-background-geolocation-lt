@@ -8,7 +8,7 @@ var bgGeo;
 // Event handler for Page "navigatingTo" event attached in main-page.xml
 export function navigatingTo(args: EventData) {
   // Get the event sender
-  page = <Page>args.object;  
+  page = <Page>args.object;
   page.bindingContext = new SettingsViewModel();
   bgGeo = args.context;
 }
@@ -54,7 +54,7 @@ export function onRowClick(args: EventData) {
     context: {
       setting: args.view.bindingContext,
       bgGeo: bgGeo
-    },      
+    },
     transition: {
       name: "slide",
       backstackVisible: true
