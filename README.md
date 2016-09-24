@@ -51,6 +51,8 @@ The plugin hosts its own demo app in the `/demo` folder.  Install it like this:
 $ cd nativescript-background-geolocation-lt
 $ npm install
 $ npm run setup
+$ tsc -p demo
+(ignore warnings)
 
 $ npm run demo.android
 or
