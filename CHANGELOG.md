@@ -1,6 +1,9 @@
 # Change Log
 
-## [1.2.0]
+## [1.1.1] - 2016-09-25
+- [Fixed] Bugs in preventSuspend during background-fetch event
+
+## [1.1.0]
 - [Changed] Upgrade to nativescript-2.3.0
 - [Fixed] Bug in prevent-suspend where the plugin failed to re-start its prevent-suspend timer if no MotionActivity event occurred during that interval.  Prevent-suspend system should now operate completely independently of MotionDetector.
 - [Fixed] `#stop` method wasn't calling `stopMonitoringSignificantChanges`, resulting in location-services icon failing to toggle OFF.
