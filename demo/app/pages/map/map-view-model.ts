@@ -525,13 +525,12 @@ export class MapModel extends observable.Observable {
   public onGeofencesChange(event:any) {
     var on = event.on;
     var off = event.off;
+    // Show new geofences within proximity
     for (let geofence of on) {
-      console.log('---------- ON: ', geofence.identifier);
       this._createGeofenceMarker(geofence);
     }
-
+    // Hide geofences out-of-proximity
     for (let identifier of off) {
-      console.log('--------------- OFF: ', identifier);
       this._destroyGeofenceMarker(identifier);
     }
   }
