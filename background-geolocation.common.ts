@@ -4,6 +4,7 @@ import observable = require("data/observable");
 
 export class AbstractBackgroundGeolocation {
   protected listeners: any;
+  protected events: any;
   protected currentPositionCallbacks: any;
   protected watchPositionCallbacks: any;
   protected syncCallback: any;
@@ -14,6 +15,19 @@ export class AbstractBackgroundGeolocation {
   protected emptyFn: any;
 
   constructor() {
+    this.events = [
+      'location',
+      'motionchange',
+      'providerchange',
+      'activitychange',
+      'geofenceschange',
+      'heartbeat',
+      'geofence',
+      'schedule',
+      'error',
+      'http'
+    ];
+
     this.listeners = {
       location: [],
       http: [],

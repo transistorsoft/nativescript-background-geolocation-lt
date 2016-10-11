@@ -10,6 +10,9 @@
     "id": "com.transistorsoft.backgroundgeolocation.nativescript",
     "tns-ios": {
       "version": "2.3.0"
+    },
+    "tns-android": {
+      "version": "2.1.0"
     }
   },
   "dependencies": {
@@ -20,12 +23,12 @@
     "zone.js": "^0.6.12"
   },
   "devDependencies": {
-    "babel-traverse": "6.15.0",
-    "babel-types": "6.14.0",
-    "babylon": "6.11.2",
+    "babel-traverse": "6.16.0",
+    "babel-types": "6.16.0",
+    "babylon": "6.11.4",
     "filewalker": "0.1.3",
     "lazy": "1.0.11",
     "nativescript-dev-typescript": "^0.3.2",
-    "typescript": "^2.0.3"
+    "typescript": "^1.8.10"
   }
 }

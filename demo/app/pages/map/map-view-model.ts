@@ -158,7 +158,6 @@ export class MapModel extends observable.Observable {
       this._enabled = value;
       if (value) {
         this._bgGeo.start();
-        this._loadGeofences();
 
         // Reload cached positions from plugin
         var polyline = this._getPolyline();
@@ -217,7 +216,7 @@ export class MapModel extends observable.Observable {
     this._bgGeo.on('providerchange', this.onProviderChange.bind(this));
     this._bgGeo.on('geofence', this.onGeofence.bind(this));
     this._bgGeo.on('schedule', this.onSchedule.bind(this));
-
+    this._bgGeo.on('geofenceschange', this.onGeofencesChange.bind(this));
     this.providerGps = 'visible';
     this.providerWifi = 'visible';
     this.providerDisabled = 'collapsed';
@@ -235,11 +234,6 @@ export class MapModel extends observable.Observable {
       this._enabled = state.enabled;
       this.notifyPropertyChange("isEnabled", state.enabled);
       this._isMoving  = this._state.isMoving;
-
-      // Render geofence markers
-      if (state.enabled) {
-        this._loadGeofences();
-      }
     }.bind(this));
   }
 
@@ -406,6 +400,9 @@ export class MapModel extends observable.Observable {
   }
 
   private _createGeofenceMarker(geofence) {
+    if (this._geofenceMarkers[geofence.identifier]) {
+      return;  // <-- Marker already exists.
+    }
     var position = mapsModule.Position.positionFromLatLng(geofence.latitude, geofence.longitude);
     var circle = new mapsModule.Circle();
     circle.userData = geofence;
@@ -418,6 +415,14 @@ export class MapModel extends observable.Observable {
     circle.strokeWidth = 2;
     this._geofenceMarkers[geofence.identifier] = circle;
     this._mapView.addCircle(circle);
+  }
+
+  private _destroyGeofenceMarker(identifier) {
+    if (this._geofenceMarkers[identifier]) {
+      var marker = this._geofenceMarkers[identifier];
+      this._mapView.removeShape(marker);
+      delete this._geofenceMarkers[identifier];
+    }
   }
 
   private _createLocationMarker(location: any) {
@@ -514,6 +519,19 @@ export class MapModel extends observable.Observable {
     if (circle) {
       circle.fillColor = new Color(100, 128,128,128);
       circle.strokeColor = new Color(200, 128,128,128);
+    }
+  }
+
+  public onGeofencesChange(event:any) {
+    var on = event.on;
+    var off = event.off;
+    // Show new geofences within proximity
+    for (let geofence of on) {
+      this._createGeofenceMarker(geofence);
+    }
+    // Hide geofences out-of-proximity
+    for (let identifier of off) {
+      this._destroyGeofenceMarker(identifier);
     }
   }
 

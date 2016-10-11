@@ -10,14 +10,24 @@ declare var NSUTF8StringEncoding: any;
 declare var CLCircularRegion: any;
 
 let TS_LOCATION_TYPE_MOTIONCHANGE   = 0;
-let TS_LOCATION_TYPE_TRACKING       = 1;
-let TS_LOCATION_TYPE_CURRENT        = 2;
-let TS_LOCATION_TYPE_SAMPLE         = 3;
-let TS_LOCATION_TYPE_WATCH          = 4;
+let TS_LOCATION_TYPE_CURRENT        = 1;
+let TS_LOCATION_TYPE_SAMPLE         = 2;
 
 var emptyFn = function(param:any) {};
 
 export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
+
+  public static get LOG_LEVEL_OFF():number { return 0;}
+  public static get LOG_LEVEL_ERROR():number {return 1;}
+  public static get LOG_LEVEL_WARNING():number { return 2;}
+  public static get LOG_LEVEL_INFO():number { return 2;}
+  public static get LOG_LEVEL_DEBUG():number { return 2;}
+  public static get LOG_LEVEL_VERBOSE():number { return 2;}
+
+  public static get DESIRED_ACCURACY_HIGH():number { return 2;}
+  public static get DESIRED_ACCURACY_MEDIUM():number { return 2;}
+  public static get DESIRED_ACCURACY_LOW():number { return 2;}
+  public static get DESIRED_ACCURACY_VERY_LOW():number { return 2;}
 
   private syncTaskId;
 
@@ -25,10 +35,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     super();
   }
 
-	public configure(config, success:any, failure:any) {
-    success = success || emptyFn;
-    failure = failure || emptyFn;
-
+  private getLocationManager() {
     if (!this.locationManager) {
       this.locationManager = new TSLocationManager();
 
@@ -43,27 +50,36 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       this.locationManager.syncCompleteBlock      = this.onSyncComplete.bind(this);
       this.locationManager.scheduleBlock          = this.onSchedule.bind(this);
     }
+    return this.locationManager;
+  }
+
+  public configure(config, success:any, failure:any) {
+    success = success || emptyFn;
+    failure = failure || emptyFn;
+
+    var locationManager = this.getLocationManager();
     this.syncTaskId = null;
-    this.state     = this.locationManager.configure(config);
+    this.state     = locationManager.configure(config);
     this.isMoving  = this.state.isMoving;
     this.enabled   = this.state.enabled;
 
     success(this.getJsObjectFromNSDictionary(this.state));
-	}
+  }
 
   public setConfig(config:Object, success:any, failure:any) {
+    var locationManager = this.getLocationManager();
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.locationManager.setConfig(config);
-    success(this.locationManager.getState());
+    locationManager.setConfig(config);
+    success(locationManager.getState());
   }
   public getState(success:Function) {
-    success(this.getJsObjectFromNSDictionary(this.locationManager.getState()));
+    success(this.getJsObjectFromNSDictionary(this.getLocationManager().getState()));
   }
   public on(event:any, success:Function, failure=function(param){}) {
     console.log('#on ', event, typeof(event));
 
-    // Handle {Object} form #on({foo: fooHandler, ≠bar: barHandler});
+    // Handle {Object} form #on({foo: fooHandler, bar: barHandler});
     if (typeof(event) === 'object') {
       var listener, key;
       for (key in event) {
@@ -71,51 +87,57 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       }
       return;
     }
-    if (!this.listeners[event]) {
+    if (this.events.indexOf(event) < 0) {
       throw "Invalid event: " + event;
     }
-    this.listeners[event].push({
-      success: success,
-      error: failure
-    });
+    if (typeof(this.listeners[event]) === 'object') {
+      this.listeners[event].push({
+        success: success,
+        error: failure
+      });
+    } else {
+      this.getLocationManager().addListenerCallback(event, function(event) {
+        return success(this.getJsObjectFromNSDictionary(event));
+      }.bind(this));
+    }
   }
 
-	public changePace(value: boolean, success:any, failure:any) {
+  public changePace(value: boolean, success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
     this.locationManager.changePace(value);
     success(value);
-	}
+  }
 
-	public start(success:any, failure:any) {
+  public start(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.locationManager.start();
+    this.getLocationManager().start();
     if (typeof(success) === 'function') {
       success(true);
     }
-	}
+  }
 
-	public stop(success:any, failure:any) {
+  public stop(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.locationManager.stop();
+    this.getLocationManager().stop();
     if (typeof(success) === 'function') {
       success(true);
     }
-	}
+  }
 
   public startSchedule(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.locationManager.startSchedule();
+    this.getLocationManager().startSchedule();
     success(true);
   }
 
   public stopSchedule(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.locationManager.stopSchedule();
+    this.getLocationManager().stopSchedule();
     if (typeof(success) === 'function') {
       success(true);
     }
@@ -126,13 +148,14 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
         failure("A sync action is already in progress");
         return;
     }
+    var locationManager = this.getLocationManager();
     failure = failure || emptyFn;
 
     // Important to set these before we execute #sync since this fires a *very fast* async NSNotification event!
-    this.syncTaskId = this.locationManager.createBackgroundTask();
-    var locations   = this.locationManager.sync();
+    this.syncTaskId = locationManager.createBackgroundTask();
+    var locations   = locationManager.sync();
     if (locations == null) {
-        this.locationManager.stopBackgroundTask(this.syncTaskId);
+        locationManager.stopBackgroundTask(this.syncTaskId);
         this.syncCallback = null;
         this.syncTaskId = null;
         failure("Sync failed.  Is there a network connection or previous sync-task pending?");
@@ -147,12 +170,17 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   public getLocations(success:Function, failure:any) {
     failure = failure || emptyFn;
-    var rs = this.locationManager.getLocations();
+    var rs = this.getLocationManager().getLocations();
     success(rs);
   }
 
+  public destroyLocations(success:any, failure:any) {
+    success = success || emptyFn;
+    failure = failure || emptyFn;
+    this.getLocationManager().destroyLocations(success, failure);
+  }
   public getCount(success: Function) {
-    var count = this.locationManager.getCount();
+    var count = this.getLocationManager().getCount();
     if (typeof(success) === 'function') {
       success(count);
     }
@@ -161,7 +189,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public clearDatabase(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    if (this.locationManager.clearDatabase()) {
+    if (this.getLocationManager().clearDatabase()) {
       success(true);
     } else {
       failure(false);
@@ -180,7 +208,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     } else if (!data.longitude) {
       return failure('Must contain a longitude');
     }
-    if (this.locationManager.insertLocation(data)) {
+    if (this.getLocationManager().insertLocation(data)) {
       success(true);
     } else {
       failure(false);
@@ -196,7 +224,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
     if (!(params.latitude && params.longitude)) {
         throw "#addGeofence requires a #latitude and #longitude";
-    }
+    } 
     if (!params.radius) {
         throw "#addGeofence requires a #radius";
     }
@@ -209,40 +237,26 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     if (typeof(params.notifyOnExit) === 'undefined') {
       params.notifyOnEntry = false;
     }
-
-    this.locationManager.addGeofenceRadiusLatitudeLongitudeNotifyOnEntryNotifyOnExit(
-      params.identifier,
-      params.radius,
-      params.latitude,
-      params.longitude,
-      params.notifyOnEntry,
-      params.notifyOnExit
-    );
-    success(params.identifier);
+    this.getLocationManager().addGeofenceSuccessError(params, success, failure);
   }
 
   public addGeofences(geofences:any, success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.locationManager.addGeofences(geofences);
-    success(true);
+    this.getLocationManager().addGeofencesSuccessError(geofences, success, failure);
   }
 
   public removeGeofence(identifier, success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    if (this.locationManager.removeGeofence(identifier)) {
-      success(true);
-    } else {
-      failure(false);
-    }
+    this.getLocationManager().removeGeofenceSuccessError(identifier, success, failure);
   }
 
   public getGeofences(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
 
-    var geofences = this.locationManager.getGeofences();
+    var geofences = this.getLocationManager().getGeofences();
     var rs = [];
 
     for (let loop = 0; loop < geofences.count; loop ++) {
@@ -260,11 +274,8 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public removeGeofences(success:any, failure:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    if (this.locationManager.removeGeofences()) {
-      success(true);
-    } else {
-      failure(false);
-    }
+    var geofences = [];  // <-- TODO provide a set of identifiers to remove.
+    this.getLocationManager().removeGeofences(geofences, success, failure);
   }
 
   public getCurrentPosition(success: Function, failure:any, options:any) {
@@ -272,59 +283,47 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       success: success,
       error: failure || emptyFn
     });
-    this.locationManager.updateCurrentPosition(options||{});
+    this.getLocationManager().updateCurrentPosition(options||{});
   }
 
   public watchPosition(success:Function, failure:any, options:any) {
-    this.watchPositionCallbacks.push({
-      success: success,
-      error: failure || emptyFn
-    });
-    this.locationManager.watchPosition(options||{});
+    console.error('#watchPosition net yet implemented');
+    failure('#watchPosition not yet implemented');
   }
 
-  public stopWatchPosition(success: any, failure: any) {
-    this.watchPositionCallbacks = [];
-    this.locationManager.stopWatchPosition();
-    if (typeof(success) === 'function') {
-      success();
-    }
+  public stopWatchPosition() {
+    this.getLocationManager().stopWatchPosition();
   }
 
   public getOdometer(success=Function, failure:any) {
-    success(this.locationManager.getOdometer());
+    success(this.getLocationManager().getOdometer());
   }
 
   public resetOdometer(success:any) {
     success = success || emptyFn;
-    this.locationManager.resetOdometer();
+    this.getLocationManager().resetOdometer();
     success(true);
   }
 
   public playSound(soundId:number) {
-    this.locationManager.playSound(soundId);
+    this.getLocationManager().playSound(soundId);
   }
 
   public getLog(success:Function) {
-    success(this.locationManager.getLog());
+    success(this.getLocationManager().getLog());
   }
 
   public emailLog(email:string) {
-    this.locationManager.emailLog(email);
+    this.getLocationManager().emailLog(email);
   }
 
   private onLocation(location, type, isMoving) {
-    var locationData = this.getJsObjectFromNSDictionary(location);
     var callbacks = this.listeners.location;
+    var locationData = this.getJsObjectFromNSDictionary(location);
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(locationData);
     }
-    if (type == TS_LOCATION_TYPE_WATCH) {
-        for (var n=0,len=this.watchPositionCallbacks.length;n<len;n++) {
-          this.watchPositionCallbacks[n].success(locationData);
-        }
-    }
-    else if (type != TS_LOCATION_TYPE_SAMPLE && this.currentPositionCallbacks.length) {
+    if (type != TS_LOCATION_TYPE_SAMPLE && this.currentPositionCallbacks.length) {
       for (var n=0,len=this.currentPositionCallbacks.length;n<len;n++) {
         this.currentPositionCallbacks[n].success(locationData);
       }
@@ -342,7 +341,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   private onGeofence(region, location, action) {
     var callbacks   = this.listeners.geofence;
-    var locationData = this.getJsObjectFromNSDictionary(location)
+    var locationData = this.getJsObjectFromNSDictionary(location);
     var params = {
       identifier: region.identifier,
       action: action,
@@ -384,8 +383,9 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  private onHeartbeat(motionType:string, location:any) {
+  private onHeartbeat(shakeCount:number, motionType:string, location:any) {
     var params = {
+      shakes: shakeCount,
       motionType: motionType,
       location: this.getJsObjectFromNSDictionary(location)
     };
@@ -400,7 +400,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       return;
     }
     this.syncCallback.success(this.getJsArrayFromNSArray(locations));
-    this.locationManager.stopBackgroundTask(this.syncTaskId);
+    this.getLocationManager().stopBackgroundTask(this.syncTaskId);
     this.syncCallback = null;
     this.syncTaskId = null;
   }
@@ -409,12 +409,12 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     var callbacks   = this.listeners.activitychange;
     for (var n=0,len=callbacks.length;n<len;n++) {
       callbacks[n].success(activityName);
-    }
+    }  
   }
 
   private onProviderChange(status:any) {
     var enabled = (status == 3);
-
+    
     var result = {
       enabled: enabled,
       gps: enabled,
@@ -438,24 +438,24 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   private getJsObjectFromNSDictionary(dictionary:any) {
     let keys = dictionary.allKeys;
     let result = {};
-
+    
     for (let loop = 0; loop < keys.count; loop++) {
         let key = keys[loop];
         let item = dictionary.objectForKey(key);
-
+        
         result[key] = this.getJsObject(item);
     }
-
+    
     return result;
   }
 
   private getJsArrayFromNSArray(array: any): Array<Object> {
     let result = [];
-
+    
     for (let loop = 0; loop < array.count; loop ++) {
         result.push(this.getJsObject(array.objectAtIndex(loop)));
     }
-
+    
     return result;
   }
 
@@ -463,10 +463,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     if (object instanceof NSDictionary) {
         return this.getJsObjectFromNSDictionary(object);
     }
-
+    
     if (object instanceof NSArray) {
         return this.getJsArrayFromNSArray(object);
-    }
+    }    
     return object;
-  }
+  }  
 }

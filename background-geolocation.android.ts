@@ -14,6 +14,8 @@ let REQUEST_ACTION_START = 1;
 let REQUEST_ACTION_GET_CURRENT_POSITION = 2;
 let REQUEST_ACTION_START_GEOFENCES = 3;
 
+let emptyFn = function() {};
+
 export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 	private mConfig: any;
 	private requestAction: number;
@@ -61,7 +63,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       }
       return;
     }
-    if (!this.listeners[event]) {
+    if (this.events.indexOf(event) < 0) {
       throw "Invalid event: " + event;
     }
 
@@ -126,13 +128,21 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   }
 	public stop(success: any, failure: any) {
+    /* TODO adapter.BackgroundGeolocation#stop doesn't accept params
+    var callback = new Callback({
+      success: success,
+      error: failure || emptyFn
+    });
+    */
+    success = success || emptyFn;
 		this.getAdapter().stop();
+    success();
 	}
 
   public getCurrentPosition(success: Function, failure=function(error){}, options={}) {
     var callback = new Callback({
       success: success,
-      error: failure
+      error: failure || emptyFn
     });
     this.getAdapter().getCurrentPosition(new org.json.JSONObject(JSON.stringify(options)), callback);
   }
@@ -148,14 +158,14 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public stopWatchPosition(success=function(result){}, failure=function(error){}) {
     var callback = new Callback({
       success: success,
-      error: failure
+      error: failure || emptyFn
     });
     this.getAdapter().stopWatchPosition(callback);
   }
   public getCount(success:Function) {
     var callback = new Callback({
       success: success,
-      error: function(error) {}
+      error: emptyFn
     });
     this.getAdapter().getCount(callback);
   }
@@ -170,7 +180,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public addGeofence(params:any, success=function(param:any){}, failure=function(error:any){}) {
     var callback = new Callback({
       success: success,
-      error: failure
+      error: failure || emptyFn
     });
     this.getAdapter().addGeofence(new org.json.JSONObject(JSON.stringify(params)), callback);
   }
@@ -205,12 +215,17 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.getAdapter().removeGeofence(identifier, callback);
   }
 
+  // @deprecated
   public clearDatabase(success=function(result){}, failure=function(error){}) {
+    this.destroyLocations(success, failure);
+  }
+
+  public destroyLocations(success=function(result){}, failure=function(error){}) {
     var callback = new Callback({
       success: success,
       error: failure
     });
-    this.getAdapter().clearDatabase(callback);
+    this.getAdapter().destroyLocations(callback);
   }
 
   public sync(success:Function, failure=function(error){}) {
@@ -239,6 +254,22 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       error: failure
     });
     this.getAdapter().insertLocation(new org.json.JSONArray(JSON.stringify(params)), callback);
+  }
+
+  public getLog(success: Function, failure: any) {
+    var callback = new Callback({
+      success: success,
+      error: failure
+    });
+    this.getAdapter().getLog(callback);
+  }
+
+  public destroyLog(success: Function, failure: any) {
+    var callback = new Callback({
+      success: success,
+      error: failure
+    });
+    this.getAdapter().destroyLog(callback);
   }
 
   public playSound(soundId) {
