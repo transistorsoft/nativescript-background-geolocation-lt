@@ -1,7 +1,18 @@
 import { AbstractBackgroundGeolocation } from './background-geolocation.common';
 export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation {
+    static readonly LOG_LEVEL_OFF: number;
+    static readonly LOG_LEVEL_ERROR: number;
+    static readonly LOG_LEVEL_WARNING: number;
+    static readonly LOG_LEVEL_INFO: number;
+    static readonly LOG_LEVEL_DEBUG: number;
+    static readonly LOG_LEVEL_VERBOSE: number;
+    static readonly DESIRED_ACCURACY_HIGH: number;
+    static readonly DESIRED_ACCURACY_MEDIUM: number;
+    static readonly DESIRED_ACCURACY_LOW: number;
+    static readonly DESIRED_ACCURACY_VERY_LOW: number;
     private syncTaskId;
     constructor();
+    private getLocationManager();
     configure(config: any, success: any, failure: any): void;
     setConfig(config: Object, success: any, failure: any): void;
     getState(success: Function): void;
@@ -13,6 +24,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     stopSchedule(success: any, failure: any): void;
     sync(success: FunctionConstructor, failure: any): void;
     getLocations(success: Function, failure: any): void;
+    destroyLocations(success: any, failure: any): void;
     getCount(success: Function): void;
     clearDatabase(success: any, failure: any): void;
     insertLocation(data: any, success: any, failure: any): any;
@@ -23,7 +35,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     removeGeofences(success: any, failure: any): void;
     getCurrentPosition(success: Function, failure: any, options: any): void;
     watchPosition(success: Function, failure: any, options: any): void;
-    stopWatchPosition(success: any, failure: any): void;
+    stopWatchPosition(): void;
     getOdometer(success: FunctionConstructor, failure: any): void;
     resetOdometer(success: any): void;
     playSound(soundId: number): void;
@@ -34,7 +46,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private onGeofence(region, location, action);
     private onHttp(statusCode, requestData, responseData, error);
     private onError(type, error);
-    private onHeartbeat(motionType, location);
+    private onHeartbeat(shakeCount, motionType, location);
     private onSyncComplete(locations);
     private onActivityChange(activityName);
     private onProviderChange(status);

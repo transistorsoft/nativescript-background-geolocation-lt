@@ -1,5 +1,6 @@
 export declare class AbstractBackgroundGeolocation {
     protected listeners: any;
+    protected events: any;
     protected currentPositionCallbacks: any;
     protected watchPositionCallbacks: any;
     protected syncCallback: any;
