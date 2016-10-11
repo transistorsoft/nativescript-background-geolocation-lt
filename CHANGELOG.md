@@ -1,4 +1,20 @@
 # Change Log
+## [1.2.0] - 2016-10-11
+- [Changed] Refactor iOS Logging system to use popular CocoaLumberjack library.  iOS logs are now stored in the database!  By default, logs are stored for 3 days, but is configurable with `logMaxDays`.  Logs can now be filtered by logLevel:
+| logLevel | Label |
+|---|---|
+|`0`|`LOG_LEVEL_OFF`|
+|`1`|`LOG_LEVEL_ERROR`|
+|`2`|`LOG_LEVEL_WARNING`|
+|`3`|`LOG_LEVEL_INFO`|
+|`4`|`LOG_LEVEL_DEBUG`|
+|`5`|`LOG_LEVEL_VERBOSE`|
+
+`#getLog`, `#emailLog` operate in the same manner as before.
+
+- [Fixed] If user declines "Motion Activity" permission, plugin failed to detect this authorization failure and fallback to the accelerometer-based motion-detection system.
+
+- [Changed] Refactored Geolocation system.  The plugin is no longer bound by native platform limits on number of geofences which can be monitored (iOS: 20; Android: 100).  You may now monitor infinite geofences.  The plugin now stores geofences in its SQLite db and performs a geospatial query, activating only those geofences in proximity of the device (@config #geofenceProximityRadius, @event `geofenceschange`).  See the new [Geofencing Guide](./docs/geofencing.md)
 
 ## [1.1.1] - 2016-09-25
 - [Fixed] Bugs in preventSuspend during background-fetch event
