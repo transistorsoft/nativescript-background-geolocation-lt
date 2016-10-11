@@ -71,6 +71,7 @@ import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 
 ## Documentation
 - [API Documentation](docs)
+- [Advanced Geofencing](docs/geofencing.md)
 - [Location Data Schema](../../wiki/Location-Data-Schema)
 - [Error Codes](../../wiki/Location-Error-Codes)
 - [Debugging Sounds](../../wiki/Debug-Sounds)
