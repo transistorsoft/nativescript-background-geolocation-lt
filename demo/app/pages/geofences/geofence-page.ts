@@ -6,7 +6,6 @@ import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 import Platform = require('platform');
 
 var page;
-var bgGeo;
 var position;
 var geofence;
 var model;
@@ -17,8 +16,6 @@ export function onShow(args: any) {
   page = <Page>args.object;
   model = new GeofenceViewModel();
   page.bindingContext = model;
-
-  bgGeo = args.context.backgroundGeolocation;
 
   if (args.context.position) {
   	position = args.context.position;
@@ -36,7 +33,7 @@ export function onCancel(args: EventData) {
 }
 
 export function onRemove(args: EventData) {
-	bgGeo.removeGeofence(geofence.identifier, function() {
+	BackgroundGeolocation.removeGeofence(geofence.identifier, function() {
 		console.log('- remove geofence success: ', geofence.identifier);
 		page.closeModal(true);
 	}, function(error) {
@@ -51,7 +48,7 @@ export function onDone(args: EventData) {
 		page.closeModal(false);
 		return;
 	}
-	bgGeo.addGeofence({
+	BackgroundGeolocation.addGeofence({
 		identifier: model.identifier,
 		notifyOnEntry: model.notifyOnEntry,
 		notifyOnExit: model.notifyOnExit,

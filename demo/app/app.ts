@@ -26,4 +26,6 @@ if (application.ios) {
 	application.ios.delegate = MyDelegate;
 }
 
+
 application.start({ moduleName: "./pages/map/map-page" });
+

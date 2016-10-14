@@ -4,9 +4,9 @@ import { EventData, Observable } from "data/observable";
 import frames = require("ui/frame");
 import { Page } from "ui/page";
 import * as Settings from "application-settings";
+import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 
 var page;
-var bgGeo;
 
 var setting: Observable;
 
@@ -16,7 +16,7 @@ function commitTextValue() {
   var config = {};
   config[setting.name] = setting.value;
 
-  bgGeo.setConfig(config, function(state) {
+  BackgroundGeolocation.setConfig(config, function(state) {
     console.log('- setConfig success', JSON.stringify(config));
   });
 }
@@ -37,7 +37,6 @@ function onTextChange(event) {
 export function navigatingTo(args: any) {
   // Get the event sender
   page = <Page>args.object;
-  bgGeo = args.context.bgGeo;
 
   page.addCssFile("pages/settings/settings-page.css");
 
@@ -132,7 +131,7 @@ export function onSelectValue(event) {
   // Now update BackgroundGeolocation config with {key:value}
   config = {};
   config[name] = currentValue;
-  bgGeo.setConfig(config, function(state) {
+  BackgroundGeolocation.setConfig(config, function(state) {
     console.log('- setConfig success: ', state);
   });
 
