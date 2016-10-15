@@ -5,7 +5,7 @@
 The following **Options** can all be provided to the plugin's `#configure` method:
 
 ```Javascript
-bgGeo.configure({
+BackgroundGeolocation.configure({
     desiredAccuracy: 0,
     distanceFilter: 50,
     .
@@ -17,7 +17,7 @@ bgGeo.configure({
 
 // Use #setConfig if you need to change options after you've executed #configure
 
-bgGeo.setConfig({
+BackgroundGeolocation.setConfig({
     desiredAccuracy: 10,
     distanceFilter: 10
 }, function(state) {

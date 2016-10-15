@@ -81,24 +81,25 @@ import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 ## Example
 
 ```Javascript
+import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
+
 export class HelloWorldModel extends observable.Observable {
-  private _bgGeo: BackgroundGeolocation;
+
   private _state: any:
 
   constructor() {
     super();
-    this._bgGeo = new BackgroundGeolocation();
 
     // Listen to events
-    this._bgGeo.on("location", this.onLocation.bind(this));
-    this._bgGeo.on("motionchange", this.onMotionChange.bind(this));
-    this._bgGeo.on("http", this.onHttp.bind(this));
-    this._bgGeo.on("heartbeat", this.onHeartbeat.bind(this));
-    this._bgGeo.on("schedule", this.onSchedule.bind(this));
-    this._bgGeo.on("error", this.onError.bind(this));
+    BackgroundGeolocation.on("location", this.onLocation.bind(this));
+    BackgroundGeolocation.on("motionchange", this.onMotionChange.bind(this));
+    BackgroundGeolocation.on("http", this.onHttp.bind(this));
+    BackgroundGeolocation.on("heartbeat", this.onHeartbeat.bind(this));
+    BackgroundGeolocation.on("schedule", this.onSchedule.bind(this));
+    BackgroundGeolocation.on("error", this.onError.bind(this));
 
     // Configure it.
-    this._bgGeo.configure({
+    BackgroundGeolocation.configure({
       debug: true,
       desiredAccuracy: 0,
       stationaryRadius: 25,
@@ -109,7 +110,7 @@ export class HelloWorldModel extends observable.Observable {
     }, function(state) {
       // Plugin is ready
       if (!this._state.enabled) {
-        this._bgGeo.start();
+        BackgroundGeolocation.start();
       }
     }.bind(this));
   }
@@ -146,11 +147,11 @@ Android automatically detects when the device is moving so has no need for a sta
 
 The plugin will execute your configured ```callback``` provided to the ```#configure(callback, config)``` method.  Both iOS & Android use a SQLite database to persist **every** recorded geolocation so you don't have to worry about persistence when no network is detected.  The plugin provides a Javascript API to fetch and destroy the records in the database.  In addition, the plugin has an optional HTTP layer allowing allowing you to automatically HTTP POST recorded geolocations to your server.
 
-The function ```changePace(isMoving, success, failure)``` is provided to force the plugin to enter "moving" or "stationary" state.
+The function `changePace(isMoving, success, failure)` is provided to force the plugin to enter "moving" or "stationary" state.
 
 ## iOS
 
-The plugin uses iOS Significant Changes API, and starts triggering your configured ```callback``` only when a cell-tower switch is detected (i.e. the device exits stationary radius). 
+The plugin uses iOS Significant Changes API, and starts triggering your configured `callback` only when a cell-tower switch is detected (i.e. the device exits stationary radius). 
 
 When the plugin detects the device has moved beyond its configured #stationaryRadius, it engages the native platform's geolocation system for aggressive monitoring according to the configured `#desiredAccuracy`, `#distanceFilter`.  The plugin attempts to intelligently scale `#distanceFilter` based upon the current reported speed.  Each time `#distanceFilter` is determined to have changed by 5m/s, it recalculates it by squaring the speed rounded-to-nearest-five and adding #distanceFilter (I arbitrarily came up with that formula.  Better ideas?).
 
