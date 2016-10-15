@@ -12,10 +12,11 @@ SVG Icons for Map
 *
 */
 
+import * as application from "application";
+import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 import observable = require("data/observable");
 import {SettingsViewModel} from "../settings/settings-view-model";
 
-import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 import {fonticon} from 'nativescript-fonticon';
 import Platform = require('platform');
 import frames = require("ui/frame");
@@ -41,7 +42,6 @@ const ICONS = {
 
 export class MapModel extends observable.Observable {
   // Background Geolocation properties
-  private _bgGeo: BackgroundGeolocation;
   private _state: any;
   private _enabled: boolean;
   private _isMoving: boolean;
@@ -157,12 +157,13 @@ export class MapModel extends observable.Observable {
     if (this._enabled !== value) {
       this._enabled = value;
       if (value) {
-        this._bgGeo.start();
+        //BackgroundGeolocation.start(function(){}, function(){});
+        BackgroundGeolocation.start();
 
         // Reload cached positions from plugin
         var polyline = this._getPolyline();
         var me = this;
-        this._bgGeo.getLocations(function(rs) {
+        BackgroundGeolocation.getLocations(function(rs) {
           rs.forEach(function(location) {
             var marker = me._createLocationMarker(location);
             polyline.addPoint(marker.position);
@@ -173,8 +174,8 @@ export class MapModel extends observable.Observable {
           this.set('zoom', this._defaultZoom);
         }
       } else {
-        this._bgGeo.stop();
-        this._bgGeo.resetOdometer();
+        BackgroundGeolocation.stop();
+        BackgroundGeolocation.resetOdometer();
 
         // Remove Map markers & shapes
         this._geofenceMarkers = {};
@@ -203,20 +204,9 @@ export class MapModel extends observable.Observable {
   }
   constructor() {
     super();
+
     this._geofenceMarkers = {};
-    this._bgGeo = new BackgroundGeolocation();
     this._zoom = 0;
-    // Listen to BackgroundGeolocation events
-    this._bgGeo.on('location', this.onLocation.bind(this), this.onLocationError.bind(this));
-    this._bgGeo.on('motionchange', this.onMotionChange.bind(this));
-    this._bgGeo.on('activitychange', this.onActivityChange.bind(this));
-    this._bgGeo.on('http', this.onHttp.bind(this));
-    this._bgGeo.on('heartbeat', this.onHeartbeat.bind(this));
-    this._bgGeo.on('schedule', this.onSchedule.bind(this));
-    this._bgGeo.on('providerchange', this.onProviderChange.bind(this));
-    this._bgGeo.on('geofence', this.onGeofence.bind(this));
-    this._bgGeo.on('schedule', this.onSchedule.bind(this));
-    this._bgGeo.on('geofenceschange', this.onGeofencesChange.bind(this));
     this.providerGps = 'visible';
     this.providerWifi = 'visible';
     this.providerDisabled = 'collapsed';
@@ -226,14 +216,46 @@ export class MapModel extends observable.Observable {
   public onMapReady(args) {
     this._mapView = args.object;
 
+    console.log('<<<<<<<<<<<<<< onMapReady >>>>>>>>>>>>>>>');
+
     // If _state already exists, we're probably returning from a navigation-event.  just ignore: we're already configured.
     if (this._state) { return };
 
-    this._bgGeo.configure(this.getConfig(), function(state) {
+    console.log('<<<<<<<<<<<<<<<<< configure >>>>>>>>>>>>>>>>>');
+
+    // Listen to BackgroundGeolocation events
+    BackgroundGeolocation.on('location', this.onLocation.bind(this), this.onLocationError.bind(this));
+    BackgroundGeolocation.on('motionchange', this.onMotionChange.bind(this));
+    BackgroundGeolocation.on('activitychange', this.onActivityChange.bind(this));
+    BackgroundGeolocation.on('http', this.onHttp.bind(this));
+    BackgroundGeolocation.on('heartbeat', this.onHeartbeat.bind(this));
+    BackgroundGeolocation.on('schedule', this.onSchedule.bind(this));
+    BackgroundGeolocation.on('providerchange', this.onProviderChange.bind(this));
+    BackgroundGeolocation.on('geofence', this.onGeofence.bind(this));
+    BackgroundGeolocation.on('schedule', this.onSchedule.bind(this));
+    BackgroundGeolocation.on('geofenceschange', this.onGeofencesChange.bind(this));
+
+    BackgroundGeolocation.configure(this.getConfig(), function(state) {
+
       this._state = state;
       this._enabled = state.enabled;
       this.notifyPropertyChange("isEnabled", state.enabled);
       this._isMoving  = this._state.isMoving;
+
+      BackgroundGeolocation.getLog(function(log) {
+        console.log('------------ log: ', log.length);
+
+        BackgroundGeolocation.destroyLog();
+        BackgroundGeolocation.getCount(function(count) {
+          console.log('-------- count: ', count);
+          BackgroundGeolocation.destroyLocations();
+        });
+
+        BackgroundGeolocation.getGeofences(function(geofences) {
+          console.log('---------- geofences: ', geofences.length);
+          BackgroundGeolocation.removeGeofences();
+        });
+      });
     }.bind(this));
   }
 
@@ -250,7 +272,6 @@ export class MapModel extends observable.Observable {
       var topMost = frames.topmost();
 
       topMost.currentPage.showModal('./pages/geofences/geofence-page', {
-        backgroundGeolocation: this._bgGeo,
         geofence: data
       }, function(remove:boolean) {
         if (remove === true) {
@@ -268,15 +289,14 @@ export class MapModel extends observable.Observable {
     // Play a UI sound when opening.
     var os = Platform.device.os;
     var soundId = (os.toUpperCase() == 'ANDROID') ? 27 : 1113;
-    this._bgGeo.playSound(soundId);
+    BackgroundGeolocation.playSound(soundId);
 
     topMost.currentPage.showModal('./pages/geofences/geofence-page', {
-      backgroundGeolocation: this._bgGeo,
       position: position
     }, function(geofenceModel) {
       if (!geofenceModel) { return; }
       var soundId = (os.toUpperCase() == 'ANDROID') ? 28 : 1114;
-      this._bgGeo.playSound(soundId);
+      BackgroundGeolocation.playSound(soundId);
 
       this._createGeofenceMarker({
         identifier: geofenceModel.identifier,
@@ -321,8 +341,7 @@ export class MapModel extends observable.Observable {
       transition: {
         name: "flip",
         backstackVisible: true
-      },
-      context: this._bgGeo
+      }
     };
     topMost.navigate(navigationEntry);
 
@@ -333,19 +352,17 @@ export class MapModel extends observable.Observable {
       distanceFilter: 10,
       stationaryRadius: 500
     };
-    this._bgGeo.setConfig(config);
+    BackgroundGeolocation.setConfig(config);
   }
 
   public onChangePace(ev) {
     this._isMoving = !this._isMoving;
-    this._bgGeo.changePace(this._isMoving);
+    BackgroundGeolocation.changePace(this._isMoving);
     this.paceButtonIcon = (this._isMoving) ? ICON_PAUSE : ICON_PLAY;
   }
 
   public onGetCurrentPosition() {
-    var bgGeo = this._bgGeo;
-
-    bgGeo.getCurrentPosition(function(location) {
+    BackgroundGeolocation.getCurrentPosition(function(location) {
       console.log('[js] getCurrentPosition: ', location);
     }.bind(this), function(error) {
       console.warn('[js] getCurrentPosition FAIL: ', error);
@@ -392,7 +409,7 @@ export class MapModel extends observable.Observable {
   }
 
   private _loadGeofences() {
-    this._bgGeo.getGeofences(function(geofences) {
+    BackgroundGeolocation.getGeofences(function(geofences) {
       for (var n=0,len=geofences.length;n<len;n++) {
         this._createGeofenceMarker(geofences[n]);
       }
@@ -455,8 +472,6 @@ export class MapModel extends observable.Observable {
     // Update map coords
     this.set('latitude', location.coords.latitude);
     this.set('longitude', location.coords.longitude);
-
-    var bgGeo = this._bgGeo;
 
     console.info('[js] location: ', JSON.stringify(location, null, 2));
 

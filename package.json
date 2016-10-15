@@ -1,8 +1,9 @@
 {
   "name": "nativescript-background-geolocation-lt",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Sophisticated, battery-conscious, cross-platform background-geolocation with motion-detection and geofencing",
   "main": "background-geolocation.js",
+  "typings": "background-geolocation.d.ts",
   "nativescript": {
     "platforms": {
       "ios": "2.3.0",
@@ -40,6 +41,7 @@
   "homepage": "http://shop.transistorsoft.com/pages/nativescript-background-geolocation",
   "devDependencies": {
     "tns-platform-declarations": "^2.3.0",
+    "tns-core-modules":"^2.3.0",
     "typescript": "^2.0.3"
   },
   "dependencies": {

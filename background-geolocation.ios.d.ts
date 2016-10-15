@@ -1,57 +1,65 @@
 import { AbstractBackgroundGeolocation } from './background-geolocation.common';
 export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation {
-    static readonly LOG_LEVEL_OFF: number;
-    static readonly LOG_LEVEL_ERROR: number;
-    static readonly LOG_LEVEL_WARNING: number;
-    static readonly LOG_LEVEL_INFO: number;
-    static readonly LOG_LEVEL_DEBUG: number;
-    static readonly LOG_LEVEL_VERBOSE: number;
-    static readonly DESIRED_ACCURACY_HIGH: number;
-    static readonly DESIRED_ACCURACY_MEDIUM: number;
-    static readonly DESIRED_ACCURACY_LOW: number;
-    static readonly DESIRED_ACCURACY_VERY_LOW: number;
-    private syncTaskId;
-    constructor();
-    private getLocationManager();
-    configure(config: any, success: any, failure: any): void;
-    setConfig(config: Object, success: any, failure: any): void;
-    getState(success: Function): void;
-    on(event: any, success: Function, failure?: (param: any) => void): void;
-    changePace(value: boolean, success: any, failure: any): void;
-    start(success: any, failure: any): void;
-    stop(success: any, failure: any): void;
-    startSchedule(success: any, failure: any): void;
-    stopSchedule(success: any, failure: any): void;
-    sync(success: FunctionConstructor, failure: any): void;
-    getLocations(success: Function, failure: any): void;
-    destroyLocations(success: any, failure: any): void;
-    getCount(success: Function): void;
-    clearDatabase(success: any, failure: any): void;
-    insertLocation(data: any, success: any, failure: any): any;
-    addGeofence(params: any, success: any, failure: any): void;
-    addGeofences(geofences: any, success: any, failure: any): void;
-    removeGeofence(identifier: any, success: any, failure: any): void;
-    getGeofences(success: any, failure: any): void;
-    removeGeofences(success: any, failure: any): void;
-    getCurrentPosition(success: Function, failure: any, options: any): void;
-    watchPosition(success: Function, failure: any, options: any): void;
-    stopWatchPosition(): void;
-    getOdometer(success: FunctionConstructor, failure: any): void;
-    resetOdometer(success: any): void;
-    playSound(soundId: number): void;
-    getLog(success: Function): void;
-    emailLog(email: string): void;
-    private onLocation(location, type, isMoving);
-    private onMotionChange(location, isMoving);
-    private onGeofence(region, location, action);
-    private onHttp(statusCode, requestData, responseData, error);
-    private onError(type, error);
-    private onHeartbeat(shakeCount, motionType, location);
-    private onSyncComplete(locations);
-    private onActivityChange(activityName);
-    private onProviderChange(status);
-    private onSchedule(schedule);
-    private getJsObjectFromNSDictionary(dictionary);
-    private getJsArrayFromNSArray(array);
-    private getJsObject(object);
+    private static syncTaskId;
+    /**
+    * Configuration Methods
+    */
+    static on(event: any, success?: Function, failure?: Function): void;
+    static configure(config: Object, success?: Function, failure?: Function): void;
+    static setConfig(config: Object, success?: any, failure?: any): void;
+    static getState(success: Function): void;
+    /**
+    * Tracking Methods
+    */
+    static start(success?: Function, failure?: Function): void;
+    static stop(success?: Function, failure?: Function): void;
+    static changePace(value: boolean, success?: any, failure?: any): void;
+    static startSchedule(success?: Function, failure?: Function): void;
+    static stopSchedule(success?: Function, failure?: Function): void;
+    static getCurrentPosition(success: Function, failure?: Function, options?: Object): void;
+    static watchPosition(success: Function, failure?: Function, options?: Object): void;
+    static stopWatchPosition(success?: Function, failure?: Function): void;
+    static getOdometer(success: Function, failure?: Function): void;
+    static resetOdometer(success?: Function): void;
+    /**
+    * HTTP & Persistence Methods
+    */
+    static sync(success?: Function, failure?: Function): void;
+    static getLocations(success: Function, failure?: Function): void;
+    static getCount(success: Function): void;
+    static insertLocation(data: any, success?: Function, failure?: Function): any;
+    static clearDatabase(success?: Function, failure?: Function): void;
+    static destroyLocations(success?: Function, failure?: Function): void;
+    /**
+    * Geofencing Methods
+    */
+    static addGeofence(params: any, success?: Function, failure?: Function): void;
+    static removeGeofence(identifier: string, success?: Function, failure?: Function): void;
+    static addGeofences(geofences: Array<Object>, success?: Function, failure?: Function): void;
+    static removeGeofences(geofences?: Array<string>, success?: Function, failure?: Function): void;
+    static getGeofences(success: Function, failure?: Function): void;
+    /**
+    * Logging & Debug methods
+    */
+    static playSound(soundId: number): void;
+    static getLog(success: Function, failure?: Function): void;
+    static destroyLog(success?: Function, failure?: Function): void;
+    static emailLog(email: string): void;
+    /**
+    * Private
+    */
+    private static onLocation(location, type, isMoving);
+    private static onMotionChange(location, isMoving);
+    private static onGeofence(region, location, action);
+    private static onHttp(statusCode, requestData, responseData, error);
+    private static onError(type, error);
+    private static onHeartbeat(motionType, location);
+    private static onSyncComplete(locations);
+    private static onActivityChange(activityName);
+    private static onProviderChange(status);
+    private static onSchedule(schedule);
+    private static getLocationManager();
+    private static getJsObjectFromNSDictionary(dictionary);
+    private static getJsArrayFromNSArray(array);
+    private static getJsObject(object);
 }

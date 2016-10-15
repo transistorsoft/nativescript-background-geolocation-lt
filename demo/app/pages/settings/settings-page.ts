@@ -2,15 +2,15 @@ import { EventData } from "data/observable";
 import { Page } from "ui/page";
 import { SettingsViewModel } from "./settings-view-model";
 import frames = require("ui/frame");
+import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 
 var page;
-var bgGeo;
+
 // Event handler for Page "navigatingTo" event attached in main-page.xml
 export function navigatingTo(args: EventData) {
   // Get the event sender
   page = <Page>args.object;
   page.bindingContext = new SettingsViewModel();
-  bgGeo = args.context;
 }
 
 export function onShow(args: EventData) {
@@ -19,7 +19,6 @@ export function onShow(args: EventData) {
   if (!page.bindingContext) {
     page.bindingContext = new SettingsViewModel();
   }
-  bgGeo = args.context;
 }
 
 // Seems this is only required for Android
@@ -28,12 +27,11 @@ export function onClickBack(args: EventData) {
 }
 
 export function onClickSync() {
-  console.log('- onClickSync', bgGeo);
-  bgGeo.getCount(function(count) {
+  BackgroundGeolocation.getCount(function(count) {
     console.log('- Count: ', count);
   });
 
-  bgGeo.sync(function(rs) {
+  BackgroundGeolocation.sync(function(rs) {
     console.log('- Sync success: ', rs.length, ' records');
   }, function(error) {
     console.log('- Sync error: ', error);
@@ -52,8 +50,7 @@ export function onRowClick(args: EventData) {
     moduleName: "./pages/settings/settings-detail-page",
     animated: true,
     context: {
-      setting: args.view.bindingContext,
-      bgGeo: bgGeo
+      setting: args.view.bindingContext
     },
     transition: {
       name: "slide",

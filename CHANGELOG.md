@@ -1,4 +1,24 @@
 # Change Log
+## [1.2.1] - 2016-10-14
+- [Changed] Refactor typescript API.  `BackgroundGeolocation` API is all static methods now -- You no longer create an instance of `BackgroundGeolocation`
+**OLD**
+```Javascript
+var bgGeo = new BackgroundGeolocation();
+bgGeo.configure(config, callback);
+
+```
+**NEW**
+```Javascript
+BackgroundGeolocation.configure(config, callback);
+```
+
+This will make interacting with the plugin throughout your views **much** easier, since views are destroyed when navigated away from.
+
+- [Fixed] `package.json` now references a definitions file.  This should solve issue with error reported in issue #18:
+```
+JS ERROR Error: Could not find module 'nativescript-background-geolocation-lt'
+```
+
 ## [1.2.0] - 2016-10-11
 - [Changed] Refactor iOS Logging system to use popular CocoaLumberjack library.  iOS logs are now stored in the database!  By default, logs are stored for 3 days, but is configurable with `logMaxDays`.  Logs can now be filtered by logLevel:
 | logLevel | Label |

@@ -8,11 +8,11 @@
   },
   "nativescript": {
     "id": "com.transistorsoft.backgroundgeolocation.nativescript",
-    "tns-ios": {
-      "version": "2.3.0"
-    },
     "tns-android": {
       "version": "2.1.0"
+    },
+    "tns-ios": {
+      "version": "2.3.0"
     }
   },
   "dependencies": {
