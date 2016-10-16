@@ -1,4 +1,7 @@
 # Change Log
+## [1.2.2] - 2016-10-16
+- [Changed] Remove `nativescript-background-fetch` from dependencies.  Users will have to manually `tns plugin add nativescript-background-fetch`, since `tns plugin add nativescript-background-geolocation-lt` doesn't add `background-fetch` the the root `node_modules` folder.  This fixes the problem referencing background-fetch's .podspec file.
+
 ## [1.2.1] - 2016-10-14
 - [Changed] Refactor typescript API.  `BackgroundGeolocation` API is all static methods now -- You no longer create an instance of `BackgroundGeolocation`
 **OLD**
