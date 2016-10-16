@@ -45,7 +45,6 @@
     "typescript": "^2.0.3"
   },
   "dependencies": {
-    "nativescript-permissions": "^1.0.1",
-    "nativescript-background-fetch": "^0.0.1"
+    "nativescript-permissions": "^1.0.1"
   }
 }
