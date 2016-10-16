@@ -12,14 +12,25 @@ This repo hosts the **iOS** platform available in the **[Premium Version](http:/
 ## Installing the plugin ##
 
 #### From npm 
+Install the following two plugins:
 ```bash
 $ tns plugin add nativescript-background-geolocation-lt
+$ tns plugin add nativescript-background-fetch
 ```
 
 #### From master (latest, greatest.)
 
+In order to install from Github repo, you must first clone the repo to your local machine and compile the Javascript files (the github repo contains no compiled .js files; they're purposely `.gitignore`d)
 ```
-$ tns plugin add https://github.com/transistorsoft/nativescript-background-geolocation-lt.git
+$ git clone https://github.com/transistorsoft/nativescript-background-geolocation-lt.git
+$ cd nativescript-background-geolocation-lt
+$ npm install
+$ tsc
+```
+
+The plugin is compiled and ready to be added to your app:
+```
+$ tns plugin add /path/to/nativescript-background-geolocation-lt
 ```
 
 ## iOS Setup
