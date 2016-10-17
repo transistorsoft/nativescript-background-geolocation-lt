@@ -216,12 +216,8 @@ export class MapModel extends observable.Observable {
   public onMapReady(args) {
     this._mapView = args.object;
 
-    console.log('<<<<<<<<<<<<<< onMapReady >>>>>>>>>>>>>>>');
-
     // If _state already exists, we're probably returning from a navigation-event.  just ignore: we're already configured.
     if (this._state) { return };
-
-    console.log('<<<<<<<<<<<<<<<<< configure >>>>>>>>>>>>>>>>>');
 
     // Listen to BackgroundGeolocation events
     BackgroundGeolocation.on('location', this.onLocation.bind(this), this.onLocationError.bind(this));
@@ -241,21 +237,6 @@ export class MapModel extends observable.Observable {
       this._enabled = state.enabled;
       this.notifyPropertyChange("isEnabled", state.enabled);
       this._isMoving  = this._state.isMoving;
-
-      BackgroundGeolocation.getLog(function(log) {
-        console.log('------------ log: ', log.length);
-
-        BackgroundGeolocation.destroyLog();
-        BackgroundGeolocation.getCount(function(count) {
-          console.log('-------- count: ', count);
-          BackgroundGeolocation.destroyLocations();
-        });
-
-        BackgroundGeolocation.getGeofences(function(geofences) {
-          console.log('---------- geofences: ', geofences.length);
-          BackgroundGeolocation.removeGeofences();
-        });
-      });
     }.bind(this));
   }
 

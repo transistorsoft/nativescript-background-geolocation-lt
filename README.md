@@ -35,26 +35,54 @@ $ tns plugin add /path/to/nativescript-background-geolocation-lt
 
 ## iOS Setup
 
-Since iOS is more strict with apps running in the background, this plugin includes the dependency [nativescript-background-fetch](https://github.com/transistorsoft/nativescript-background-fetch) (also created by [Transistor Software](http://transistorsoft.com)).  This plugin automatically awakens a suspended app in the background, providing *exactly* 30s of running-time.  Actually implementing **`background-fetch`** in your application code is **optional** -- `background-geolocation` uses it automatically under-the-hood for its own purposes.  However, you **must** perform the plugin's [setup process](https://github.com/transistorsoft/nativescript-background-fetch#setup) in your **`app.ts`**:
+Since iOS is more strict with apps running in the background, this plugin requires you install [nativescript-background-fetch](https://github.com/transistorsoft/nativescript-background-fetch) (also created by [Transistor Software](http://transistorsoft.com)).  This plugin automatically awakens a suspended app in the background, providing *exactly* 30s of running-time.  Actually implementing **`background-fetch`** in your application code is **optional** -- `background-geolocation` uses it automatically under-the-hood for its own purposes.  However, you **must** perform the plugin's [setup process](https://github.com/transistorsoft/nativescript-background-fetch#setup) in your **`app.ts`**:
 
 **`app.ts`**
 ```diff
-import application = require("application");
+import * as app from 'application';
 
-+ if (application.ios) {
-+  class MyDelegate extends UIResponder {
-+    public static ObjCProtocols = [UIApplicationDelegate];      
++import {BackgroundFetch} from "nativescript-background-fetch";
+
++if (app.ios) {
++  class MyDelegate extends UIResponder implements UIApplicationDelegate {
++    public static ObjCProtocols = [UIApplicationDelegate];
 +      // BackgroundFetch delegate method
-+      public applicationPerformFetchWithCompletionHandler(application: UIApplication, completionHandler:any) {
-+        TSBackgroundFetch.sharedInstance().performFetchWithCompletionHandler(completionHandler);
++      public applicationPerformFetchWithCompletionHandler(application: any, completionHandler:any) {
++        BackgroundFetch.performFetchWithCompletionHandler(completionHandler);
 +      }
 +    }
-+    application.ios.delegate = MyDelegate;
-+}    
++    app.ios.delegate = MyDelegate;
++}
 
-application.start({ moduleName: "main-page" });
+app.start({ moduleName: 'main-page' });
 ```
 
+**NOTE** If your build fails with the following errors:
+```
+app/app.ts(6,28): error TS2304: Cannot find name 'UIResponder'.
+app/app.ts(6,51): error TS2304: Cannot find name 'UIApplicationDelegate'.
+app/app.ts(7,36): error TS2304: Cannot find name 'UIApplicationDelegate'.
+```
+
+This is because your app hasn't loaded the ios platform-declarations.  You can either load those (if you know how ;)) or simply configure your `tsconfig.json` to ignore errors:
+
+```diff
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "sourceMap": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "noEmitHelpers": true,
++        "noEmitOnError": false
+    },
+    "exclude": [
+        "node_modules",
+        "platforms"
+    ]
+}
+```
 
 ## Demo app
 The plugin hosts its own demo app in the `/demo` folder.  Install it like this:

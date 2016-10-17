@@ -6,6 +6,7 @@
         "target": "es5",
         "experimentalDecorators": true,
         "noEmitHelpers": true,
+        "noEmitOnError": false,
         "inlineSourceMap": true,
         "removeComments": false,
         "emitDecoratorMetadata": true
