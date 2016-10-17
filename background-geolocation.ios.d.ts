@@ -58,6 +58,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private static onActivityChange(activityName);
     private static onProviderChange(status);
     private static onSchedule(schedule);
+    private static getAdapter();
     private static getLocationManager();
     private static getJsObjectFromNSDictionary(dictionary);
     private static getJsArrayFromNSArray(array);

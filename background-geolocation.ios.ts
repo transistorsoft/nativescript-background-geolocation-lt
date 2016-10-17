@@ -418,6 +418,9 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
+  private static getAdapter() {
+
+  }
   private static getLocationManager() {
     if (!this.locationManager) {
       this.locationManager = TSLocationManager.sharedInstance();
