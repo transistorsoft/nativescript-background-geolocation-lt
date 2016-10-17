@@ -85,6 +85,11 @@ This is because your app hasn't loaded the ios platform-declarations.  You can e
 ```
 
 ## Demo app
+**NOTE:** I have no idea why, but the demo [fails to compile](https://github.com/NativeScript/NativeScript/issues/2698) its `.js` files using `typescript@2.0.3`.  Install `1.8.10`:
+```Console
+$ npm install -g typescript@1.8.10
+```
+
 The plugin hosts its own demo app in the `/demo` folder.  Install it like this:
 ```Bash
 $ cd nativescript-background-geolocation-lt
