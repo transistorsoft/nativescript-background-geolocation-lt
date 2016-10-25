@@ -1,4 +1,8 @@
 # Change Log
+## [Unreleased]
+- [Changed] Implement database-logging for Android.  Both iOS and Android now send logs to the database.
+- [Fixed] Bug in Android `#insertLocation` (Reported in issue #23)
+
 ## [1.2.2] - 2016-10-16
 - [Changed] Remove `nativescript-background-fetch` from dependencies.  Users will have to manually `tns plugin add nativescript-background-fetch`, since `tns plugin add nativescript-background-geolocation-lt` doesn't add `background-fetch` the the root `node_modules` folder.  This fixes the problem referencing background-fetch's .podspec file.
 
