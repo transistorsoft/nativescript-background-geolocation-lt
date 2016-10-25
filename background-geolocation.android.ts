@@ -261,7 +261,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
         failure(error);
       }
     });
-    this.getAdapter().insertLocation(new org.json.JSONArray(JSON.stringify(data)), callback);
+    this.getAdapter().insertLocation(new org.json.JSONObject(JSON.stringify(data)), callback);
   }
 
   // @deprecated
