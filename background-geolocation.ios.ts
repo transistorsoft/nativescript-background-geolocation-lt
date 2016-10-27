@@ -324,11 +324,11 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  private static onGeofence(region:any, location:Object, action:string) {
+  private static onGeofence(identifier:string, action: string, location:Object) {
     var callbacks   = this.listeners.geofence;
     var locationData = this.getJsObjectFromNSDictionary(location);
     var params = {
-      identifier: region.identifier,
+      identifier: identifier,
       action: action,
       location: locationData
     };
