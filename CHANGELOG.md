@@ -1,8 +1,13 @@
 # Change Log
-## [Unreleased]
-- [Changed] Implement database-logging for Android.  Both iOS and Android now send logs to the database.
+
+## [1.2.4] - 2016-10-27
 - [Fixed] Bug in Android `#insertLocation` (Reported in issue #23)
 - [Fixed] iOS geofencing issue where multiple geofences trigger simultaneously, only the last geofence event would be transmitted to the client and persisted to database.
+- [Added] iOS can now initial-trigger a geofence when device is already within the newly added geofence.  Android has always had this behavour by default.  This behaviour is controlled with new `@config {Integer meters} geofenceInitialTriggerEntry [true]`.
+- [Fixed] Android had a bug when Activity terminated with `stopOnTerminate: true`
+
+## [1.2.3] - 2016-10-20
+- [Changed] Implement database-logging for Android.  Both iOS and Android now send logs to the database.
 
 ## [1.2.2] - 2016-10-16
 - [Changed] Remove `nativescript-background-fetch` from dependencies.  Users will have to manually `tns plugin add nativescript-background-fetch`, since `tns plugin add nativescript-background-geolocation-lt` doesn't add `background-fetch` the the root `node_modules` folder.  This fixes the problem referencing background-fetch's .podspec file.
