@@ -14,6 +14,11 @@ let REQUEST_ACTION_START_GEOFENCES = 3;
 
 let emptyFn = function() {};
 
+// When Activity starts, initialize BackgroundGeolocation
+app.android.on(app.AndroidApplication.activityStartedEvent, function(args) {
+  BackgroundGeolocation.onActivityStarted(args);
+});
+
 export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 	private static mConfig: any;
 	private static requestAction: number;
@@ -22,11 +27,25 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 	private static backgroundServiceIntent: any;
 	private static isEnabled: boolean;
 	private static forceReload: boolean;
-  private static configured = false;
+  private static initialized = false;
+  private static intent: android.content.Intent;
 
-  private static init() {
-    this.configured = true;
+  public static onActivityStarted(args) {
+    this.init(args.activity);
+  }
+  public static onActivityDestroyed(args) {
+    this.getAdapter().onActivityDestroy();
+  }
+  private static init(activity:android.app.Activity) {
+    // Important to only run this method once!
+    if (this.initialized) { return; }
+    this.initialized = true;
+    this.intent = activity.getIntent();
 
+    // Inform BackgroundGeolocation adapter when activity is destroyed
+    app.android.on(app.AndroidApplication.activityDestroyedEvent, this.onActivityDestroyed.bind(this));
+
+    // Listen to playservices connect error.  User probably doesn't have play-services installed.  This will direct the user to install it.
     this.getAdapter().on("playservicesconnecterror", new Callback({
       success: this.onGooglePlayServicesConnectError.bind(this),
       error: emptyFn
@@ -68,9 +87,6 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   * Configuration Methods
   */
   public static configure(config:Object, success?:Function, failure?:Function) {
-    if (!this.configured) {
-      this.init();
-    }
     var callback = new Callback({
       success: function(state:org.json.JSONObject) {
         success(JSON.parse(state.toString()));
@@ -459,7 +475,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   private static getAdapter(): any {
-    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.currentContext, app.android.foregroundActivity.getIntent());
+    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.currentContext, this.intent);
   }
   private static requestPermission(success: Function, failure: Function) {
     permissions.requestPermission((<any>android).Manifest.permission.ACCESS_FINE_LOCATION, "Background tracking required").then(success).catch(failure);
