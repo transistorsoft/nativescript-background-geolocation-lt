@@ -1,4 +1,8 @@
 # Change Log
+## [1.2.5] - 2016-10-31
+- [Fixed] Issue compiling demo with `typescript@2.x`
+- [Fixed] Remove Android deprecation issues with `AndroidManifest.xml`
+- [Changed] Refactor Android scheduler to no use a Service.
 
 ## [1.2.4] - 2016-10-27
 - [Fixed] Bug in Android `#insertLocation` (Reported in issue #23)
