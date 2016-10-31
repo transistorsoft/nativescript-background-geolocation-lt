@@ -157,7 +157,6 @@ export class MapModel extends observable.Observable {
     if (this._enabled !== value) {
       this._enabled = value;
       if (value) {
-        //BackgroundGeolocation.start(function(){}, function(){});
         BackgroundGeolocation.start();
 
         // Reload cached positions from plugin
@@ -432,7 +431,6 @@ export class MapModel extends observable.Observable {
     marker.flat = true;
     marker.anchor = [0.5, 0.5];
     this._mapView.addMarker(marker);
-    console.log('- createLocationMarker: ', location.timetamp);
     return marker;
   }
 
