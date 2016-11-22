@@ -40,11 +40,11 @@
   },
   "homepage": "http://shop.transistorsoft.com/pages/nativescript-background-geolocation",
   "devDependencies": {
-    "tns-platform-declarations": "^2.3.0",
-    "tns-core-modules":"^2.3.0",
+    "tns-platform-declarations": "^2.4.0",
+    "tns-core-modules":"^2.4.0",
     "typescript": "^2.0.3"
   },
   "dependencies": {
-    "nativescript-permissions": "^1.0.1"
+    "nativescript-permissions": "^1.2.1"
   }
 }

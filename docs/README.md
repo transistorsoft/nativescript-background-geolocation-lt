@@ -80,7 +80,7 @@ BackgroundGeolocation.setConfig({
 | Option | Type | Opt/Required | Default | Note |
 |---|---|---|---|---|
 | [`debug`](#param-boolean-debug-false) | `Boolean` | Optional | `false` | When enabled, the plugin will emit sounds for life-cycle events of background-geolocation!  **NOTE iOS**:  In addition, you must manually enable the *Audio and Airplay* background mode in *Background Capabilities* to hear these debugging sounds. |
-| [`logLevel`](#param-integer-loglevel-5) | `Integer` | Optional **iOS** | `LOG_LEVEL_VERBOSE` | Filters the logs by `logLevel`: `LOG_LEVEL_OFF`, `LOG_LEVEL_ERROR`, `LOG_LEVEL_WARNING`, `LOG_LEVEL_INFO`, `LOG_LEVEL_DEBUG`, `LOG_LEVEL_VERBOSE` |
+| [`logLevel`](#param-integer-loglevel-5) | `Integer` | Optional | `LOG_LEVEL_VERBOSE` | Filters the logs by `logLevel`: `LOG_LEVEL_OFF`, `LOG_LEVEL_ERROR`, `LOG_LEVEL_WARNING`, `LOG_LEVEL_INFO`, `LOG_LEVEL_DEBUG`, `LOG_LEVEL_VERBOSE` |
 | [`logMaxDays`](#param-integer-logmaxdays-3) | `Integer` | Optional | `3` | Maximum days to persist a log-entry in database. |
 | [`stopOnTerminate`](#param-boolean-stoponterminate-true) | `Boolean` | Optional | `true` | Enable this in order to force a stop() when the application is terminated |
 | [`startOnBoot`](#param-boolean-startonboot-false) | `Boolean` | Optional | `false` | Set to `true` to enable background-tracking after the device reboots. |
@@ -404,6 +404,27 @@ Maximum number of records to persist in plugin's SQLite database.  Default `-1` 
 
 When enabled, the plugin will emit sounds for life-cycle events of background-geolocation!  **NOTE iOS**:  In addition, you must manually enable the *Audio and Airplay* background mode in *Background Capabilities* to hear these [debugging sounds](../../../wiki/Debug-Sounds).  See the ../../../wiki [Debug Sounds](wiki/Debug-Sounds) for a detailed description of these sounds.
 
+####`@param {Integer} logLevel [5]`
+
+Set the log-filter `logLevel`.  @see [`getLog`](#getlogcallbackfn) / [`emailLog`](#emaillogemail-callbackfn).
+
+| logLevel | Label |
+|---|---|
+|`0`|`LOG_LEVEL_OFF`|
+|`1`|`LOG_LEVEL_ERROR`|
+|`2`|`LOG_LEVEL_WARNING`|
+|`3`|`LOG_LEVEL_INFO`|
+|`4`|`LOG_LEVEL_DEBUG`|
+|`5`|`LOG_LEVEL_VERBOSE`|
+
+These log-levels are defined as **constants** on the `BackgroundGeolocation` object:
+
+```Javascript
+bgGeo.configure({
+  logLevel: bgGeo.LOG_LEVEL_WARNING
+});
+```
+
 ####`@param {Boolean} stopOnTerminate [true]`
 Enable this in order to force a stop() when the application terminated (e.g. on iOS, double-tap home button, swipe away the app).  On Android, ```stopOnTerminate: false``` will cause the plugin to operate as a headless background-service (in this case, you should configure an #url in order for the background-service to send the location to your server)
 
@@ -490,27 +511,6 @@ bgGeo.setConfig({
 ```
 
 ## iOS Options
-
-####`@param {Integer} logLevel [5]`
-
-Set the log-filter `logLevel`.  @see [`getLog`](#getlogcallbackfn) / [`emailLog`](#emaillogemail-callbackfn).
-
-| logLevel | Label |
-|---|---|
-|`0`|`LOG_LEVEL_OFF`|
-|`1`|`LOG_LEVEL_ERROR`|
-|`2`|`LOG_LEVEL_WARNING`|
-|`3`|`LOG_LEVEL_INFO`|
-|`4`|`LOG_LEVEL_DEBUG`|
-|`5`|`LOG_LEVEL_VERBOSE`|
-
-These log-levels are defined as **constants** on the `BackgroundGeolocation` object:
-
-```Javascript
-bgGeo.configure({
-  logLevel: bgGeo.LOG_LEVEL_WARNING
-});
-```
 
 ####`@param {Boolean} preventSuspend [false]`
 
