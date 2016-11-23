@@ -222,7 +222,7 @@ export class MapModel extends observable.Observable {
     BackgroundGeolocation.on('location', this.onLocation.bind(this), this.onLocationError.bind(this));
     BackgroundGeolocation.on('motionchange', this.onMotionChange.bind(this));
     BackgroundGeolocation.on('activitychange', this.onActivityChange.bind(this));
-    BackgroundGeolocation.on('http', this.onHttp.bind(this));
+    BackgroundGeolocation.on('http', this.onHttp.bind(this), this.onHttpError.bind(this));
     BackgroundGeolocation.on('heartbeat', this.onHeartbeat.bind(this));
     BackgroundGeolocation.on('schedule', this.onSchedule.bind(this));
     BackgroundGeolocation.on('providerchange', this.onProviderChange.bind(this));
@@ -324,7 +324,6 @@ export class MapModel extends observable.Observable {
       }
     };
     topMost.navigate(navigationEntry);
-
   }
 
   public onSetConfig() {
@@ -532,7 +531,9 @@ export class MapModel extends observable.Observable {
   public onHttp(response:any) {
     console.info('[js] http: ', response);
   }
-
+  public onHttpError(error:any) {
+    console.info('[js] http error: ', error);
+  }
   public onHeartbeat(params: any) {
     console.info('[js] heartbeat: ', params);
   }

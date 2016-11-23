@@ -7,7 +7,6 @@ demo/*.d.ts
 demo/platforms
 demo/node_modules
 demo/lib
-demo/app/App_Resources/iOS/build.xcconfig
 node_modules
 .DS_Store
 *.d.ts

@@ -26,5 +26,9 @@ if (application.ios) {
 	application.ios.delegate = MyDelegate;
 }
 
+////
+// For debugging
+//application.start({ moduleName: "./pages/login/login" });
+
 application.start({ moduleName: "./pages/map/map-page" });
 

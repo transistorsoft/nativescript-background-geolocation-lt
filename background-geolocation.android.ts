@@ -62,7 +62,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     if (this.events.indexOf(event) < 0) {
       throw "Invalid event: " + event;
     }
-
+    failure = failure || emptyFn;
     var cb;
     switch (event) {
       case 'motionchange':
