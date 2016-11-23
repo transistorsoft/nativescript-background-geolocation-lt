@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [1.3.0] - 2016-11-23
 - [Fixed] `stopWatchPostion` callbacks not being called.
 - [Fixed] Bug with Android geofences not posting `event: geofence` and the actual `geofence` data was missing (The data sent to Javascript callback was ok, just the data sent to HTTP.
 - [Fixed] Logic bug in `TSGeofenceManager`; was not performing geospatial query when changing state from **MOVING -> STATIONARY**.
