@@ -9,4 +9,5 @@ Pod::Spec.new do |s|
   s.vendored_frameworks = "platforms/ios/TSLocationManager.framework"
   s.license = {:type => "MIT"}
   s.source = { :path => "../../node_modules/nativescript-background-geolocation-lt/platforms/ios" }
+  s.dependency "CocoaLumberjack", "~> 3.0.0"
 end

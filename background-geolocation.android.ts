@@ -62,7 +62,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     if (this.events.indexOf(event) < 0) {
       throw "Invalid event: " + event;
     }
-
+    failure = failure || emptyFn;
     var cb;
     switch (event) {
       case 'motionchange':
@@ -475,7 +475,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   private static getAdapter(): any {
-    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.currentContext, this.intent);
+    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context, this.intent);
   }
   private static requestPermission(success: Function, failure: Function) {
     permissions.requestPermission((<any>android).Manifest.permission.ACCESS_FINE_LOCATION, "Background tracking required").then(success).catch(failure);

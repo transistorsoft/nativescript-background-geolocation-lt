@@ -10,11 +10,11 @@
 		</data>
 		<key>Headers/TSLocationManager.h</key>
 		<data>
-		n0wucjv1wYnwq05Q7SU5lMQKtkw=
+		fxJ2A30kuRhg3dWdp6NyE8uzymA=
 		</data>
 		<key>Headers/TSSchedule.h</key>
 		<data>
-		l7gJ1bMBCvrAI0AsQBLYBHlAznk=
+		QCQijL359mtz3vYZOz3lU6+pQiY=
 		</data>
 		<key>Info.plist</key>
 		<data>
@@ -42,22 +42,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			n0wucjv1wYnwq05Q7SU5lMQKtkw=
+			fxJ2A30kuRhg3dWdp6NyE8uzymA=
 			</data>
 			<key>hash2</key>
 			<data>
-			UKmZJ346/l3luLShA8sc03l9L6r50OUbSH/gsYAS57w=
+			VCODH9E12J1QRWfTtlbNUpXHn+pwvghJWen16+0BpZs=
 			</data>
 		</dict>
 		<key>Headers/TSSchedule.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			l7gJ1bMBCvrAI0AsQBLYBHlAznk=
+			QCQijL359mtz3vYZOz3lU6+pQiY=
 			</data>
 			<key>hash2</key>
 			<data>
-			z/ddw6U/oQSX715tcPfpjec7gX7eyA5KiBjS3BueSBo=
+			Qv/pbWa9haQidGkJqtKX4LLHBJgyclApsj5wrhpK74g=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
