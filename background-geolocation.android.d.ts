@@ -9,9 +9,8 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private static forceReload;
     private static initialized;
     private static intent;
-    static onActivityStarted(args: any): void;
+    static init(): void;
     static onActivityDestroyed(args: any): void;
-    private static init(activity);
     static on(event: any, success?: Function, failure?: Function): void;
     /**
     * Configuration Methods
