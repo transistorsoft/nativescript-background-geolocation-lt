@@ -15,8 +15,8 @@ let REQUEST_ACTION_START_GEOFENCES = 3;
 let emptyFn = function() {};
 
 // When Activity starts, initialize BackgroundGeolocation
-app.android.on(app.AndroidApplication.activityStartedEvent, function(args) {
-  BackgroundGeolocation.onActivityStarted(args);
+app.android.on(app.AndroidApplication.activityCreatedEvent, function(args) {
+  BackgroundGeolocation.init();
 });
 
 export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
@@ -30,17 +30,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   private static initialized = false;
   private static intent: android.content.Intent;
 
-  public static onActivityStarted(args) {
-    this.init(args.activity);
-  }
-  public static onActivityDestroyed(args) {
-    this.getAdapter().onActivityDestroy();
-  }
-  private static init(activity:android.app.Activity) {
+  public static init() {
     // Important to only run this method once!
     if (this.initialized) { return; }
     this.initialized = true;
-    this.intent = activity.getIntent();
 
     // Inform BackgroundGeolocation adapter when activity is destroyed
     app.android.on(app.AndroidApplication.activityDestroyedEvent, this.onActivityDestroyed.bind(this));
@@ -50,6 +43,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       success: this.onGooglePlayServicesConnectError.bind(this),
       error: emptyFn
     }));
+  }
+
+  public static onActivityDestroyed(args) {
+    this.getAdapter().onActivityDestroy();
   }
 
   public static on(event:any, success?:Function, failure?:Function) {
@@ -475,8 +472,9 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   private static getAdapter(): any {
-    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context, this.intent);
+    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context, app.android.foregroundActivity.getIntent());
   }
+
   private static requestPermission(success: Function, failure: Function) {
     permissions.requestPermission((<any>android).Manifest.permission.ACCESS_FINE_LOCATION, "Background tracking required").then(success).catch(failure);
   }
