@@ -11,12 +11,11 @@ let TAG = "TSLocationnManager";
 let REQUEST_ACTION_START = 1;
 let REQUEST_ACTION_GET_CURRENT_POSITION = 2;
 let REQUEST_ACTION_START_GEOFENCES = 3;
-
 let emptyFn = function() {};
 
-// When Activity starts, initialize BackgroundGeolocation
-app.android.on(app.AndroidApplication.activityCreatedEvent, function(args) {
-  BackgroundGeolocation.init();
+// Inform adapter.BackgroundGeolocation when Activity is destroyed.
+app.android.on(app.AndroidApplication.activityDestroyedEvent, function(args) {
+  BackgroundGeolocation.onActivityDestroyed(args);
 });
 
 export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
@@ -27,26 +26,12 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 	private static backgroundServiceIntent: any;
 	private static isEnabled: boolean;
 	private static forceReload: boolean;
-  private static initialized = false;
   private static intent: android.content.Intent;
-
-  public static init() {
-    // Important to only run this method once!
-    if (this.initialized) { return; }
-    this.initialized = true;
-
-    // Inform BackgroundGeolocation adapter when activity is destroyed
-    app.android.on(app.AndroidApplication.activityDestroyedEvent, this.onActivityDestroyed.bind(this));
-
-    // Listen to playservices connect error.  User probably doesn't have play-services installed.  This will direct the user to install it.
-    this.getAdapter().on("playservicesconnecterror", new Callback({
-      success: this.onGooglePlayServicesConnectError.bind(this),
-      error: emptyFn
-    }));
-  }
+  private static timer: any;
 
   public static onActivityDestroyed(args) {
     this.getAdapter().onActivityDestroy();
+    this.intent = null;
   }
 
   public static on(event:any, success?:Function, failure?:Function) {
@@ -89,12 +74,12 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
         success(JSON.parse(state.toString()));
       }.bind(this),
       error: function(error:android.os.Bundle) {
-        console.log('- BackgroundGeolocation#configure error: ', error);
         failure(error);
       }.bind(this)
     });
 
     this.getAdapter().configure(new org.json.JSONObject(JSON.stringify(config)), callback);
+
   }
 
   public static setConfig(config:Object, success?:Function, failure?:Function) {
@@ -471,8 +456,19 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     return result;
   }
 
+  private static init() {
+    this.intent = app.android.foregroundActivity.getIntent();
+    this.getAdapter().on("playservicesconnecterror", new Callback({
+      success: this.onGooglePlayServicesConnectError.bind(this),
+      error: emptyFn
+    }));
+  }
+
   private static getAdapter(): any {
-    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context, app.android.foregroundActivity.getIntent());
+    if (!this.intent) {
+      this.init();
+    }
+    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context, this.intent);
   }
 
   private static requestPermission(success: Function, failure: Function) {

@@ -7,9 +7,8 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private static backgroundServiceIntent;
     private static isEnabled;
     private static forceReload;
-    private static initialized;
     private static intent;
-    static init(): void;
+    private static timer;
     static onActivityDestroyed(args: any): void;
     static on(event: any, success?: Function, failure?: Function): void;
     /**
@@ -63,6 +62,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private static createActivityChangeCallback(callback);
     private static onGooglePlayServicesConnectError(errorCode);
     private static hasPermission();
+    private static init();
     private static getAdapter();
     private static requestPermission(success, failure);
 }
