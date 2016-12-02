@@ -150,7 +150,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
     if (this.getAdapter().startSchedule()) {
-      success(JSON.parse(com.transistorsoft.locationmanager.adapter.settings.Settings.getState().toString()));
+      this.getState(success);
     } else {
       failure("Failed to start schedule.  Did you configure a #schedule?");
     }
@@ -160,7 +160,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
     this.getAdapter().stopSchedule();
-    success(JSON.parse(com.transistorsoft.locationmanager.adapter.settings.Settings.getState().toString()));
+    this.getState(success);
   }
 
   public static getCurrentPosition(success: Function, failure?:Function, options?:Object) {
