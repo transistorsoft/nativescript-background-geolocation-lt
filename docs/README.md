@@ -135,6 +135,7 @@ bgGeo.on('location', function(location) {
 | [`clearDatabase`](#cleardatabasecallbackfn-failurefn) | `callbackFn` | Delete all records in plugin's SQLite database |
 | [`sync`](#synccallbackfn-failurefn) | - | If the plugin is configured for HTTP with an `#url` and `#autoSync: false`, this method will initiate POSTing the locations currently stored in the native SQLite database to your configured `#url`|
 | [`getOdometer`](#getodometercallbackfn-failurefn) | `callbackFn` | The plugin constantly tracks distance travelled. The supplied callback will be executed and provided with a `distance` as the 1st parameter.|
+| [`setOdometer`](#setodometervalue-callbackfn-failurefn) | `callbackFn` | Set the **odometer** to any arbitrary value.  **NOTE** `setOdometer` will perform a `getCurrentPosition` in order to record to exact location where odometer was set; as a result, the `callback` signatures are identical to those of `getCurrentPosition`.|
 | [`resetOdometer`](#resetodometercallbackfn-failurefn) | `callbackFn` | Reset the **odometer** to `0`.  The plugin never automatically resets the odometer -- this is **up to you** |
 | [`playSound`](#playsoundsoundid) | `soundId` | Here's a fun one.  The plugin can play a number of OS system sounds for each platform.  For [IOS](http://iphonedevwiki.net/index.php/AudioServices) and [Android](http://developer.android.com/reference/android/media/ToneGenerator.html).  I offer this API as-is, it's up to you to figure out how this works. |
 | [`addGeofence`](#addgeofenceconfig-callbackfn-failurefn) | `{config}` | Adds a geofence to be monitored by the native plugin. Monitoring of a geofence is halted after a crossing occurs.|
@@ -1276,9 +1277,23 @@ The plugin constantly tracks distance travelled.  To fetch the current **odomete
     });
 ```
 
+####`setOdometer(value, callbackFn, failureFn)`
+
+Set the **odometer** to any arbitrary value.  **NOTE** `setOdometer` will perform a `getCurrentPosition` in order to record to exact location where odometer was set; as a result, the `callback` signatures are identical to those of `getCurrentPosition`.  If the method fails to fetch a current-position, the `failureFn` will be called but the odometer **will** have been set to the desired value.
+
+```Javascript
+    bgGeo.setOdometer(1234.56, function(location) {
+        // Callback is called with the location where odometer was set at.
+        console.log('- setOdometer success: ', location);
+    }, function(errorCode) {
+        // If the plugin failed to fetch a location, it will still have set your odometer to your desired value.
+        console.log('- Error: ', errorCode);
+    });
+```
+
 ####`resetOdometer(callbackFn, failureFn)`
 
-Reset the **odometer** to zero.  The plugin never automatically resets the odometer so it's up to you to reset it as desired.
+Reset the **odometer** to zero.  This method is an alias for `setOdometer(0)`.
 
 ####`playSound(soundId)`
 

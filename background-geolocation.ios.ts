@@ -66,13 +66,13 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
     locationManager.setConfig(config);
-    success(locationManager.getState());
+    this.getState(success);
   }
 
   public static getState(success:Function) {
     success(this.getJsObjectFromNSDictionary(this.getLocationManager().getState()));
   }
-  
+
   /**
   * Tracking Methods
   */
@@ -80,18 +80,14 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
     this.getLocationManager().start();
-    if (success) {
-      success(true);
-    }
+    this.getState(success);
   }
 
   public static stop(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
     this.getLocationManager().stop();
-    if (success) {
-      success(true);
-    }
+    this.getState(success);
   }
 
   public static changePace(value: boolean, success?:any, failure?:any) {
@@ -105,39 +101,42 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
     this.getLocationManager().startSchedule();
-    success(true);
+    this.getState(success);
   }
 
   public static stopSchedule(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
     this.getLocationManager().stopSchedule();
-    if (success) {
-      success(true);
-    }
+    this.getState(success);
   }
 
   public static getCurrentPosition(success: Function, failure?:Function, options?:Object) {
-    this.currentPositionCallbacks.push({
-      success: success,
-      error: failure || emptyFn
-    });
-    this.getLocationManager().updateCurrentPosition(options||{});
+    failure = failure || emptyFn;
+    var mySuccess = function(location:any) {
+      success(this.getJsObjectFromNSDictionary(location));
+    }.bind(this);
+    var myFailure = function(error:any) {
+      failure(error.code);
+    }.bind(this)
+    this.getLocationManager().getCurrentPositionSuccessFailure(options||{}, mySuccess, myFailure);
   }
 
   public static watchPosition(success:Function, failure?:Function, options?:Object) {
-    this.watchPositionCallbacks.push({
-      success: success,
-      error: failure || emptyFn
-    });
-    this.getLocationManager().watchPosition(options||{});
+    failure = failure || emptyFn;
+    var mySuccess = function(location:any) {
+      success(this.getJsObjectFromNSDictionary(location));
+    }.bind(this);
+    var myFailure = function(error:any) {
+      failure(error.code);
+    }.bind(this);
+    this.getLocationManager().watchPositionSuccessFailure(options||{}, mySuccess, myFailure);
   }
 
   public static stopWatchPosition(success?:Function, failure?:Function) {
     this.getLocationManager().stopWatchPosition();
-    this.watchPositionCallbacks = [];
     if (success) {
-      success();
+      success(true);
     }
   }
 
@@ -145,12 +144,20 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success(this.getLocationManager().getOdometer());
   }
 
-  public static resetOdometer(success?:Function) {
+  public static setOdometer(value:number, success?:Function, failure?:Function) {
     success = success || emptyFn;
-    this.getLocationManager().resetOdometer();
-    success(true);
+    failure = failure || emptyFn;
+    var mySuccess = function(location:any) {
+      success(this.getJsObjectFromNSDictionary(location));
+    }.bind(this);
+    var myFailure = function(error:any) {
+      failure(error.code);
+    }.bind(this);
+    this.getLocationManager().setOdometerSuccessFailure(value, mySuccess, myFailure);
   }
-
+  public static resetOdometer(success?:Function, failure?:Function) {
+    this.setOdometer(0, success, failure);
+  }
   /**
   * HTTP & Persistence Methods
   */
@@ -338,11 +345,19 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   private static onHttp(statusCode:number, requestData:any, responseData:any, error:any) {
-    var callbacks = this.listeners.http;
-    var responseText = NSString.alloc().initWithDataEncoding(responseData, NSUTF8StringEncoding);
-    var cb;
+    var callbacks      = this.listeners.http;
+    var responseText   = "";
+    var callbackFn     = 'success';
+
+    if (error) {
+      responseText = error.localizedDescription;
+      callbackFn = 'error';
+    } else {
+      responseText = NSString.alloc().initWithDataEncoding(responseData, NSUTF8StringEncoding).toString();
+      callbackFn = 'success';
+    }
     for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n].success({
+      callbacks[n][callbackFn]({
         status: statusCode,
         responseText: responseText
       });
@@ -410,11 +425,9 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   private static onSchedule(schedule: Object) {
-    var state = this.locationManager.getState();
-
     var callbacks = this.listeners.schedule;
     for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n].success(state);
+      this.getState(callbacks[n].success);
     }
   }
 

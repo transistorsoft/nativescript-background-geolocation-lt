@@ -53,6 +53,9 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       case 'activitychange':
         cb = this.createActivityChangeCallback(success);
         break;
+      case 'http':
+        cb = this.createHttpCallback(success, failure);
+        break;
       default:
         cb = new Callback({
           success: function(response) {
@@ -83,16 +86,21 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   public static setConfig(config:Object, success?:Function, failure?:Function) {
+    success = success || emptyFn;
     var callback = new Callback({
-      success: success,
-      error: failure
+      success: function(state:org.json.JSONObject) {
+        success(JSON.parse(state.toString()));
+      },
+      error: failure || emptyFn
     });
     this.getAdapter().setConfig(new org.json.JSONObject(JSON.stringify(config)), callback);
   }
 
   public static getState(success:Function) {
     var callback = new Callback({
-      success: success,
+      success: function(state:org.json.JSONObject) {
+        success(JSON.parse(state.toString()));
+      },
       error: emptyFn
     });
     this.getAdapter().getState(callback);
@@ -116,15 +124,13 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 	}
 
   public static stop(success?:Function, failure?:Function) {
-    /* TODO adapter.BackgroundGeolocation#stop doesn't accept params
-    var callback = new Callback({
-      success: success,
-      error: failure || emptyFn
-    });
-    */
     success = success || emptyFn;
-    this.getAdapter().stop();
-    success();
+    this.getAdapter().stop(new Callback({
+      success: function(state: org.json.JSONObject) {
+        success(JSON.parse(state.toString()));
+      },
+      error: failure || emptyFn
+    }));
   }
 
   public static changePace(value: boolean, success?:Function, failure?:Function) {
@@ -144,7 +150,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
     if (this.getAdapter().startSchedule()) {
-      success();
+      success(JSON.parse(com.transistorsoft.locationmanager.adapter.settings.Settings.getState().toString()));
     } else {
       failure("Failed to start schedule.  Did you configure a #schedule?");
     }
@@ -154,7 +160,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
     this.getAdapter().stopSchedule();
-    success();
+    success(JSON.parse(com.transistorsoft.locationmanager.adapter.settings.Settings.getState().toString()));
   }
 
   public static getCurrentPosition(success: Function, failure?:Function, options?:Object) {
@@ -200,11 +206,21 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success(this.getAdapter().getOdometer());
   }
 
+  public static setOdometer(value:any, success?:Function, failure?:Function) {
+    success = success || emptyFn;
+    failure = failure || emptyFn;
+    var callback = new Callback({
+      success: function(location:any) {
+        success(JSON.parse(location.toString()));
+      },
+      failure: function(error:number) {
+        failure(error);
+      }
+    });
+    this.getAdapter().setOdometer(new java.lang.Float(value), callback);
+  }
   public static resetOdometer(success?:Function, failure?:Function) {
-    this.getAdapter().resetOdometer();
-    if (success) {
-      success(true);
-    }
+    this.setOdometer(0, success, failure);
   }
 
   /**
@@ -405,20 +421,18 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
         error: failure
       });
       adapter.start(callback);
-    } else {
-      adapter.stop();
-      success();
     }
   }
+
 
   private static createHttpCallback(success:Function, failure?:Function) {
     failure = failure || emptyFn;
     return new Callback({
       success: function(response) {
-        success(response.getInt("status"), response.getString("responseText"));
+        success(JSON.parse(response.toString()));
       },
       error: function(response) {
-        failure(response.getInt("status"), response.getString("responseText"));
+        success(JSON.parse(response.toString()));
       }
     });
   }

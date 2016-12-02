@@ -157,7 +157,9 @@ export class MapModel extends observable.Observable {
     if (this._enabled !== value) {
       this._enabled = value;
       if (value) {
-        BackgroundGeolocation.start();
+        BackgroundGeolocation.start(function() {
+          console.log('- Start success');
+        });
 
         // Reload cached positions from plugin
         var polyline = this._getPolyline();
@@ -173,8 +175,9 @@ export class MapModel extends observable.Observable {
           this.set('zoom', this._defaultZoom);
         }
       } else {
-        BackgroundGeolocation.stop();
-        BackgroundGeolocation.resetOdometer();
+        BackgroundGeolocation.stop(function(state) {
+          console.log('- Stop success');
+        });
 
         // Remove Map markers & shapes
         this._geofenceMarkers = {};
@@ -231,7 +234,9 @@ export class MapModel extends observable.Observable {
     BackgroundGeolocation.on('geofenceschange', this.onGeofencesChange.bind(this));
 
     BackgroundGeolocation.configure(this.getConfig(), function(state) {
-
+      if (state.schedule) {
+        BackgroundGeolocation.startSchedule();
+      }
       this._state = state;
       this._enabled = state.enabled;
       this.notifyPropertyChange("isEnabled", state.enabled);
@@ -295,7 +300,7 @@ export class MapModel extends observable.Observable {
       // Fetch default config with overrides.
       config = SettingsViewModel.getDefaultConfig({
         license: "5647026b5a15ced50fcd3adcb2b743ab32abf2374c40d0aff875e53b15f93b60",
-        url: 'http://192.168.11.100:8080/locations',
+        url: 'http://localhost:8080/locations',
         params: {
           device: {
             platform: Platform.device.os,
@@ -529,10 +534,10 @@ export class MapModel extends observable.Observable {
   }
 
   public onHttp(response:any) {
-    console.info('[js] http: ', response);
+    console.info('[js] http: ', JSON.stringify(response, null, 2));
   }
-  public onHttpError(error:any) {
-    console.info('[js] http error: ', error);
+  public onHttpError(response:any) {
+    console.info('[js] http error: ', JSON.stringify(response, null, 2));
   }
   public onHeartbeat(params: any) {
     console.info('[js] heartbeat: ', params);

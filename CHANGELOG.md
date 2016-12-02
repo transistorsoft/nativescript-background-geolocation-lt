@@ -1,4 +1,7 @@
 # Change Log
+## [Unreleased]
+- [Fixed] `http` event `success` callback receives `{}` but `error` receives `String` (issue #36).
+- [Added] Add `setOdometer` method for arbitrarily setting odometer to any value.  `resetOdometer` is now aliased to `setOdometer(0)`.  **NOTE:** `setOdometer` performs a `getCurrentPosition` in order to record the exact location where the odometer was set.  The callbacks for `setOdometer` are identical to those of `getCurrentPosition`.
 
 ## [1.3.0] - 2016-11-23
 - [Fixed] `stopWatchPostion` callbacks not being called.
