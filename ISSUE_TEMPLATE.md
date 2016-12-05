@@ -1,33 +1,48 @@
-<!--- Provide a general summary of the issue in the Title above -->
+<!--
+*****************************************************************
+* WARNING:  If you ignore this template, your issue will be too.
+*****************************************************************
+-->
 
+<!--
+  Provide a general summary of the issue in the Title above 
+-->
 ## Your Environment
 * Plugin version:
 * Platform: iOS or Android
 * OS version:
 * Device manufacturer / model:
-* Cordova version (`cordova -v`):
-* Cordova platform version (`cordova platform ls`):
+* Nativescript version (`tns info`):
 * Plugin config
 
 ## Expected Behavior
-<!--- Tell us what should happen -->
+<!--- 
+  Tell us what should happen 
+-->
 
 ## Actual Behavior
-<!--- Tell us what happens instead -->
+<!--- 
+  Tell us what happens instead 
+-->
 
 ## Steps to Reproduce
-<!--- reproduce this issue; include code to reproduce, if relevant -->
+<!--- 
+  reproduce this issue; include code to reproduce, if relevant 
+-->
 1.
 2.
 3.
 4.
 
 ## Context
-<!--- What were you trying to do? -->
+<!--- 
+  What were you trying to do? 
+-->
 
 ## Debug logs
-<!-- include iOS / Android logs
-- ios XCode logs, 
-- use #getLog #emailLog methods (@see docs)
-- Android: $ adb logcat
+<!-- 
+  include iOS / Android logs
+    - ios XCode logs, 
+    - use #getLog #emailLog methods (@see docs)
+    - Android: $ adb logcat
 -->

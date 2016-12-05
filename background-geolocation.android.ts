@@ -424,7 +424,6 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-
   private static createHttpCallback(success:Function, failure?:Function) {
     failure = failure || emptyFn;
     return new Callback({
@@ -432,7 +431,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
         success(JSON.parse(response.toString()));
       },
       error: function(response) {
-        success(JSON.parse(response.toString()));
+        failure(JSON.parse(response.toString()));
       }
     });
   }
