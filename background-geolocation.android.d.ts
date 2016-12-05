@@ -29,6 +29,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     static watchPosition(success: Function, failure?: Function, options?: Object): void;
     static stopWatchPosition(success?: Function, failure?: Function): void;
     static getOdometer(success: Function, failure?: Function): void;
+    static setOdometer(value: any, success?: Function, failure?: Function): void;
     static resetOdometer(success?: Function, failure?: Function): void;
     /**
     * HTTP & Persistence Methods
@@ -52,6 +53,8 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     */
     static getLog(success: Function, failure?: Function): void;
     static destroyLog(success?: Function, failure?: Function): void;
+    static startBackgroundTask(success: Function): void;
+    static finish(taskId: number): void;
     static playSound(soundId: any): void;
     /**
     * Private

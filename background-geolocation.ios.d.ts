@@ -20,7 +20,8 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     static watchPosition(success: Function, failure?: Function, options?: Object): void;
     static stopWatchPosition(success?: Function, failure?: Function): void;
     static getOdometer(success: Function, failure?: Function): void;
-    static resetOdometer(success?: Function): void;
+    static setOdometer(value: number, success?: Function, failure?: Function): void;
+    static resetOdometer(success?: Function, failure?: Function): void;
     /**
     * HTTP & Persistence Methods
     */
@@ -38,6 +39,8 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     static addGeofences(geofences: Array<Object>, success?: Function, failure?: Function): void;
     static removeGeofences(geofences?: Array<string>, success?: Function, failure?: Function): void;
     static getGeofences(success: Function, failure?: Function): void;
+    static startBackgroundTask(success: Function): void;
+    static finish(taskId: number): void;
     /**
     * Logging & Debug methods
     */
