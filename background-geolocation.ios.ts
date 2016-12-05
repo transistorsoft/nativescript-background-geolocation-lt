@@ -281,6 +281,14 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success(this.getJsArrayFromNSArray(this.getLocationManager().getGeofences()));
   }
 
+  public static startBackgroundTask(success:Function) {
+    success(this.getLocationManager().createBackgroundTask());
+  }
+
+  public static finish(taskId:number) {
+    this.getLocationManager().stopBackgroundTask(taskId);
+  }
+
   /**
   * Logging & Debug methods
   */

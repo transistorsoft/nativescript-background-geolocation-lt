@@ -1,7 +1,8 @@
 # Change Log
 ## [Unreleased]
 - [Fixed] `http` event `success` callback receives `{}` but `error` receives `String` (issue #36).
-- [Added] Add `setOdometer` method for arbitrarily setting odometer to any value.  `resetOdometer` is now aliased to `setOdometer(0)`.  **NOTE:** `setOdometer` performs a `getCurrentPosition` in order to record the exact location where the odometer was set.  The callbacks for `setOdometer` are identical to those of `getCurrentPosition`.
+- [Changed] Add ability to set odometer to any arbitrary value.  Before, odometer could only be reset to `0` via `resetOdometer`.  The plugin now uses `setOdometer(Float, successFn, failureFn`.  `resetOdometer` is now just an alias for `setOdometer(0)`.  `setOdometer` will now internally perform a `#getCurrentPosition`, so it can know the exact location where the odometer was set at.  As a result, using `#setOdometer` is exactly like performing a `#getCurrentPosition` and the `success` / `failure` callbacks use the same method-signature, where the `success` callback is provided the `location`.
+- [Added] Added ability to create your own arbitrary **background tasks** with new `#startBackgroundTask` method.  Some of the plugin's methods receive a `taskId` which you've had to call `bgGeo.finish(taskId)` upon.  These automatically created `taskId` will soon be removed.  It will be **up to you** to create your own as desired, when you need to perform any long-running task in any of the plugin's callbacks.  `#finish` operates in the same manner as before.
 
 ## [1.3.0] - 2016-11-23
 - [Fixed] `stopWatchPostion` callbacks not being called.

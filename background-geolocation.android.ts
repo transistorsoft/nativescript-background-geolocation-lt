@@ -405,6 +405,15 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.getAdapter().destroyLog(callback);
   }
 
+  public static startBackgroundTask(success:Function) {
+    // Just return 0 for compatibility with iOS API.  Android has no concept of these iOS-only background-tasks.
+    success(0);
+  }
+
+  public static finish(taskId:number) {
+    // Just an empty function for compatibility with iOS.  Android has no concept of these iOS-only background-tasks.
+  }
+
   public static playSound(soundId) {
     com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.startTone(soundId);
   }

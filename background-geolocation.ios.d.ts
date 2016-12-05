@@ -39,6 +39,8 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     static addGeofences(geofences: Array<Object>, success?: Function, failure?: Function): void;
     static removeGeofences(geofences?: Array<string>, success?: Function, failure?: Function): void;
     static getGeofences(success: Function, failure?: Function): void;
+    static startBackgroundTask(success: Function): void;
+    static finish(taskId: number): void;
     /**
     * Logging & Debug methods
     */
