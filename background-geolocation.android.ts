@@ -169,7 +169,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       success: function(location:org.json.JSONObject) {
         success(JSON.parse(location.toString()));
       },
-      error: function(error:string) {
+      error: function(error:any) {
         failure(error);
       }
     });
@@ -182,7 +182,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       success: function(location:org.json.JSONObject) {
         success(JSON.parse(location.toString()));
       },
-      error: function(error: string) {
+      error: function(error: any) {
         failure(error);
       }
     });
@@ -195,7 +195,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       success: function(result:string) {
         success(result);
       },
-      error: function(error: string) {
+      error: function(error: any) {
         failure(error);
       }
     });
@@ -210,14 +210,23 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
     var callback = new Callback({
-      success: function(location:any) {
+      success: function(location:org.json.JSONObject) {
         success(JSON.parse(location.toString()));
       },
-      failure: function(error:number) {
+      error: function(error:any) {
         failure(error);
       }
     });
-    this.getAdapter().setOdometer(new java.lang.Float(value), callback);
+
+    if (this.hasPermission()) {
+      this.getAdapter().setOdometer(new java.lang.Float(value), callback);
+    } else {
+      this.requestPermission(function() {
+        this.getAdapter().setOdometer(new java.lang.Float(value), callback);
+      }.bind(this), function() {
+        console.log('- requestPermission failure');
+      }.bind(this));
+    }
   }
   public static resetOdometer(success?:Function, failure?:Function) {
     this.setOdometer(0, success, failure);

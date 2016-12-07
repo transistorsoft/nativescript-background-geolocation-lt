@@ -351,7 +351,6 @@ export class MapModel extends observable.Observable {
     }.bind(this), function(error) {
       console.warn('[js] getCurrentPosition FAIL: ', error);
     }.bind(this), {
-      timeout: 10,
       samples: 3,
       desiredAccuracy: 10,
       persist: false
