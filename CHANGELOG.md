@@ -1,6 +1,6 @@
 # Change Log
 ## [Unreleased]
-## [1.3.2] - 2016-12-07
+## [1.3.3] - 2016-12-07
 - [Fixed] Bug in `setOdometer` callback.  Add permission check on `setOdometer`Fixes issue #42
 
 ## [1.3.2] - 2016-12-05
