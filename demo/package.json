@@ -12,11 +12,11 @@
       "ios": "2.0.0",
       "android": "2.0.0"
     },
-    "tns-android": {
-      "version": "2.4.1"
-    },
     "tns-ios": {
       "version": "2.4.0"
+    },
+    "tns-android": {
+      "version": "2.4.1"
     }
   },
   "dependencies": {
