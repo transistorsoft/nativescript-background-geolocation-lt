@@ -14,6 +14,7 @@ export class AbstractBackgroundGeolocation {
     providerchange: [],
     geofence: []
   };
+
   protected static events = [
     'location',
     'motionchange',

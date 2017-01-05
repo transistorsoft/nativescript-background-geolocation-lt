@@ -5,6 +5,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     * Configuration Methods
     */
     static on(event: any, success?: Function, failure?: Function): void;
+    static removeListeners(): void;
     static configure(config: Object, success?: Function, failure?: Function): void;
     static setConfig(config: Object, success?: any, failure?: any): void;
     static getState(success: Function): void;
