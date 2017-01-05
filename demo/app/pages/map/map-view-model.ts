@@ -178,7 +178,6 @@ export class MapModel extends observable.Observable {
         BackgroundGeolocation.stop(function(state) {
           console.log('- Stop success');
         });
-        BackgroundGeolocation.removeListeners();
 
         // Remove Map markers & shapes
         this._geofenceMarkers = {};
