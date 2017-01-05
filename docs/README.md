@@ -41,6 +41,7 @@ BackgroundGeolocation.setConfig({
 | [`pausesLocationUpdatesAutomatically`](#param-boolean-pauseslocationupdatesautomatically-true) | `Boolean` | Optional (**iOS**)| `true` | The default behaviour of the plugin is to turn off location-services automatically when the device is detected to be stationary.  When set to `false`, location-services will **never** be turned off (and `disableStopDetection` will automatically be set to `true`) -- it's your responsibility to turn them off when you no longer need to track the device.  This feature should **not** generally be used.  `preventSuspend` will no longer work either.|
 | [`locationAuthorizationRequest`](#param-boolean-locationauthorizationrequest-always) | `Always`,`WhenInUse` | Optional (**iOS**)| `Always` | The desired iOS location-authorization request, either `Always` or `WhenInUse`.  You'll have to edit the corresponding key in your app's `Info.plist`, `NSLocationAlwaysUsageDescription` or `NSWhenInUseUsageDescription`.  `WhenInUse` will display a **blue bar** at top-of-screen informing user that location-services are on. |
 | [`locationAuthorizationAlert`](#param-object-locationauthorizationalert) | `{}` | Optional (**iOS**)| `{}` | When you configure the plugin location-authorization `Always` or `WhenInUse` and the user changes the value in the app's location-services settings or disabled location-services, the plugin will display an Alert directing the user to the **Settings** screen.  This config allows you to configure all the Strings for that Alert popup. |
+| [`desiredOdometerAccuracy`](#param-integer-meters-desiredodometeraccuracy) | `Integer meters`  |  Optional | `100`  | Specify an accuracy threshold for odometer calculations.  Defaults to `100`.  If a location arrives having `accuracy > desiredOdometerAccuracy`, that location will not be used to update the odometer.  If you only want to calculate odometer from GPS locations, you could set `desiredOdometerAccuracy: 10`.  This will prevent odometer updates when a device is moving around indoors, in a shopping mall, for example.|
 
 ## Activity Recognition Options
 
@@ -201,6 +202,10 @@ Defaults to ```false```.  Set ```true``` to disable automatic speed-based ```#di
 ####`@param {Integer} stopAfterElapsedMinutes`
 
 The plugin can optionally auto-stop monitoring location when some number of minutes elapse after being the #start method was called.
+
+####`@param {Integer meters} desiredOdometerAccuracy [100]`
+
+Specify an accuracy threshold for odometer calculations.  Defaults to `100`.  If a location arrives having `accuracy > desiredOdometerAccuracy`, that location will not be used to update the odometer.  If you only want to calculate odometer from GPS locations, you could set `desiredOdometerAccuracy: 10`.  This will prevent odometer updates when a device is moving around indoors, in a shopping mall, for example.
 
 ## iOS Options
 
@@ -1067,7 +1072,9 @@ bgGeo.changePace(false); // <-- Disable aggressive GPS monitoring.  Engages stat
 ```
 
 ####`addGeofence(config, callbackFn, failureFn)`
-Adds a geofence to be monitored by the native plugin.  Monitoring of a geofence is halted after a crossing occurs.  The `config` object accepts the following params.
+Adds a geofence to be monitored by the native plugin.  If a geofence *already exists* with the configured `identifier`, the previous one will be **deleted** before the new one is inserted.  The `config` object accepts the following params.  See [Geofencing](./geofencing.md) for more information.
+
+**Note**: when adding a list-of-geofences, it's about **10* faster** to use `[addGeofences](#addgeofencesgeofences-callbackfn-failurefn)` instead.
 
 ######@config {String} identifier The name of your geofence, eg: "Home", "Office"
 ######@config {Float} radius The radius (meters) of the geofence.  In practice, you should make this >= 100 meters.
@@ -1075,8 +1082,9 @@ Adds a geofence to be monitored by the native plugin.  Monitoring of a geofence 
 ######@config {Float} longitude Longitude of the center-point of the circular geofence.
 ######@config {Boolean} notifyOnExit Whether to listen to EXIT events
 ######@config {Boolean} notifyOnEntry Whether to listen to ENTER events
-######@config {Boolean} notifyOnDwell (Android only) Whether to listen to DWELL events
-######@config {Integer milliseconds} loiteringDelay (Android only) When `notifyOnDwell` is `true`, the delay before DWELL event is fired after entering a geofence.
+######@config {Boolean} notifyOnDwell (**Android only**) Whether to listen to DWELL events
+######@config {Integer milliseconds} loiteringDelay (**Android only**) When `notifyOnDwell` is `true`, the delay before DWELL event is fired after entering a geofence (@see [Creating and Monitoring Geofences](https://developer.android.com/training/location/geofencing.html))
+######@config {Object} extras Optional arbitrary meta-data.
 
 ```Javascript
 bgGeo.addGeofence({
@@ -1087,7 +1095,10 @@ bgGeo.addGeofence({
     notifyOnEntry: true,
     notifyOnExit: false,
     notifyOnDwell: true,
-    loiteringDelay: 30000   // <-- 30 seconds
+    loiteringDelay: 30000,  // 30 seconds
+    extras: {               // Optional arbitrary meta-data
+        zone_id: 1234
+    }
 }, function() {
     console.log("Successfully added geofence");
 }, function(error) {
@@ -1096,7 +1107,7 @@ bgGeo.addGeofence({
 ```
 
 ####`addGeofences(geofences, callbackFn, failureFn)`
-Adds a list of geofences to be monitored by the native plugin.  Monitoring of a geofence is halted after a crossing occurs.  The `geofences` param is an `Array` of geofence Objects `{}` with the following params:
+Adds a list of geofences to be monitored by the native plugin.  If a geofence *already* exists with the configured `identifier`, the previous one will be **deleted** before the new one is inserted.  The `geofences` param is an `Array` of geofence Objects `{}` with the following params:
 
 ######@config {String} identifier The name of your geofence, eg: "Home", "Office"
 ######@config {Float} radius The radius (meters) of the geofence.  In practice, you should make this >= 100 meters.
@@ -1106,6 +1117,7 @@ Adds a list of geofences to be monitored by the native plugin.  Monitoring of a 
 ######@config {Boolean} notifyOnEntry Whether to listen to ENTER events
 ######@config {Boolean} notifyOnDwell (Android only) Whether to listen to DWELL events
 ######@config {Integer milliseconds} loiteringDelay (Android only) When `notifyOnDwell` is `true`, the delay before DWELL event is fired after entering a geofence.
+######@config {Object} extras Optional arbitrary meta-data.
 
 ```Javascript
 bgGeo.addGeofences([{
@@ -1116,7 +1128,10 @@ bgGeo.addGeofences([{
     notifyOnEntry: true,
     notifyOnExit: false,
     notifyOnDwell: true,
-    loiteringDelay: 30000   // <-- 30 seconds
+    loiteringDelay: 30000,   // 30 seconds
+    extras: {                // Optional arbitrary meta-data
+        zone_id: 1234
+    }
 }], function() {
     console.log("Successfully added geofence");
 }, function(error) {

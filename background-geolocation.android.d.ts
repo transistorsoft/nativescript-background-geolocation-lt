@@ -11,6 +11,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private static timer;
     static onActivityDestroyed(args: any): void;
     static on(event: any, success?: Function, failure?: Function): void;
+    static removeListeners(): void;
     /**
     * Configuration Methods
     */

@@ -68,6 +68,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.getAdapter().on(event, cb);
   }
 
+  public static removeListeners() {
+    this.getAdapter().removeListeners();
+  }
+
   /**
   * Configuration Methods
   */

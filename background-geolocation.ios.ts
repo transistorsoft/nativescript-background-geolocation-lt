@@ -48,6 +48,13 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
+  public static removeListeners() {
+    var key;
+    for (key in this.listeners) {
+      this.listeners[key] = [];
+    }
+  }
+
   public static configure(config:Object, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
