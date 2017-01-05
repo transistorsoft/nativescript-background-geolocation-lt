@@ -1,6 +1,7 @@
 # Change Log
 
 ## [Unreleased]
+- [Added] `removeListeners` method for removing all event-listeners.
 - [Added] Ability to provide optional arbitrary meta-data `extras` on geofences.
 - [Changed] Location parameters `heading`, `accuracy`, `odometer`, `speed`, `altitude`, `altitudeAccuracy` are now fixed at 2 decimal places.
 - [Fixed] Bug reported with `EventBus already registered` error.  Found a few cases where `EventBus.isRegistered` was not being used.

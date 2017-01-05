@@ -120,6 +120,7 @@ bgGeo.on('location', function(location) {
 | Method Name | Arguments | Notes
 |---|---|---|
 | [`configure`](#configureconfig-success-failure) | `{config}`, `successFn`, `failureFn` | Configures the plugin's parameters (@see following Config section for accepted config params. The `success` callback will be executed after the plugin has successfully configured and provided with the current `state` object. |
+| [`removeListeners`](#removelisteners-successfn-failurefn) | `none` | Remove all events-listeners registered with `#on` method |
 | [`setConfig`](#setconfigconfig-successfn-failurefn) | `{config}`, `successFn`, `failureFn` | Re-configure the plugin with new values |
 | [`start`](#startsuccessfn-failurefn) | `callbackFn`| Enable location tracking.  Supplied `callbackFn` will be executed when tracking is successfully engaged.  This is the plugin's power **ON** button.  The plugin will initially start into its **stationary** state, fetching an initial location before turning off location services.  Android will be monitoring its **Activity Recognition System** while iOS will create a stationary geofence around the current location. |
 | [`stop`](#stopsuccessfn-failurefn) | `callbackFn` | Disable location tracking.  Supplied `callbackFn` will be executed when tracking is successfully halted.  This is the plugin's power **OFF** button. |
@@ -817,6 +818,26 @@ bgGeo.configure({
 }, function(error) {
     console.warn("Background Geolocation failed to configure");
 })
+```
+
+####`removeListeners(successFn, failureFn)`
+
+Remove all event-listeners registered with `#on` method.  You're free to add more listeners again after executing `#removeListeners`.
+
+```Javascript
+bgGeo.on('location', function(location, taskId) {
+  console.log('- Location', location);
+  bgGeo.finish(taskId);
+})
+.
+.
+.
+bgGeo.removeListeners();
+
+bgGeo.on('location', function(location, taskId) {
+  console.log('- Location listener added again: ', location);
+  bgGeo.finish(taskId);
+});
 ```
 
 ####`setConfig(config, successFn, failureFn)`
