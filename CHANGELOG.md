@@ -1,6 +1,7 @@
 # Change Log
 
-## [Unreleased]
+## [1.4.0]
+- [Fixed] Locale issue when rounding location float attributes (eg: `speed`, `heading`, `odometer`)
 - [Added] `removeListeners` method for removing all event-listeners.
 - [Added] Ability to provide optional arbitrary meta-data `extras` on geofences.
 - [Changed] Location parameters `heading`, `accuracy`, `odometer`, `speed`, `altitude`, `altitudeAccuracy` are now fixed at 2 decimal places.
