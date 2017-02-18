@@ -1,5 +1,28 @@
 # Change Log
 
+## [1.5.0] - 2017-03-01
+- [Changed] Refactor iOS / Android Settings management
+- [Fixed] Android sqlite migration issue; when upgrading from very old version -> latest, the "geofences" table migration could be skipped.
+- [Fixed] `#emailLog` now works.
+- [Added] HTTP JSON template features.  See [HTTP Features](./docs/http.md).  You can now template your entire JSON request data sent to the server by the plugin's HTTP layer.
+- [Changed] **ANDROID BREAKING** `license` is no longer provided to `#configure` -- You will now add it to your `app/App_Resources/Android/AndroidManifest.xml` (see [README](README.md) for details):
+
+```diff
+<manifest>
+  <application>
++    <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="YOUR LICENSE KEY" />
+  </application>
+</manifest>
+```
+
+- [Fixed] Migrate Android `providerchange` mechanism out of the `Service` (which only runs when the plugin is `#start`ed) to a place where it will be monitored all the time, regardless if the plugin is enabled or not.
+- [Fixed] Catch `IllegalStateException` reported when using `#getLog`
+- [Changed] With new Android "Doze-mode", override "idle" on `stopTimeout` and `schedule` alarms
+- [Changed] Tweak iOS accelerometer-only motion-detection system.
+- [Fixed] Location-authorization alert being popped up after a `suspend` event because the plugin always attempts to ensure it has a stationary-region here.  Simply check current authorization-status is not == `Denied`.
+- [Fixed] iOS Location Authorization alert is shown multiple time.  Also discovered a bug where the `providerchange` `enabled` value was calculated based upon hard-coded `Always` where it should have compared to the configured `locationAuthorizationRequest`.
+- [Added] If plugin's `#stop` method is called, the Location Authorization Alert will be hidden (if currently visible).
+
 ## [1.4.0]
 - [Fixed] Locale issue when rounding location float attributes (eg: `speed`, `heading`, `odometer`)
 - [Added] `removeListeners` method for removing all event-listeners.

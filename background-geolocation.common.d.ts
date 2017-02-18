@@ -21,6 +21,11 @@ export declare class AbstractBackgroundGeolocation {
     static DESIRED_ACCURACY_MEDIUM: number;
     static DESIRED_ACCURACY_LOW: number;
     static DESIRED_ACCURACY_VERY_LOW: number;
+    static AUTHORIZATION_STATUS_NOT_DETERMINED: number;
+    static AUTHORIZATION_STATUS_RESTRICTED: number;
+    static AUTHORIZATION_STATUS_DENIED: number;
+    static AUTHORIZATION_STATUS_ALWAYS: number;
+    static AUTHORIZATION_STATUS_WHEN_IN_USE: number;
     protected static currentPositionCallbacks: any[];
     protected static watchPositionCallbacks: any[];
     protected static syncCallback: any;

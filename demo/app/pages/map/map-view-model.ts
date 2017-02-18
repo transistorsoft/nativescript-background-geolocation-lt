@@ -13,6 +13,7 @@ SVG Icons for Map
 */
 
 import * as application from "application";
+
 import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 import observable = require("data/observable");
 import {SettingsViewModel} from "../settings/settings-view-model";
@@ -164,13 +165,14 @@ export class MapModel extends observable.Observable {
         // Reload cached positions from plugin
         var polyline = this._getPolyline();
         var me = this;
+        /*
         BackgroundGeolocation.getLocations(function(rs) {
           rs.forEach(function(location) {
             var marker = me._createLocationMarker(location);
             polyline.addPoint(marker.position);
           });
         });
-
+        */
         if (this.zoom < this._defaultZoom) {
           this.set('zoom', this._defaultZoom);
         }
@@ -299,7 +301,6 @@ export class MapModel extends observable.Observable {
     } else {
       // Fetch default config with overrides.
       config = SettingsViewModel.getDefaultConfig({
-        license: "5647026b5a15ced50fcd3adcb2b743ab32abf2374c40d0aff875e53b15f93b60",
         url: 'http://localhost:8080/locations',
         params: {
           device: {
@@ -314,6 +315,10 @@ export class MapModel extends observable.Observable {
       // Cache current settings
       Settings.setString('config', JSON.stringify(config));
     }
+    //config.httpRootProperty = 'data';
+    //config.locationTemplate = '{"lat":{{latitude}}, "lng":{{longitude}}, "event":"{{event}}"}';
+    config.logLevel = 5;
+    
     return config;
   }
 
@@ -506,6 +511,8 @@ export class MapModel extends observable.Observable {
   }
 
   public onProviderChange(provider:any) {
+    console.log('onProviderChange: ', JSON.stringify(provider, null, 2));
+
     this.providerDisabled = (provider.enabled) ? 'collapsed' : 'visible';
     this.providerWifi = (provider.enabled && provider.network) ? 'visible' : 'collapsed';
     this.providerGps = (provider.enabled && provider.gps) ? 'visible' : 'collapsed';

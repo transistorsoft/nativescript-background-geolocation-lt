@@ -36,5 +36,9 @@
 			</intent-filter>
 		</activity>
 		<activity android:name="com.tns.ErrorReportActivity"/>
+
+		<!-- Background Geolocation License -->
+		<meta-data android:name="com.transistorsoft.locationmanager.license" android:value="5647026b5a15ced50fcd3adcb2b743ab32abf2374c40d0aff875e53b15f93b60" />
+
 	</application>
 </manifest>

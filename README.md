@@ -9,6 +9,23 @@ This repo hosts the **iOS** platform available in the **[Premium Version](http:/
 ![Home](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/screenshot-iphone5-geofences-framed-README.png)
 ![Settings](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/screenshot-iphone5-settings-framed-README.png)
 
+## [:books: API Documentation](./docs/README.md)
+- :wrench: [Configuration Options](./docs/README.md#wrench-configuration-options)
+  + [Geolocation Options](./docs/README.md#wrench-geolocation-options)
+  + [Activity Recognition Options](./docs/README.md#wrench-activity-recognition-options)
+  + [HTTP & Persistence Options](./docs/README.md#wrench-http--persistence-options)
+  + [Geofencing Options](./docs/README.md#wrench-geofencing-options)
+  + [Application Options](./docs/README.md#wrench-application-options)
+- :zap: [Events](./docs/README.md#zap-events)
+- :small_blue_diamond: [Methods](./docs/README.md#large_blue_diamond-methods)
+- :blue_book: Guides
+  + [Philosophy of Operation](../../wiki/Philosophy-of-Operation)
+  + [Geofencing](./docs/geofencing.md)
+  + [HTTP Features](./docs/http.md)
+  + [Location Data Schema](../../wiki/Location-Data-Schema)
+  + [Debugging](../../wiki/Debugging)
+
+
 ## Installing the plugin ##
 
 #### From npm 
@@ -84,6 +101,20 @@ This is because your app hasn't loaded the ios platform-declarations.  You can e
 }
 ```
 
+## Android Setup (Premium Users)
+
+A [License](http://www.transistorsoft.com/shop/products/nativescript-background-geolocation)) is required to unlock Android.
+
+Edit the file **`app/App_Resources/Android/App_Resources/AndroidManifest.xml`**.  Copy the following `<meta-data />` tag containing your **YOUR LICENSE KEY** within the `<application>` element:
+
+```diff
+<manifest>
+  <application>
++    <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="YOUR LICENSE KEY" />
+  </application>
+</manifest>
+```
+
 ## Demo app
 
 The plugin hosts its own demo app in the `/demo` folder.  Install it like this:
@@ -110,6 +141,7 @@ import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
 
 ## Documentation
 - [API Documentation](docs)
+- [HTTP Features](docs/http.md)
 - [Advanced Geofencing](docs/geofencing.md)
 - [Location Data Schema](../../wiki/Location-Data-Schema)
 - [Error Codes](../../wiki/Location-Error-Codes)
