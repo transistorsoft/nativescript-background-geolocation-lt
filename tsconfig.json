@@ -17,7 +17,8 @@
         "node_modules/tns-platform-declarations/android/org.nativescript.widgets.d.ts",
         "background-geolocation.common.ts",
         "background-geolocation.ios.ts",
-        "background-geolocation.android.ts"
+        "background-geolocation.android.ts",
+        "references.d.ts"
     ],
     "exclude": [
         "node_modules",

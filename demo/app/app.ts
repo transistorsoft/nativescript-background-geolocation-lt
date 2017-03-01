@@ -19,6 +19,10 @@ if (application.ios) {
 		public static ObjCProtocols = [UIApplicationDelegate];
 
 	  public applicationPerformFetchWithCompletionHandler(application: UIApplication, completionHandler:any) {
+
+	  	var controller = application.keyWindow.rootViewController;
+	  	console.log('********** controller: ', controller);
+	  	
 	    console.log('- AppDelegate Rx Fetch event');
 	    BackgroundFetch.performFetchWithCompletionHandler(completionHandler);
 	  }

@@ -2,12 +2,16 @@
 
 import {AbstractBackgroundGeolocation} from './background-geolocation.common';
 
+import * as utils from "utils/utils";
+
 declare var TSLocationManager: any;
 declare var NSString: any;
 declare var NSDictionary: any;
 declare var NSArray: any;
 declare var NSUTF8StringEncoding: any;
 declare var CLCircularRegion: any;
+declare var UIApplication: any;
+declare var CLAuthorizationStatus: any;
 
 let TS_LOCATION_TYPE_MOTIONCHANGE   = 0;
 let TS_LOCATION_TYPE_CURRENT        = 1;
@@ -195,8 +199,10 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   public static getLocations(success:Function, failure?:Function) {
     failure = failure || emptyFn;
-    var rs = this.getLocationManager().getLocations();
+
+    var rs = this.getJsArrayFromNSArray(this.getLocationManager().getLocations());
     success(rs);
+    //success(this.getJsArrayFromNSArray(this.getLocationManager().getLocations()));
   }
 
   public static getCount(success: Function) {
@@ -426,12 +432,33 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  private static onProviderChange(status:any) {
-    var enabled = (status == 3);
+  private static onProviderChange(status:CLAuthorizationStatus) {
+
+    var state = this.getLocationManager().getState();
+    var authorizationRequest = state.objectForKey("locationAuthorizationRequest");
+
+    console.log('********* authRequest: ', authorizationRequest,  (authorizationRequest == "Always"));
+
+    var enabled = false;
+    switch (status) {
+        case CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedAlways:
+            enabled = (authorizationRequest == "Always");
+            break;
+        case CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse:
+            enabled = (authorizationRequest == "WhenInUse");
+            break;
+        case CLAuthorizationStatus.kCLAuthorizationStatusDenied:
+        case CLAuthorizationStatus.kCLAuthorizationStatusRestricted:
+        case CLAuthorizationStatus.kCLAuthorizationStatusNotDetermined:
+            enabled = false;
+            break;
+    }
+
     var result = {
       enabled: enabled,
       gps: enabled,
-      network: enabled
+      network: enabled,
+      status: status
     };
     var callbacks   = this.listeners.providerchange;
     for (var n=0,len=callbacks.length;n<len;n++) {
@@ -451,6 +478,8 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
   private static getLocationManager() {
     if (!this.locationManager) {
+      let app = utils.ios.getter(UIApplication, UIApplication.sharedApplication);
+
       this.locationManager = TSLocationManager.sharedInstance();
 
       this.locationManager.locationChangedBlock   = this.onLocation.bind(this);
@@ -463,6 +492,8 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       this.locationManager.heartbeatBlock         = this.onHeartbeat.bind(this);
       this.locationManager.syncCompleteBlock      = this.onSyncComplete.bind(this);
       this.locationManager.scheduleBlock          = this.onSchedule.bind(this);
+      this.locationManager.viewController         = app.keyWindow.rootViewController;
+
     }
     return this.locationManager;
   }
