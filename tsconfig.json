@@ -5,6 +5,9 @@
         "sourceMap": true,
         "noImplicitAny": false,
         "noLib": false,
+        "lib": [
+            "es2016"
+        ],
         "declaration": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
