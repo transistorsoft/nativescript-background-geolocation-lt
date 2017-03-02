@@ -9,5 +9,3 @@ demo/node_modules
 demo/lib
 node_modules
 .DS_Store
-*.d.ts
-!background-geolocation.d.ts
