@@ -41,7 +41,7 @@
   "homepage": "http://shop.transistorsoft.com/pages/nativescript-background-geolocation",
   "devDependencies": {
     "tns-platform-declarations": "^2.4.2",
-    "tns-core-modules": "^2.5.1",
+    "tns-core-modules": "^2.5.2",
     "typescript": "^2.0.3"
   },
   "dependencies": {
