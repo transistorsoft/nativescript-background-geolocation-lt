@@ -14,17 +14,14 @@
     },
     "tns-android": {
       "version": "2.5.0"
-    },
-    "tns-ios": {
-      "version": "2.5.0"
     }
   },
   "dependencies": {
-    "nativescript-background-geolocation-lt": "../",
     "nativescript-background-fetch": "^1.0.2",
+    "nativescript-background-geolocation-lt": "file:///Users/chris/Documents/workspace/NativeScript/background-geolocation/nativescript-background-geolocation-lt",
     "nativescript-fonticon": "^1.1.0",
     "nativescript-google-maps-sdk": "^1.3.13",
-    "tns-core-modules": "2.5.1",
+    "tns-core-modules": "2.5.2",
     "zone.js": "^0.6.12"
   },
   "devDependencies": {

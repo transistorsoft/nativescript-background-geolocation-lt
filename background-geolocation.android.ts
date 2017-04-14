@@ -477,7 +477,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   private static onGooglePlayServicesConnectError(errorCode:number) {
-    com.google.android.gms.common.GoogleApiAvailability.GoogleApiAvailability.getInstance().getErrorDialog(app.android.foregroundActivity, errorCode, 1001).show();
+    com.google.android.gms.common.GoogleApiAvailability.getInstance().getErrorDialog(app.android.foregroundActivity, errorCode, 1001).show();
   }
 
   private static hasPermission() {
