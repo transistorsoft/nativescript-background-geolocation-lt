@@ -53,6 +53,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     * Logging & Debug methods
     */
     static getLog(success: Function, failure?: Function): void;
+    static emailLog(email: string, success?: Function, failure?: Function): void;
     static destroyLog(success?: Function, failure?: Function): void;
     static startBackgroundTask(success: Function): void;
     static finish(taskId: number): void;

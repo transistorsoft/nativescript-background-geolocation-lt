@@ -404,6 +404,20 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.getAdapter().getLog(callback);
   }
 
+  public static emailLog(email:string, success?:Function, failure?:Function) {
+    success = success || emptyFn;
+    failure = failure || emptyFn;
+    var callback = new Callback({
+      success: function(result:string) {
+        success(result)
+      },
+      error: function(error:string) {
+        failure(error);
+      }
+    });
+    console.warn('BackgroundGeolocation#emailLog -- NOT IMPLEMENTED');
+  }
+
   public static destroyLog(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
