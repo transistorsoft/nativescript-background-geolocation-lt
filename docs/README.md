@@ -128,6 +128,7 @@ BackgroundGeolocation.setConfig({
 | [`maxBatchSize`](#config-integer-maxbatchsize-undefined) | `Integer` | `-1` | If you've enabled HTTP feature by configuring an [`#url`](config-string-url-undefined) and [`batchSync: true`](#config-string-batchsync-false), this parameter will limit the number of records attached to each batch.|
 | [`maxDaysToPersist`](#config-integer-maxdaystopersist-1) | `Integer` |  `1` |  Maximum number of days to store a geolocation in plugin's SQLite database.|
 | [`maxRecordsToPersist`](#config-integer-maxrecordstopersist--1) | `Integer` |  `-1` |  Maximum number of records to persist in plugin's SQLite database.  Defaults to `-1` (no limit).  To disable persisting locations, set this to `0`|
+| [`locationsOrderDirection`](#config-string-locationsorderdirection-asc) | `String` |  `ASC` |  Controls the order that locations are selected from the database (and synced to your server).  Defaults to ascending (`ASC`), where oldest locations are synced first.|
 
 
 ## :wrench: Application Options
@@ -892,15 +893,14 @@ Maximum number of days to store a geolocation in plugin's SQLite database when y
 
 #### `@config {Integer} maxRecordsToPersist [-1]`
 
-Maximum number of records to persist in plugin's SQLite database.  Default `-1` means **no limit**.
+Maximum number of records to persist in plugin's SQLite database.  Default `-1`
+ means **no limit**.
 
 ------------------------------------------------------------------------------
 
-#### `@config {Integer} logMaxDays [3]`
+#### `@config {String} locationsOrderDirection [ASC]`
 
-Maximum number of days to persist a log-entry in database.  Defaults to **`3`** days.
-
-------------------------------------------------------------------------------
+Controls the order that locations are selected from the database (and synced to your server).  Defaults to ascending (`ASC`), where oldest locations are synced first.|
 
 
 # :wrench: Application Options
@@ -995,16 +995,16 @@ BackgroundGeolocation.configure({
 BackgroundGeolocation.on('schedule', function(state) {
   console.log('- Schedule event, enabled:', state.enabled);
 
-  if (state.enabled) {
-    // tracking started!
-  } else {
-    // tracking stopped
+  if (!state.schedulerEnabled) {
+    BackgroundGeolocation.startSchedule();
   }
 });
 
 // Later when you want to stop the Scheduler (eg: user logout)
 BackgroundGeolocation.stopSchedule(function() {
   console.info('- Scheduler stopped');
+  // You must explicitly stop tracking if currently enabled
+  BackgroundGeolocation.stop();
 });
 
 // Or modify the schedule with usual #setConfig method
@@ -1190,6 +1190,12 @@ BackgroundGeolocation.configure({
 
 ------------------------------------------------------------------------------
 
+
+#### `@config {Integer} logMaxDays [3]`
+
+Maximum number of days to persist a log-entry in database.  Defaults to **`3`** days.
+
+------------------------------------------------------------------------------
 
 # :zap: Events
 
@@ -1582,7 +1588,16 @@ Disable location tracking.  Supplied **`successFn`** will be executed when track
 BackgroundGeolocation.stop();
 ```
 
-:warning: If you've configured a [`schedule`](config-array-schedule-undefined), **`#stop`** will halt the Scheduler as well.
+:warning: If you've configured a [`schedule`](config-array-schedule-undefined), **`#stop`** will **not** halt the Scheduler.  You must explicitly stop the Scheduler as well:
+
+```javascript
+// Later when you want to stop the Scheduler (eg: user logout)
+BackgroundGeolocation.stopSchedule(function() {
+  console.info('- Scheduler stopped');
+  // You must explicitly stop tracking if currently enabled
+  BackgroundGeolocation.stop();
+});
+```
 
 ------------------------------------------------------------------------------
 
@@ -1852,6 +1867,16 @@ BackgroundGeolocation.stopSchedule(function() {
 });
 ```
 
+:warning: **`#stopSchedule`** will not execute **`#stop`** if the plugin is currently tracking.  You must explicitly execute `#stop`.
+
+```javascript
+// Later when you want to stop the Scheduler (eg: user logout)
+BackgroundGeolocation.stopSchedule(function() {
+  // You must explicitly stop tracking if currently enabled
+  BackgroundGeolocation.stop();
+});
+```
+
 ------------------------------------------------------------------------------
 
 
@@ -2111,9 +2136,9 @@ Adds a geofence to be monitored by the native plugin.  If a geofence *already ex
 
 ##### `@config {Boolean} notifyOnEntry` Whether to listen to ENTER events
 
-##### `@config {Boolean} notifyOnDwell` (**Android only**) Whether to listen to DWELL events
+##### `@config {Boolean} notifyOnDwell` Whether to listen to DWELL events
 
-##### `@config {Integer milliseconds} loiteringDelay` (**Android only**) When `notifyOnDwell` is `true`, the delay before DWELL event is fired after entering a geofence (@see [Creating and Monitoring Geofences](https://developer.android.com/training/location/geofencing.html))
+##### `@config {Integer milliseconds} loiteringDelay` When `notifyOnDwell` is `true`, the delay before DWELL event is fired after entering a geofence (@see [Creating and Monitoring Geofences](https://developer.android.com/training/location/geofencing.html))
 
 ##### `@config {Object} extras` Optional arbitrary meta-data.
 

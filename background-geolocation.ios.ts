@@ -27,8 +27,6 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   * Configuration Methods
   */
   public static on(event:any, success?:Function, failure?:Function) {
-    console.log('#on ', event, typeof(event));
-
     // Handle {Object} form #on({foo: fooHandler, bar: barHandler});
     if (typeof(event) === 'object') {
       var listener, key;
@@ -248,8 +246,6 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
 
-    console.log('------- addGeofence: ', JSON.stringify(params, null, 2));
-
     if (!params.identifier) {
       throw "#addGeofence requires an 'identifier'";
     }
@@ -433,12 +429,8 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   private static onProviderChange(status:CLAuthorizationStatus) {
-
     var state = this.getLocationManager().getState();
     var authorizationRequest = state.objectForKey("locationAuthorizationRequest");
-
-    console.log('********* authRequest: ', authorizationRequest,  (authorizationRequest == "Always"));
-
     var enabled = false;
     switch (status) {
         case CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedAlways:

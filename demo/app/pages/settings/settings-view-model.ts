@@ -13,7 +13,7 @@ const CITY_DRIVE_DATA = [{"lat":"37.33527476","lng":"-122.03254703"},{"lat":"37.
 
 const SETTINGS = {
   COMMON: [
-    {name: 'url', group: 'http', inputType: 'text', dataType: 'string', values: [], defaultValue: ''},
+    {name: 'url', group: 'http', inputType: 'text', dataType: 'string', values: [], defaultValue: 'http://your.server.com'},
     {name: 'method', group: 'http', inputType: 'select', dataType: 'string', values: ['POST', 'PUT'], defaultValue: 'POST'},
     {name: 'autoSync', group: 'http', dataType: 'boolean', inputType: 'select', values: [true, false], defaultValue: true},
     {name: 'autoSyncThreshold', group: 'http', dataType: 'integer', inputType: 'select', values: [0, 5, 10, 25, 50, 100], defaultValue: 0},

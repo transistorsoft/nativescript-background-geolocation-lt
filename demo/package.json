@@ -20,11 +20,10 @@
     }
   },
   "dependencies": {
-    "nativescript-background-fetch": "^1.0.2",
+    "nativescript-background-fetch": "^1.0.4",
     "nativescript-background-geolocation-lt": "../",
     "nativescript-fonticon": "^1.1.0",
     "nativescript-google-maps-sdk": "^1.4.3",
-    "tns-core-modules": "2.5.2",
     "nativescript-toast": "^1.4.5",
     "tns-core-modules": "2.5.2",
     "zone.js": "^0.6.12"

@@ -1,4 +1,19 @@
 # Change Log
+## [1.6.0] - 2017-04-25
+- [Changed] iOS minimum version is now `8.4`.  Plugin will log an error when used on versions of iOS that don't implement the method `CLLocationManager#requestLocation`
+- [Fixed] iOS bug executing `#setConfig` multiple times too quickly can crash the plugin when multiple threads attempt to modify an `NSMutableDictionary`
+- [Fixed] Android was rounding `battery_level` to 1 decimal place.
+- [Fixed] iOS geofences-only mode was not using significant-location-change events to evaluate geofences within proximity.
+- [Changed] iOS now uses `CLLocationManager requestLocation` to request the `motionchange` position, rather than counting samples.  This is a more robust way to get a single location
+- [Fixed] iOS crash when providing `null` values in `Object` config options (ie: `#extras`, `#params`, `#headers`, etc)
+- [Added] New config option `locationsOrderDirection [ASC|DESC]` for controlling the order that locations are selected from the database (and synced to your server).  Defaults to `ASC`.
+- [Added] Support for iOS geofence `DWELL` transitions.
+- [Changed] Updated **proguard config** to ignore `com.transistorsoft.**` -- `tslocationmanager.aar` is *already* pro-guarded.
+- [Fixed] iOS bug when composing geofence data for peristence.  Sometimes it appended a `location.geofence.location` due to a shared `NSDictionary`
+- [Fixed] Android issue with applying default settings the first time an app boots.  If you execute `#getState` before `#configure` is called, `#getState` would return an empty `{}`.
+- [Changed] The licensing model of Android now enforces license only for **release** builds.  If an invalid license is configured while runningin **debug** mode, a Toast warning will appear **"BackgroundGeolocation is running in evaluation mode."**, but the plugin *will* work.
+- [Fixed] iOS bug with HTTP `401` handling.
+- [Added] The Android plugin now broadcasts all its events using the Android `BroadcastReceiver` mechanism.  You're free to implement your own native Android handler to receive and react to these events as you wish.
 
 ## [1.5.0] - 2017-03-01
 - [Changed] Refactor iOS / Android Settings management

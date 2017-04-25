@@ -56,7 +56,11 @@ export function onDone(args: EventData) {
 		loiteringDelay: model.loiteringDelay,
 		radius: model.radius,
 		latitude: position.latitude,
-		longitude: position.longitude
+		longitude: position.longitude,
+    extras: {
+      radius: model.radius,
+      center: {latitude: model.latitude, longitude: model.longitude}
+    },
 	}, function() {
 		page.closeModal(model);
 	});
