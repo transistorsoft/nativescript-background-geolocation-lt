@@ -18,7 +18,14 @@
 }
 
 Button {
-    horizontal-align: center;    
+    horizontal-align: center;
+    padding: 10px;
+}
+Button.btn-full {
+  width: 100%;
+}
+Button.btn-round {
+  border-radius: 5px;
 }
 .toolbar {
     background-color: #fff;
@@ -33,7 +40,7 @@ Button {
 }
 Label.hr {
     background-color: #eee;
-    height: 1;
+    height: 1px;
 }
 
 .btn-blue {

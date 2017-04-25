@@ -16,7 +16,6 @@
     "demo.android": "npm run preparedemo && cd demo && tns run android",
     "preparedemo": "npm run build && cd demo && tns plugin remove nativescript-background-geolocation-lt && tns plugin add .. && tns install",
     "setup": "cd demo && npm install && cd .. && npm run build && cd demo && tns plugin add .. && cd ..",
-    "uninstall": "rm -r ../../lib/iOS/TSLocationManager.framework",
     "fix-xcode": "xcproj --project 'demo/platforms/ios/demo.xcodeproj' touch && xcproj --project 'demo/platforms/ios/Pods/Pods.xcodeproj' touch"
   },
   "repository": {

@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage = "https://github.com/transistorsoft/nativescript-background-geolocation-lt"
   s.platform = :ios, "8.0"
   s.libraries = 'sqlite3'
-  s.vendored_frameworks = "platforms/ios/TSLocationManager.framework"
+  #s.vendored_frameworks = "TSLocationManager.framework"
   s.license = {:type => "MIT"}
   s.source = { :path => "../../node_modules/nativescript-background-geolocation-lt/platforms/ios" }
   s.dependency "CocoaLumberjack", "~> 3.0.0"

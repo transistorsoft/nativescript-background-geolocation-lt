@@ -84,12 +84,12 @@ export class GeofenceViewModel extends observable.Observable {
   	}
   }
 
-  get loiteringDelay(): number {
+  get loiteringDelay(): any {
   	return this._loiteringDelay;
   }
-  set loiteringDelay(value:number) {
+  set loiteringDelay(value:any) {
   	if (value !== this._loiteringDelay) {
-  		this._loiteringDelay = value;
+  		this._loiteringDelay = parseInt(value, 10);
   	}
   }
 

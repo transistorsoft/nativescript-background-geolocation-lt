@@ -54,7 +54,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     */
     private static onLocation(location, type, isMoving);
     private static onMotionChange(location, isMoving);
-    private static onGeofence(identifier, action, location);
+    private static onGeofence(ev);
     private static onHttp(statusCode, requestData, responseData, error);
     private static onError(type, error);
     private static onHeartbeat(motionType, location);

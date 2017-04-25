@@ -15,7 +15,7 @@
 	 	</Repeater>
 
 	 	<StackLayout orientation="vertical" visibility="{{inputType === 'text' ? 'visible' : 'collapsed'}}">
-	 		<TextField text="{{value}}" />
+	 		<TextField text="{{value}}" style="padding: 15 10 15 10;" />
 	 		<Label text="" class="hr" />
 	 	</StackLayout>
 	 </StackLayout>

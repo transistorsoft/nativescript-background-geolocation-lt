@@ -21,25 +21,25 @@
 		<StackLayout visibility="{{action === 'new' ? 'visible' : 'collapsed'}}">
 			<StackLayout orientation="horizontal" class="form-item">
 				<Label text="Notify on ENTRY" />
-				<Switch checked="true" />
+				<Switch checked="{{notifyOnEntry}}" />
 			</StackLayout>
 			<Label text="" class="form-item-separator" />
 
 			<StackLayout orientation="horizontal" class="form-item">
 				<Label text="Notify on EXIT" />
-				<Switch checked="false" />
+				<Switch checked="{{notifyOnExit}}" />
 			</StackLayout>
 			<Label text="" class="form-item-separator" />
 
 			<StackLayout orientation="horizontal" class="form-item">
 				<Label text="Notify on DWELL" />
-				<Switch checked="false" />
+				<Switch checked="{{notifyOnDwell}}" />
 			</StackLayout>
 			<Label text="" class="form-item-separator" />
 
 			<StackLayout orientation="horizontal" class="form-item">
 				<Label text="Loitering delay (ms)" />
-				<TextField hint="Delay before DWELL" />
+				<TextField hint="Delay before DWELL" text="{{loiteringDelay}}"/>
 			</StackLayout>
 			<Label text="" class="form-item-separator" />
 		</StackLayout>

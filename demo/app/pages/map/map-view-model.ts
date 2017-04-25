@@ -165,20 +165,13 @@ export class MapModel extends observable.Observable {
         // Reload cached positions from plugin
         var polyline = this._getPolyline();
         var me = this;
-        /*
-        BackgroundGeolocation.getLocations(function(rs) {
-          rs.forEach(function(location) {
-            var marker = me._createLocationMarker(location);
-            polyline.addPoint(marker.position);
-          });
-        });
-        */
+
         if (this.zoom < this._defaultZoom) {
           this.set('zoom', this._defaultZoom);
         }
       } else {
         BackgroundGeolocation.stop(function(state) {
-          console.log('- Stop success');
+          console.log('- Stop success');          
         });
 
         // Remove Map markers & shapes
@@ -215,6 +208,10 @@ export class MapModel extends observable.Observable {
     this.providerWifi = 'visible';
     this.providerDisabled = 'collapsed';
     this.watchingPosition = false;
+
+    SettingsViewModel.on('resetodometer', (event) => {
+      this.odometer = (0).toFixed(1);
+    });
   }
 
   public onMapReady(args) {
@@ -235,15 +232,17 @@ export class MapModel extends observable.Observable {
     BackgroundGeolocation.on('schedule', this.onSchedule.bind(this));
     BackgroundGeolocation.on('geofenceschange', this.onGeofencesChange.bind(this));
 
-    BackgroundGeolocation.configure(this.getConfig(), function(state) {
-      if (state.schedule) {
-        BackgroundGeolocation.startSchedule();
-      }
-      this._state = state;
-      this._enabled = state.enabled;
-      this.notifyPropertyChange("isEnabled", state.enabled);
+    // Fetch config params fom SettingsViewModel
+    SettingsViewModel.getState((config) => {
+      this._state = config;
+      this._enabled = config.enabled;
+      this.notifyPropertyChange("isEnabled", config.enabled);
       this._isMoving  = this._state.isMoving;
-    }.bind(this));
+
+      BackgroundGeolocation.configure(config, (state) => {
+        console.log('BackgroundGeolocation configure success');
+      });
+    });
   }
 
   public onCoordinateTapped(args) {
@@ -294,37 +293,10 @@ export class MapModel extends observable.Observable {
     }.bind(this));
   }
 
-  private getConfig() {
-    var config = {};
-    if (Settings.hasKey('config')) {
-      config = JSON.parse(Settings.getString('config'));
-    } else {
-      // Fetch default config with overrides.
-      config = SettingsViewModel.getDefaultConfig({
-        url: 'http://localhost:8080/locations',
-        params: {
-          device: {
-            platform: Platform.device.os,
-            manufacturer: Platform.device.manufacturer,
-            model: Platform.device.model,
-            version: Platform.device.osVersion,
-            uuid: Platform.device.uuid
-          }
-        }
-      });
-      // Cache current settings
-      Settings.setString('config', JSON.stringify(config));
-    }
-    //config.httpRootProperty = 'data';
-    //config.locationTemplate = '{"lat":{{latitude}}, "lng":{{longitude}}, "event":"{{event}}"}';
-    config.logLevel = 5;
-    
-    return config;
-  }
-
   public onClickSettings() {
     var topMost = frames.topmost();
 
+    SettingsViewModel.playSound('OPEN');
     var navigationEntry = {
       moduleName: "./pages/settings/settings-page",
       animated: true,
@@ -366,7 +338,7 @@ export class MapModel extends observable.Observable {
     var polyline = new mapsModule.Polyline();
     polyline.color = new Color(150, 38, 119, 255);
     polyline.geodesic = true;
-    polyline.width = (os.toUpperCase() == 'ANDROID') ? 17 : 5;
+    polyline.width = (os.toUpperCase() == 'ANDROID') ? 17 : 6;
     this._mapView.addPolyline(polyline);
     return polyline;
   }
@@ -417,7 +389,7 @@ export class MapModel extends observable.Observable {
     circle.radius = geofence.radius,
     circle.fillColor = new Color(70, 17,183,0);
     circle.strokeColor = new Color(200, 17,183,0);
-    circle.strokeWidth = 2;
+    circle.strokeWidth = 1;
     this._geofenceMarkers[geofence.identifier] = circle;
     this._mapView.addCircle(circle);
   }
@@ -450,7 +422,7 @@ export class MapModel extends observable.Observable {
     circle.fillColor = new Color(128, 255, 0, 0);
     circle.strokeColor = new Color('#aa0000');
     circle.strokeOpacity = 0.5;
-    circle.strokeWidth = 2;
+    circle.strokeWidth = 1;
     this._mapView.addCircle(circle);
     return circle;
   }
@@ -524,6 +496,8 @@ export class MapModel extends observable.Observable {
       circle.fillColor = new Color(100, 128,128,128);
       circle.strokeColor = new Color(200, 128,128,128);
     }
+    let location = geofence.location;
+    this.onLocation(location);
   }
 
   public onGeofencesChange(event:any) {

@@ -248,6 +248,8 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
 
+    console.log('------- addGeofence: ', JSON.stringify(params, null, 2));
+
     if (!params.identifier) {
       throw "#addGeofence requires an 'identifier'";
     }
@@ -257,11 +259,14 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     if (!params.radius) {
         throw "#addGeofence requires a #radius";
     }
-    if ( (typeof(params.notifyOnEntry) === 'undefined') && (typeof(params.notifyOnExit) === 'undefined') ) {
-        throw "#addGeofence requires at least notifyOnEntry {Boolean} and/or #notifyOnExit {Boolean}";
+    if ( (typeof(params.notifyOnDwell) === 'undefined') && (typeof(params.notifyOnEntry) === 'undefined') && (typeof(params.notifyOnExit) === 'undefined') ) {
+        throw "#addGeofence requires at least notifyOnDwell {Boolean} and/or notifyOnEntry {Boolean} and/or #notifyOnExit {Boolean}";
     }
     if (typeof(params.notifyOnEntry) === 'undefined') {
       params.notifyOnEntry = false;
+    }
+    if (typeof(params.notifyOnDwell) === 'undefined') {
+      params.notifyOnDwell = false;
     }
     if (typeof(params.notifyOnExit) === 'undefined') {
       params.notifyOnEntry = false;
@@ -352,16 +357,11 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  private static onGeofence(identifier:string, action: string, location:Object) {
-    var callbacks   = this.listeners.geofence;
-    var locationData = this.getJsObjectFromNSDictionary(location);
-    var params = {
-      identifier: identifier,
-      action: action,
-      location: locationData
-    };
+  private static onGeofence(ev:Object) {
+    let event         = this.getJsObjectFromNSDictionary(ev);
+    let callbacks     = this.listeners.geofence;
     for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n].success(params);
+      callbacks[n].success(event);
     }
   }
 

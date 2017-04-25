@@ -23,28 +23,11 @@ export function onShow(args: EventData) {
 
 // Seems this is only required for Android
 export function onClickBack(args: EventData) {
+  SettingsViewModel.playSound('CLOSE');
   frames.topmost().goBack();
 }
 
-export function onClickSync() {
-  BackgroundGeolocation.getCount(function(count) {
-    console.log('- Count: ', count);
-  });
-
-  BackgroundGeolocation.sync(function(rs) {
-    console.log('- Sync success: ', rs.length, ' records');
-  }, function(error) {
-    console.log('- Sync error: ', error);
-  });
-}
-
-export function onClickLogs(args: EventData) {
-  // TODO this is broken
-  console.log('NOT YET IMPLEMENTED');
-  //bgGeo.emailLog('foo@bar.com');
-}
-
-export function onRowClick(args: EventData) {
+export function onRowClick(args: any) {
 	var topMost = frames.topmost();
   var navigationEntry = {
     moduleName: "./pages/settings/settings-detail-page",

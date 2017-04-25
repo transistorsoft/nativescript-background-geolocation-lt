@@ -3,7 +3,6 @@ Page {
 }
 TextField {
   background-color: #fafafa;
-  padding: 15 10 15 10;
 }
 .settings .group {  
   padding: 20 10 10 10;
@@ -11,6 +10,11 @@ TextField {
 }
 .settings .group .ion {
   color: #06e;
+}
+.item {
+  padding: 5px;
+  background-color: #fff;
+  margin-bottom: 1px;
 }
 .settings .group .title {
   font-weight: bold;
