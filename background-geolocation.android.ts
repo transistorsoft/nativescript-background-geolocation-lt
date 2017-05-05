@@ -169,6 +169,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   public static getCurrentPosition(success: Function, failure?:Function, options?:Object) {
     failure = failure || emptyFn;
+    options = options || {};
     var callback = new Callback({
       success: function(location:org.json.JSONObject) {
         success(JSON.parse(location.toString()));
