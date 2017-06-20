@@ -408,15 +408,53 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public static emailLog(email:string, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
+
+    var adapter = this.getAdapter();
+
     var callback = new Callback({
-      success: function(result:string) {
-        success(result)
+      success: function(result:any) {
+        var log = new java.lang.String(result);
+        var state = adapter.getState();
+        var mailer = new android.content.Intent(android.content.Intent.ACTION_SEND);
+        mailer.setType("message/rfc822");
+        
+        var e = Array.create(java.lang.String, 1);
+        e[0] = email;
+        mailer.putExtra(android.content.Intent.EXTRA_EMAIL, e);
+        mailer.putExtra(android.content.Intent.EXTRA_SUBJECT, "BackgroundGeolocation log");    
+        mailer.putExtra(android.content.Intent.EXTRA_TEXT, state.toString(4));
+
+        try {
+          var file = new java.io.File(android.os.Environment.getExternalStorageDirectory(), "background-geolocation.log.gz");
+          var stream = new java.io.FileOutputStream(file);
+
+          // Compress log.
+          var os = new java.io.ByteArrayOutputStream(log.length());
+          var gos = new java.util.zip.GZIPOutputStream(os);
+
+          gos.write(log.getBytes());
+          gos.close();
+          var compressed = os.toByteArray();
+          os.close();
+
+          stream.write(compressed);
+          stream.close();
+          mailer.putExtra(android.content.Intent.EXTRA_STREAM, android.net.Uri.fromFile(file));
+          file.deleteOnExit();
+
+          app.android.foregroundActivity.startActivityForResult(android.content.Intent.createChooser(mailer, "Send log: " + email + "..."), 1);
+          success(true);
+        } catch(e) {
+          failure(e.message);
+        }
+        
       },
       error: function(error:string) {
         failure(error);
       }
     });
-    console.warn('BackgroundGeolocation#emailLog -- NOT IMPLEMENTED');
+
+    adapter.getLog(callback);
   }
 
   public static destroyLog(success?:Function, failure?:Function) {

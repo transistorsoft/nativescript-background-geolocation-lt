@@ -14,7 +14,7 @@ export class GeofenceViewModel extends observable.Observable {
     super();
     this._title = '';
     this._action = '';
-    this._radius = 100;
+    this._radius = 200;
     this._notifyOnEntry = true;
     this._notifyOnExit = false;
     this._notifyOnDwell = false;

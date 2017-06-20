@@ -48,7 +48,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     static playSound(soundId: number): void;
     static getLog(success: Function, failure?: Function): void;
     static destroyLog(success?: Function, failure?: Function): void;
-    static emailLog(email: string): void;
+    static emailLog(email: string, success?: Function, failure?: Function): void;
     /**
     * Private
     */

@@ -48,6 +48,7 @@ export function onDone(args: EventData) {
 		page.closeModal(false);
 		return;
 	}
+
 	BackgroundGeolocation.addGeofence({
 		identifier: model.identifier,
 		notifyOnEntry: model.notifyOnEntry,
@@ -59,7 +60,7 @@ export function onDone(args: EventData) {
 		longitude: position.longitude,
     extras: {
       radius: model.radius,
-      center: {latitude: model.latitude, longitude: model.longitude}
+      center: {latitude: position.latitude, longitude: position.longitude}
     },
 	}, function() {
 		page.closeModal(model);

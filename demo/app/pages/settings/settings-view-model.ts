@@ -113,6 +113,7 @@ export class SettingsViewModel extends Observable {
           device: {
             platform: Platform.device.os,
             manufacturer: Platform.device.manufacturer,
+            framework: 'NativeScript',
             model: Platform.device.model,
             version: Platform.device.osVersion,
             uuid: Platform.device.uuid
@@ -314,7 +315,11 @@ export class SettingsViewModel extends Observable {
       SettingsViewModel.notify('Enter an email address');
       return;
     }
-    BackgroundGeolocation.emailLog(this._email);
+    BackgroundGeolocation.emailLog(this._email, function(success) {
+      console.log('emailLog success: ', success);
+    }, function(error) {
+      console.warn('emailLog FAILURE: ', error);
+    });
   }
 
   public onClickRemoveGeofences(event) {

@@ -324,8 +324,11 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  public static emailLog(email:string) {
+  public static emailLog(email:string, success?:Function, failure?:Function) {
+    success = success || emptyFn;
+    failure = failure || emptyFn;
     this.getLocationManager().emailLog(email);
+    success(true);
   }
 
   /**
