@@ -1,54 +1,128 @@
-﻿@import url("~/css/platform.css");
+﻿/*
+In NativeScript, the app.css file is where you place CSS rules that
+you would like to apply to your entire application. Check out
+http://docs.nativescript.org/ui/styling for a full list of the CSS
+selectors and properties you can use to style UI components.
 
-/**
-* nativescript-fonticon
+/*
+In many cases you may want to use the NativeScript core theme instead
+of writing your own CSS rules. For a full list of class names in the theme
+refer to http://docs.nativescript.org/ui/theme. 
+The imported CSS rules must precede all other types of rules.
 */
+@import 'nativescript-theme-core/css/core.light.css';
+
+/*
+The following CSS rule changes the font size of all UI
+components that have the btn class name.
+*/
+.btn {
+    font-size: 18;
+    padding: 0;
+    margin: 5;    
+}
+
+.btn-danger {
+  background-color: #ff3824;
+  color: #fff;
+}
+.btn-primary {
+  background-color: #0076ff;
+}
+.btn-dark {
+  color: #000;
+  border-color: #000;
+}
 .ion {
   font-family: Ionicons, ionicons;
-  font-size:24;
-}
-.hidden {
-    display:none;
-}
-.title {
-    font-weight: bold;
-    horizontal-align: center;
-    padding: 0 5 0 5;
-    height: 24;
 }
 
-Button {
-    horizontal-align: center;
-    padding: 10px;
-}
-Button.btn-full {
-  width: 100%;
-}
-Button.btn-round {
-  border-radius: 5px;
-}
-.toolbar {
-    background-color: #fff;
-    height: 44;
-}
-.toolbar-top {
-    padding-right: 5;
-    vertical-align: middle;
-}
-.toolbar-bottom {
-    background-color: #fff;
-}
-Label.hr {
-    background-color: #eee;
-    height: 1px;
+label.location {
+  font-family: monospace;
+  font-size: 12;
 }
 
-.btn-blue {
-  background-color: #06e;
-  color: #fff;
+button.ion-play {
+    color: white;
+    background-color: green;
 }
-.btn-red {
-  background-color: #e03;
-  color: #fff;
+button.ion-pause {
+    color: white;
+    background-color: red;
+}
+button.icon-button {
+  background-color: transparent;
+  font-size: 28;
+  width: 30;
+  margin: 0;
+  padding: 0;
+  border-color: transparent;
+  border-width: 1;
 }
 
+.transistor-toolbar {
+  background-color: #fedd1e;
+  padding: 0;
+  height: 50;
+}
+.transistor-toolbar button {
+  
+}
+.transistor-toolbar switch {  
+  background-color: green;
+}
+.transistor-toolbar .title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 20;
+}
+.transistor-toolbar .fab-button {
+  padding-left: 5;
+  margin-left: 7;
+  background-color: #fedd1e;
+}
+
+.top-toolbar {
+  padding-left: 5;
+  padding-right: 5;
+}
+.bottom-toolbar {
+
+}
+.bottom-toolbar button {
+  width: 60;
+}
+.bottom-toolbar .status {
+  padding: 0;
+}
+.bottom-toolbar .status label {
+  font-size: 14;
+}
+.bottom-toolbar .status label.activity {
+  margin-right: 5;
+  text-align: right;
+}
+.bottom-toolbar .status label.odometer {
+  margin-right: 5;
+  text-align: left;
+}
+.fab-button {
+  height: 50;
+  width: 50;
+  background-color: #fedd1e;
+}
+.main-menu {
+  margin-left: 10;
+  margin-top: 10;
+  width: 52;
+  horizontal-align: left;
+  vertical-align: top;
+}
+.main-menu .fab-button {  
+  margin-top: 20;
+  horizontal-align: left;
+  margin-left:2;
+  margin-bottom:2;
+  height: 50;
+  width: 50;
+}

@@ -94,7 +94,7 @@ POST /my_url
 
 ### `locationTemplate` & `geofenceTemplate`
 
-If you wish to provide your own custom HTTP JSON schema, you can configure distinct templates for both `location` and `geofence` data.  Evaulate variables in your template using Ruby `erb`-style tags:
+If you wish to provide your own custom HTTP JSON schema, you can configure distinct templates for both `location` and `geofence` data.  Evaluate variables in your template using Ruby `erb`-style tags:
 
 ```erb
 <%= variable_name %>
@@ -147,7 +147,7 @@ The following template tags are common to both **`locationTemplate`** and **`geo
 | `altitude_accuracy` | `Float` | Meters|
 | `timestamp` | `String` |ISO-8601|
 | `uuid` | `String` |Unique ID|
-| `event` | `String` |`motionchange|geofenee|heartbeat`
+| `event` | `String` |`motionchange|geofence|heartbeat`
 | `odometer` | `Float` | Meters|
 | `activity.type` | `String` | `still|on_foot|running|on_bicycle|in_vehicle|unknown`|
 | `activity.confidence` | `Integer` | 0-100%|

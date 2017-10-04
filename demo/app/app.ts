@@ -1,9 +1,12 @@
-﻿import * as application from "application";
-import {BackgroundFetch} from "nativescript-background-fetch";
+﻿/*
+In NativeScript, the app.ts file is the entry point to your application.
+You can use this file to perform app-level initialization, but the primary
+purpose of the file is to pass control to the app’s first module.
+*/
 
-if(application.ios) {
-  GMSServices.provideAPIKey("AIzaSyAttgr9w-Wwu4TWkeMAPsYwaYvH2ibSPjQ");
-}
+import "./bundle-config";
+import * as app from 'application';
+import {BackgroundFetch} from "nativescript-background-fetch";
 
 // fonticon setup
 import {TNSFontIcon, fonticon} from 'nativescript-fonticon';
@@ -12,27 +15,27 @@ TNSFontIcon.paths = {
   'ion': 'css/ionicons.min.css'
 };
 TNSFontIcon.loadCss();
-application.resources['fonticon'] = fonticon;
 
-if (application.ios) {
-	class MyDelegate extends UIResponder implements UIApplicationDelegate {
-		public static ObjCProtocols = [UIApplicationDelegate];
+let resources = app.getResources();
+resources['fonticon'] = fonticon;
+app.setResources(resources);
 
-	  public applicationPerformFetchWithCompletionHandler(application: UIApplication, completionHandler:any) {
+if (app.ios) {
+  class MyDelegate extends UIResponder implements UIApplicationDelegate {
+    public static ObjCProtocols = [UIApplicationDelegate];
 
-	  	var controller = application.keyWindow.rootViewController;
-	  	console.log('********** controller: ', controller);
-	  	
-	    console.log('- AppDelegate Rx Fetch event');
-	    BackgroundFetch.performFetchWithCompletionHandler(completionHandler);
-	  }
-	}
-	application.ios.delegate = MyDelegate;
+    public applicationPerformFetchWithCompletionHandler(application: UIApplication, completionHandler:any) {
+      console.log('- AppDelegate Rx Fetch event');
+      BackgroundFetch.performFetchWithCompletionHandler(application, completionHandler);
+    }
+  }
+  app.ios.delegate = MyDelegate;
 }
 
-////
-// For debugging
-//application.start({ moduleName: "./pages/login/login" });
 
-application.start({ moduleName: "./pages/map/map-page" });
+app.start({ moduleName: 'main-page' });
 
+/*
+Do not place any code after the application has been started as it will not
+be executed on iOS.
+*/

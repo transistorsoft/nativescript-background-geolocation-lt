@@ -1,4 +1,4 @@
-import {AbstractBackgroundGeolocation} from './background-geolocation.common';
+import {AbstractBackgroundGeolocation, Logger} from './background-geolocation.common';
 
 var permissions = require("nativescript-permissions");
 
@@ -6,7 +6,28 @@ import app = require('application');
 
 declare var com: any;
 
-let Callback = com.transistorsoft.locationmanager.adapter.TSCallback;
+let TSCallback = com.transistorsoft.locationmanager.adapter.callback.TSCallback;
+let TSLocationCallback = com.transistorsoft.locationmanager.adapter.callback.TSLocationCallback;
+let TSLocation = com.transistorsoft.locationmanager.location.TSLocation;
+let TSPlayServicesConnectErrorCallback = com.transistorsoft.locationmanager.adapter.callback.TSPlayServicesConnectErrorCallback;
+let TSSyncCallback = com.transistorsoft.locationmanager.adapter.callback.TSSyncCallback;
+let TSGetLocationsCallback = com.transistorsoft.locationmanager.adapter.callback.TSGetLocationsCallback;
+let TSGetCountCallback = com.transistorsoft.locationmanager.adapter.callback.TSGetCountCallback;
+let TSInsertLocationCallback = com.transistorsoft.locationmanager.adapter.callback.TSInsertLocationCallback;
+let TSGetGeofencesCallback = com.transistorsoft.locationmanager.adapter.callback.TSGetGeofencesCallback;
+let TSGetLogCallback = com.transistorsoft.locationmanager.adapter.callback.TSGetLogCallback;
+let TSEmailLogCallback = com.transistorsoft.locationmanager.adapter.callback.TSEmailLogCallback;
+let TSActivityChangeCallback = com.transistorsoft.locationmanager.adapter.callback.TSActivityChangeCallback;
+let TSHttpResponseCallback = com.transistorsoft.locationmanager.adapter.callback.TSHttpResponseCallback;
+let TSGeofenceCallback = com.transistorsoft.locationmanager.adapter.callback.TSGeofenceCallback;
+let TSGeofencesChangeCallback = com.transistorsoft.locationmanager.adapter.callback.TSGeofencesChangeCallback;
+let TSHeartbeatCallback = com.transistorsoft.locationmanager.adapter.callback.TSHeartbeatCallback;
+let TSLocationProviderChangeCallback = com.transistorsoft.locationmanager.adapter.callback.TSLocationProviderChangeCallback;
+let TSScheduleCallback = com.transistorsoft.locationmanager.adapter.callback.TSScheduleCallback;
+let TSPowerSaveChangeCallback = com.transistorsoft.locationmanager.adapter.callback.TSPowerSaveChangeCallback;
+
+let TSSensors = com.transistorsoft.locationmanager.util.Sensors;
+
 let TAG = "TSLocationnManager";
 let REQUEST_ACTION_START = 1;
 let REQUEST_ACTION_GET_CURRENT_POSITION = 2;
@@ -19,25 +40,18 @@ app.android.on(app.AndroidApplication.activityDestroyedEvent, function(args) {
 });
 
 export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
-	private static mConfig: any;
-	private static requestAction: number;
-	private static isStarting = false;
-	private static startCallback = null;
-	private static backgroundServiceIntent: any;
-	private static isEnabled: boolean;
 	private static forceReload: boolean;
   private static intent: android.content.Intent;
-  private static timer: any;
 
   public static onActivityDestroyed(args) {
     this.getAdapter().onActivityDestroy();
     this.intent = null;
   }
 
-  public static on(event:any, success?:Function, failure?:Function) {
+  public static addListener(event:any, success?:Function, failure?:Function) {
     if (typeof(event) === 'object') {
       for (var key in event) {
-        this.on(key, event[key]);
+        this.addListener(key, event[key]);
       }
       return;
     }
@@ -47,67 +61,91 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     failure = failure || emptyFn;
     var cb;
     switch (event) {
+      case 'location':
+        cb = this.createLocationCallback(success, failure);
+        this.getAdapter().onLocation(cb);
+        break;
       case 'motionchange':
         cb = this.createMotionChangeCallback(success);
+        this.getAdapter().onMotionChange(cb);
         break;
       case 'activitychange':
         cb = this.createActivityChangeCallback(success);
+        this.getAdapter().onActivityChange(cb);
         break;
       case 'http':
         cb = this.createHttpCallback(success, failure);
+        this.getAdapter().onHttp(cb);
         break;
-      default:
-        cb = new Callback({
-          success: function(response) {
-            success(JSON.parse(response.toString()));
-          },
-          error: failure
-        });
+      case 'geofence':
+        cb = this.createGeofenceCallback(success);
+        this.getAdapter().onGeofence(cb);
         break;
+      case 'geofenceschange':
+        cb = this.createGeofencesChangeCallback(success);
+        this.getAdapter().onGeofencesChange(cb);
+        break;
+      case 'schedule':
+        cb = this.createScheduleCallback(success);
+        this.getAdapter().onSchedule(cb);
+        break;
+      case 'heartbeat':
+        cb = this.createHeartbeatCallback(success);
+        this.getAdapter().onHeartbeat(cb);
+        break;
+      case 'providerchange':
+        cb = this.createProviderChangeCallback(success);
+        this.getAdapter().onLocationProviderChange(cb);
+        break;
+      case 'powersavechange':
+        cb = this.createPowerSaveChangeCallback(success);
+        this.getAdapter().onPowerSaveChange(cb);
+        break;      
     }
-    this.getAdapter().on(event, cb);
+    if (cb) {
+      this.registerCallback(event, success, cb);
+    }
   }
 
-  public static removeListeners() {
-    this.getAdapter().removeListeners();
+  protected static removeNativeListener(event:string, callback:Function) {
+    this.getAdapter().removeListener(event, callback);
   }
-
+  
   /**
   * Configuration Methods
   */
   public static configure(config:Object, success?:Function, failure?:Function) {
-    var callback = new Callback({
-      success: function(state:org.json.JSONObject) {
-        success(JSON.parse(state.toString()));
-      }.bind(this),
-      error: function(error:android.os.Bundle) {
+    let adapter = this.getAdapter();
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success(JSON.parse(adapter.getState().toString()));
+      },
+      onError: (error:string) => {
         failure(error);
-      }.bind(this)
+      }
     });
 
-    this.getAdapter().configure(new org.json.JSONObject(JSON.stringify(config)), callback);
+    adapter.configure(new org.json.JSONObject(JSON.stringify(config)), callback);
 
   }
 
   public static setConfig(config:Object, success?:Function, failure?:Function) {
+    let adapter = this.getAdapter();
+    failure = failure || emptyFn;
     success = success || emptyFn;
-    var callback = new Callback({
-      success: function(state:org.json.JSONObject) {
-        success(JSON.parse(state.toString()));
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success(JSON.parse(adapter.getState().toString()));
       },
-      error: failure || emptyFn
+      onError: (error:string) => {
+        failure(error);
+      }
     });
-    this.getAdapter().setConfig(new org.json.JSONObject(JSON.stringify(config)), callback);
+    adapter.setConfig(new org.json.JSONObject(JSON.stringify(config)), callback);
   }
 
   public static getState(success:Function) {
-    var callback = new Callback({
-      success: function(state:org.json.JSONObject) {
-        success(JSON.parse(state.toString()));
-      },
-      error: emptyFn
-    });
-    this.getAdapter().getState(callback);
+    success(JSON.parse(this.getAdapter().getState().toString()));
   }
 
   /**
@@ -119,35 +157,40 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     if (this.hasPermission()) {
       this.setEnabled(true, success, failure);
     } else {
-      this.requestPermission(function() {
+      this.requestPermission(() => {
         this.setEnabled(true, success, failure);
-      }.bind(this), function() {
+      }, () => {
         console.log('- requestPermission failure');
-      }.bind(this));
+      });
     }
 	}
 
   public static stop(success?:Function, failure?:Function) {
     success = success || emptyFn;
-    this.getAdapter().stop(new Callback({
-      success: function(state: org.json.JSONObject) {
-        success(JSON.parse(state.toString()));
+    let adapter = this.getAdapter();
+    adapter.stop(new TSCallback({
+      onSuccess: function() {
+        success(JSON.parse(adapter.getState().toString()));
       },
-      error: failure || emptyFn
+      onFailure: (error:string) => {
+        failure(error);
+      }
     }));
   }
 
   public static changePace(value: boolean, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-
-    var cb = new Callback({
-      success: function(location:org.json.JSONObject) {
-        success(JSON.parse(location.toString()));
+    let adapter = this.getAdapter();
+    var cb = new TSCallback({
+      onSuccess: () => {
+        success();
       },
-      error: failure
+      onFailure: (error:string) => {
+        failure(error);
+      }
     });
-    this.getAdapter().changePace(value, cb);
+    adapter.changePace(value, cb);
   }
 
   public static startSchedule(success?:Function, failure?:Function) {
@@ -167,40 +210,67 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.getState(success);
   }
 
+  public static startGeofences(success?:Function, failure?:Function) {
+    success = success || emptyFn;
+    failure = failure || emptyFn;    
+    
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success();
+      },
+      onFailure: (error:string) => {
+        failure(error);
+      }
+    });
+
+    if (this.hasPermission()) {
+      this.getAdapter().startGeofences(callback);
+    } else {
+      this.requestPermission(() => {
+        this.getAdapter().startGeofences(callback);
+      }, () => {
+        failure('Permission denied');
+      });
+    }    
+  }
+
   public static getCurrentPosition(success: Function, failure?:Function, options?:Object) {
     failure = failure || emptyFn;
     options = options || {};
-    var callback = new Callback({
-      success: function(location:org.json.JSONObject) {
-        success(JSON.parse(location.toString()));
+    
+    let callback = new TSLocationCallback({
+      onLocation: (tsLocation:any) => {
+        success(JSON.parse(tsLocation.toJson().toString()));
       },
-      error: function(error:any) {
+      onError: (error:number) => {
         failure(error);
       }
     });
     this.getAdapter().getCurrentPosition(new org.json.JSONObject(JSON.stringify(options)), callback);
   }
+
   public static watchPosition(success:Function, failure?:Function, options?:Object) {
     failure = failure || emptyFn;
     options = options || {};
-    var callback = new Callback({
-      success: function(location:org.json.JSONObject) {
-        success(JSON.parse(location.toString()));
+    var callback = new TSLocationCallback({
+      onLocation: function(tsLocation:any) {
+        success(JSON.parse(tsLocation.toJson().toString()));
       },
-      error: function(error: any) {
+      onError: function(error: number) {
         failure(error);
       }
     });
     this.getAdapter().watchPosition(new org.json.JSONObject(JSON.stringify(options)), callback);
   }
+
   public static stopWatchPosition(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(result:string) {
-        success(result);
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success();
       },
-      error: function(error: any) {
+      onError: (error: string) => {
         failure(error);
       }
     });
@@ -211,14 +281,14 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success(this.getAdapter().getOdometer());
   }
 
-  public static setOdometer(value:any, success?:Function, failure?:Function) {
+  public static setOdometer(value:number, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(location:org.json.JSONObject) {
-        success(JSON.parse(location.toString()));
+    let callback = new TSLocationCallback({
+      onLocation: (tsLocation:any) => {
+        success(JSON.parse(tsLocation.toJson().toString()));
       },
-      error: function(error:any) {
+      onError: function(error:number) {
         failure(error);
       }
     });
@@ -243,11 +313,17 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public static sync(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(rs:org.json.JSONArray) {
-        success(JSON.parse(rs.toString()));
+    let callback = new TSSyncCallback({
+      onSuccess: function(records:any) {
+        let size = records.size();
+        let result = [];      
+        for (let i=0;i<size;i++) {
+          let record = records.get(i);
+          result.push(JSON.parse(record.json.toString()));
+        }
+        success(result);
       },
-      error: function(error:string) {
+      onFailure: function(error:string) {
         failure(error);
       }
     });
@@ -257,11 +333,17 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   public static getLocations(success:Function, failure?:Function) {
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(rs:org.json.JSONArray) {
-        success(JSON.parse(rs.toString()));
+    let callback = new TSGetLocationsCallback({
+      onSuccess: (records:any) => {
+        let size = records.size();
+        let result = [];      
+        for (let i=0;i<size;i++) {
+          let record = records.get(i);
+          result.push(JSON.parse(record.json.toString()));
+        }
+        success(result);
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
@@ -269,11 +351,13 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   public static getCount(success:Function) {
-    var callback = new Callback({
-      success: function(count:number) {
+    let callback = new TSGetCountCallback({
+      onSuccess: (count:number) => {
         success(count);
       },
-      error: function(error:string) {}
+      onFailure: (error:string) => {
+        console.warn('Failed to getCount: ', error);
+      }
     });
     this.getAdapter().getCount(callback);
   }
@@ -281,11 +365,11 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public static insertLocation(data:any, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(uuid:string) {
+    let callback = new TSInsertLocationCallback({
+      onSuccess: (uuid:string) => {
         success(uuid);
       },
-      error: function(error: string) {
+      onFailure: (error: string) => {
         failure(error);
       }
     });
@@ -294,19 +378,17 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
 
   // @deprecated
   public static clearDatabase(success?:Function, failure?:Function) {
-    success = success || emptyFn;
-    failure = failure || emptyFn;
     this.destroyLocations(success, failure);
   }
 
   public static destroyLocations(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(result:string) {
-        success(result);
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success();
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
@@ -320,11 +402,11 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
 
-    var callback = new Callback({
-      success: function(result:string) {
-        success(result);
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success();
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
@@ -335,25 +417,26 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     success = success || emptyFn;
     failure = failure || emptyFn;
 
-    var callback = new Callback({
-      success: function(result:string) {
-        success(result);
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success();
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
     this.getAdapter().removeGeofence(identifier, callback);
   }
 
-  public static addGeofences(geofences:Array<Object>, success?:Function, failure?:Function) {
+  public static addGeofences(geofences?:Array<Object>, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(result:string) {
-        success(result);
+    geofences = geofences || [];
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success();
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
@@ -361,28 +444,43 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   public static removeGeofences(geofences?:Array<string>, success?:Function, failure?:Function) {
+    // Handle case where no geofences are provided (ie: remove all geofences).
+    if (typeof(geofences) === 'function') {
+      failure = success;
+      success = geofences;
+      geofences = [];
+    }
+    geofences = geofences || [];
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(result:string) {
-        success(result);
+
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success();
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
-    geofences = geofences || [];
-    this.getAdapter().removeGeofences(new org.json.JSONArray(JSON.stringify(geofences)), callback);
+    let identifiers = new java.util.ArrayList();
+    geofences.forEach((identifier) => { identifiers.add(identifier); });
+    this.getAdapter().removeGeofences(identifiers, callback);
   }
 
   public static getGeofences(success:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(rs:org.json.JSONArray) {
-        success(JSON.parse(rs.toString()));
+    let callback = new TSGetGeofencesCallback({
+      onSuccess: (records:any) => {
+        let size = records.size();
+        let result = [];      
+        for (let i=0;i<size;i++) {
+          let geofence = records.get(i);
+          result.push(JSON.parse(geofence.toJson()));
+        }
+        success(result);
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
@@ -394,11 +492,11 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   */
   public static getLog(success: Function, failure?:Function) {
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(log:string) {
+    let callback = new TSGetLogCallback({
+      onSuccess: (log:string) => {
         success(log)
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
@@ -408,29 +506,47 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public static emailLog(email:string, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(result:string) {
-        success(result)
+    let callback = new TSEmailLogCallback({
+      onSuccess: () => {
+        success()
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
-    console.warn('BackgroundGeolocation#emailLog -- NOT IMPLEMENTED');
+    this.getAdapter().emailLog(email, app.android.foregroundActivity, callback);
   }
 
   public static destroyLog(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var callback = new Callback({
-      success: function(response:string) {
-        success(response);
+    let callback = new TSCallback({
+      onSuccess: () => {
+        success();
       },
-      error: function(error:string) {
+      onFailure: (error:string) => {
         failure(error);
       }
     });
     this.getAdapter().destroyLog(callback);
+  }
+
+  public static getSensors(success:Function, failure?:Function) {
+    failure = failure || emptyFn;
+    let sensors = TSSensors.getInstance(app.android.context);
+    let result = {
+      "platform": "android",
+      "accelerometer": sensors.hasAccelerometer(),
+      "magnetometer": sensors.hasMagnetometer(),
+      "gyroscope": sensors.hasGyroscope(),
+      "significant_motion": sensors.hasSignificantMotion()
+    };
+    success(result);
+  }
+
+  public static isPowerSaveMode(success: Function, failure?:Function) {
+    let isPowerSaveMode = this.getAdapter().isPowerSaveMode().booleanValue();
+    success(isPowerSaveMode);
   }
 
   public static startBackgroundTask(success:Function) {
@@ -452,46 +568,134 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   private static setEnabled(value: boolean, success:Function, failure:Function) {
     var adapter = this.getAdapter();
     if (value) {
-      var me = this;
-      var callback = new Callback({
-        success: success,
-        error: failure
+      let callback = new TSCallback({
+        onSuccess: () => {
+          success(JSON.parse(adapter.getState().toString()));
+        },
+        onFailure: (error:string) => {
+          failure(error);
+        }
       });
       adapter.start(callback);
     }
   }
 
-  private static createHttpCallback(success:Function, failure?:Function) {
+  private static createLocationCallback(success:Function, failure?:Function) {
     failure = failure || emptyFn;
-    return new Callback({
-      success: function(response) {
-        success(JSON.parse(response.toString()));
+    return new TSLocationCallback({
+      onLocation: (tsLocation:any) => {
+        success(JSON.parse(tsLocation.toJson().toString()));
       },
-      error: function(response) {
-        failure(JSON.parse(response.toString()));
+      onError: (error) => {
+        failure(error);
       }
     });
   }
+
   private static createMotionChangeCallback(callback:Function) {
-    return new Callback({
-      success: function(params: org.json.JSONObject) {
-        var location = params.getJSONObject("location");
-        var moving = params.getBoolean("isMoving");
-        callback(moving, JSON.parse(location.toString()));
+    return new TSLocationCallback({
+      onLocation: (tsLocation:any) => {
+        let isMoving = tsLocation.getIsMoving().booleanValue();
+        callback(isMoving, JSON.parse(tsLocation.toJson().toString()));
       },
-      error: function(error){}
-    });
-  }
-  private static createActivityChangeCallback(callback:Function) {
-    return new Callback({
-      success: function(activityName: string) {
-        callback(activityName);
-      },
-      error: function(error){}
+      onError: (error:number) => {
+
+      }
     });
   }
 
-  private static onGooglePlayServicesConnectError(errorCode:number) {
+  private static createHttpCallback(success:Function, failure?:Function) {
+    return new TSHttpResponseCallback({
+      onHttpResponse: function(response:any) {
+        let params = {
+          status: response.status,
+          responseText: response.responseText
+        };
+        if (response.isSuccess()) {
+          success(params);
+        } else {
+          failure(params);
+        }
+      }
+    });
+  } 
+
+  private static createActivityChangeCallback(callback:Function) {
+    return new TSActivityChangeCallback({
+      onActivityChange: (event:any) => {
+        callback(JSON.parse(event.toJson().toString()));
+      }
+    });
+  }
+
+  private static createGeofenceCallback(callback:Function) {
+    return new TSGeofenceCallback({
+      onGeofence: (event:any) => {
+        callback(JSON.parse(event.toJson().toString()));
+      }
+    });
+  }
+
+  private static createGeofencesChangeCallback(callback:Function) {
+    return new TSGeofencesChangeCallback({
+      onGeofencesChange: (event:any) => {
+        callback(JSON.parse(event.toJson().toString()));
+      }
+    });
+  }
+
+  private static createScheduleCallback(callback:Function) {
+    return new TSScheduleCallback({
+      onSchedule: (event:any) => {
+        callback(JSON.parse(event.toJson().toString()));
+      }
+    })
+  }
+
+  private static createProviderChangeCallback(callback:Function) {
+    return new TSLocationProviderChangeCallback({
+      onLocationProviderChange: (event:any) => {
+        callback(JSON.parse(event.toJson().toString()));
+      }
+    })
+  }
+
+  private static createHeartbeatCallback(callback:Function) {
+    return new TSHeartbeatCallback({
+      onHeartbeat: (event:any) => {
+        callback(JSON.parse(event.toJson().toString()));
+      }
+    })
+  }
+
+  private static createPowerSaveChangeCallback(callback:Function) {
+    return new TSPowerSaveChangeCallback({
+      onPowerSaveChange: (isPowerSaveMode) => {
+        callback(isPowerSaveMode.booleanValue());
+      }
+    });
+  }
+
+  private static init() {
+    this.intent = app.android.foregroundActivity.getIntent();
+
+    // Handle Google Play Services errors
+    this.getAdapter().onPlayServicesConnectError(new TSPlayServicesConnectErrorCallback({
+      onPlayServicesConnectError: (errorCode:number) => {
+        this.handleGooglePlayServicesConnectError(errorCode);
+      }
+    }));
+    this.logger = new Logger(com.transistorsoft.locationmanager.logger.TSLog);
+  }
+
+  protected static getAdapter(): any {
+    if (!this.intent) {
+      this.init();
+    }
+    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context, this.intent);
+  }
+
+  private static handleGooglePlayServicesConnectError(errorCode:number) {
     com.google.android.gms.common.GoogleApiAvailability.getInstance().getErrorDialog(app.android.foregroundActivity, errorCode, 1001).show();
   }
 
@@ -504,22 +708,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
         );
     }
     return result;
-  }
-
-  private static init() {
-    this.intent = app.android.foregroundActivity.getIntent();
-    this.getAdapter().on("playservicesconnecterror", new Callback({
-      success: this.onGooglePlayServicesConnectError.bind(this),
-      error: emptyFn
-    }));
-  }
-
-  private static getAdapter(): any {
-    if (!this.intent) {
-      this.init();
-    }
-    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context, this.intent);
-  }
+  }  
 
   private static requestPermission(success: Function, failure: Function) {
     permissions.requestPermission((<any>android).Manifest.permission.ACCESS_FINE_LOCATION, "Background tracking required").then(success).catch(failure);

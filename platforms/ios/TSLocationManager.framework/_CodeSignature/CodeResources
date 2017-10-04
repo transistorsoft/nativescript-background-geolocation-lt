@@ -6,19 +6,55 @@
 	<dict>
 		<key>Headers/LocationManager.h</key>
 		<data>
-		g0mUx4Xt6DQpXvsH22XVlCdk4Pg=
+		Vvo+0aC1cMmb1OvUO2FuIrdpQfs=
+		</data>
+		<key>Headers/TSActivityChangeEvent.h</key>
+		<data>
+		tIADkXeywJQ8oDfmTShRw6W2YzQ=
+		</data>
+		<key>Headers/TSGeofenceEvent.h</key>
+		<data>
+		CmztnrPUPK7Sj3E05AbQID6dtzI=
+		</data>
+		<key>Headers/TSGeofencesChangeEvent.h</key>
+		<data>
+		jQMUq+YVHbUC0WjPWT2hZEKG72k=
+		</data>
+		<key>Headers/TSHeartbeatEvent.h</key>
+		<data>
+		rb6Pg0eSnVx96/ANyGolvSdrzL8=
+		</data>
+		<key>Headers/TSHttpEvent.h</key>
+		<data>
+		Fg8krMXZGJrgjy4EPzTIOaJlU9w=
+		</data>
+		<key>Headers/TSLocation.h</key>
+		<data>
+		86hG1KjgPObfZvHRP/GiRkG5mMw=
 		</data>
 		<key>Headers/TSLocationManager.h</key>
 		<data>
-		IRhcCxcph9341C5sf8F6anoCmIc=
+		XF7q/WgBlTCHk75u9TVijHWYXXU=
+		</data>
+		<key>Headers/TSPowerSaveChangeEvent.h</key>
+		<data>
+		9rBQC7BzFjY14QdpgDpcNbMH5Mw=
+		</data>
+		<key>Headers/TSProviderChangeEvent.h</key>
+		<data>
+		CXnFy7GKyGc92cKNJg5cDZQkWR4=
 		</data>
 		<key>Headers/TSSchedule.h</key>
 		<data>
-		QCQijL359mtz3vYZOz3lU6+pQiY=
+		Vf6rEW8+HwFYpwFB5+5DZ3MkfqM=
+		</data>
+		<key>Headers/TSScheduleEvent.h</key>
+		<data>
+		W9KUUn0g93z+z65Visxl0ZctIEU=
 		</data>
 		<key>Info.plist</key>
 		<data>
-		2WgtjKp+kQQI0ECO6fJvo45Imcw=
+		YJIfbiUsPYBI+Px9QRci/K+nYv4=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -31,33 +67,132 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			g0mUx4Xt6DQpXvsH22XVlCdk4Pg=
+			Vvo+0aC1cMmb1OvUO2FuIrdpQfs=
 			</data>
 			<key>hash2</key>
 			<data>
-			CYgwNo/szYFk3HGSwQIBagce5hrNzWvKsPpsu0ri3s8=
+			WXVN7u2JqFoiw3dZaN+9Z7hvuNfuKqxyG8tnERdvJqE=
+			</data>
+		</dict>
+		<key>Headers/TSActivityChangeEvent.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			tIADkXeywJQ8oDfmTShRw6W2YzQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			6wAje5d8epIHEh5JbvCZYeEB3OoC43kZ+Bt3rQVCGLw=
+			</data>
+		</dict>
+		<key>Headers/TSGeofenceEvent.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			CmztnrPUPK7Sj3E05AbQID6dtzI=
+			</data>
+			<key>hash2</key>
+			<data>
+			0NzBASGFluUq42sLxjMjr5P1jrHXzfE88SXTX7FvGLw=
+			</data>
+		</dict>
+		<key>Headers/TSGeofencesChangeEvent.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			jQMUq+YVHbUC0WjPWT2hZEKG72k=
+			</data>
+			<key>hash2</key>
+			<data>
+			XFvppoPlP92aIj/rvS4tGvXbUHIAwchRQNuMHhbL7M8=
+			</data>
+		</dict>
+		<key>Headers/TSHeartbeatEvent.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			rb6Pg0eSnVx96/ANyGolvSdrzL8=
+			</data>
+			<key>hash2</key>
+			<data>
+			ANT9Eu3B/u4ooFPpBH63dhaCxGJiL+R+af2KOSNFV/4=
+			</data>
+		</dict>
+		<key>Headers/TSHttpEvent.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Fg8krMXZGJrgjy4EPzTIOaJlU9w=
+			</data>
+			<key>hash2</key>
+			<data>
+			A0brIj4SV74g/h3haeH4JyFu7v0uyYN/ekFrAQWF2eY=
+			</data>
+		</dict>
+		<key>Headers/TSLocation.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			86hG1KjgPObfZvHRP/GiRkG5mMw=
+			</data>
+			<key>hash2</key>
+			<data>
+			C6JeMvQTERDdlD4MY9sZglwUAONeqPm0aP2eFPzvdzI=
 			</data>
 		</dict>
 		<key>Headers/TSLocationManager.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			IRhcCxcph9341C5sf8F6anoCmIc=
+			XF7q/WgBlTCHk75u9TVijHWYXXU=
 			</data>
 			<key>hash2</key>
 			<data>
-			h7Ch+EyrL15CTRUqEoySv/J0RDxM8A55i4nw+DTCgyA=
+			h55G6m91bGGTcCQwLvhdKKD0TZwXcAoGD7jVyVD2Z1s=
+			</data>
+		</dict>
+		<key>Headers/TSPowerSaveChangeEvent.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			9rBQC7BzFjY14QdpgDpcNbMH5Mw=
+			</data>
+			<key>hash2</key>
+			<data>
+			/MqMIkqxNDoX1sQSpckcGvBWd8UESGF332/djKYcBfM=
+			</data>
+		</dict>
+		<key>Headers/TSProviderChangeEvent.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			CXnFy7GKyGc92cKNJg5cDZQkWR4=
+			</data>
+			<key>hash2</key>
+			<data>
+			KUP8RBL0QCPUcyLqJwo904f3BEnS4fXKuPLBHvFBImM=
 			</data>
 		</dict>
 		<key>Headers/TSSchedule.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			QCQijL359mtz3vYZOz3lU6+pQiY=
+			Vf6rEW8+HwFYpwFB5+5DZ3MkfqM=
 			</data>
 			<key>hash2</key>
 			<data>
-			Qv/pbWa9haQidGkJqtKX4LLHBJgyclApsj5wrhpK74g=
+			wikkY1kZ6S9dyFQzUOee3f8dQ0S0BbP2iQIMFfm27Y4=
+			</data>
+		</dict>
+		<key>Headers/TSScheduleEvent.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			W9KUUn0g93z+z65Visxl0ZctIEU=
+			</data>
+			<key>hash2</key>
+			<data>
+			rNR94pyVpuRhQDnd44Hey67/s2hxmkMmDyEBX05KDO8=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

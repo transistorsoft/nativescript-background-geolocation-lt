@@ -1,8 +1,8 @@
 {
   "name": "nativescript-background-geolocation-lt",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Sophisticated, battery-conscious, cross-platform background-geolocation with motion-detection and geofencing",
-  "main": "background-geolocation.js",
+  "main": "background-geolocation",
   "typings": "background-geolocation.d.ts",
   "nativescript": {
     "platforms": {
@@ -12,8 +12,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "demo.ios": "npm run preparedemo && cd demo && tns emulate ios --device 'iPhone 6s'",
-    "demo.android": "npm run preparedemo && cd demo && tns run android",
+    "demo.ios": "npm run preparedemo && cd demo && tns debug ios --emulator",
+    "demo.android": "npm run preparedemo && cd demo && tns debug android",
     "preparedemo": "npm run build && cd demo && tns plugin remove nativescript-background-geolocation-lt && tns plugin add .. && tns install",
     "setup": "cd demo && npm install && cd .. && npm run build && cd demo && tns plugin add .. && cd ..",
     "fix-xcode": "xcproj --project 'demo/platforms/ios/demo.xcodeproj' touch && xcproj --project 'demo/platforms/ios/Pods/Pods.xcodeproj' touch"
@@ -39,11 +39,15 @@
   },
   "homepage": "http://shop.transistorsoft.com/pages/nativescript-background-geolocation",
   "devDependencies": {
-    "tns-platform-declarations": "^2.5.2",
-    "tns-core-modules": "^2.5.2",
-    "typescript": "^2.0.3"
+    "tns-core-modules": "^3.0.0 || ^3.0.0-rc.1",
+    "tns-platform-declarations": "^3.0.0 || ^3.0.0-rc.1",
+    "typescript": "^2.2.2"
   },
   "dependencies": {
-    "nativescript-permissions": "^1.2.1"
+    "nativescript-permissions": "^1.2.1",
+    "nativescript-background-fetch": "~1.1.1"
+  },
+  "peerDependencies": {
+    "tns-core-modules": "^3.0.0 || ^3.0.0-rc.1"
   }
 }
