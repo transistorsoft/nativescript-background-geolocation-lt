@@ -4,8 +4,8 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     /**
     * Configuration Methods
     */
-    static on(event: any, success?: Function, failure?: Function): void;
-    static removeListeners(): void;
+    static addListener(event: any, success?: Function, failure?: Function): void;
+    protected static removeNativeListener(event: string, callback: Function): void;
     static configure(config: Object, success?: Function, failure?: Function): void;
     static setConfig(config: Object, success?: any, failure?: any): void;
     static getState(success: Function): void;
@@ -14,6 +14,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     */
     static start(success?: Function, failure?: Function): void;
     static stop(success?: Function, failure?: Function): void;
+    static startGeofences(success?: Function, failure?: Function): void;
     static changePace(value: boolean, success?: any, failure?: any): void;
     static startSchedule(success?: Function, failure?: Function): void;
     static stopSchedule(success?: Function, failure?: Function): void;
@@ -29,7 +30,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     static sync(success?: Function, failure?: Function): void;
     static getLocations(success: Function, failure?: Function): void;
     static getCount(success: Function): void;
-    static insertLocation(data: any, success?: Function, failure?: Function): any;
+    static insertLocation(data: any, success?: Function, failure?: Function): void;
     static clearDatabase(success?: Function, failure?: Function): void;
     static destroyLocations(success?: Function, failure?: Function): void;
     /**
@@ -37,7 +38,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     */
     static addGeofence(params: any, success?: Function, failure?: Function): void;
     static removeGeofence(identifier: string, success?: Function, failure?: Function): void;
-    static addGeofences(geofences: Array<Object>, success?: Function, failure?: Function): void;
+    static addGeofences(geofences?: Array<Object>, success?: Function, failure?: Function): void;
     static removeGeofences(geofences?: Array<string>, success?: Function, failure?: Function): void;
     static getGeofences(success: Function, failure?: Function): void;
     static startBackgroundTask(success: Function): void;
@@ -48,22 +49,13 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     static playSound(soundId: number): void;
     static getLog(success: Function, failure?: Function): void;
     static destroyLog(success?: Function, failure?: Function): void;
-    static emailLog(email: string): void;
+    static emailLog(email: string, success?: Function, failure?: Function): void;
+    static getSensors(success: Function, failure?: Function): void;
+    static isPowerSaveMode(success: Function, failure?: Function): void;
     /**
     * Private
     */
-    private static onLocation(location, type, isMoving);
-    private static onMotionChange(location, isMoving);
-    private static onGeofence(ev);
-    private static onHttp(statusCode, requestData, responseData, error);
-    private static onError(type, error);
-    private static onHeartbeat(motionType, location);
-    private static onSyncComplete(locations);
-    private static onActivityChange(activityName);
-    private static onProviderChange(status);
-    private static onSchedule(schedule);
-    private static getAdapter();
-    private static getLocationManager();
+    protected static getAdapter(): any;
     private static getJsObjectFromNSDictionary(dictionary);
     private static getJsArrayFromNSArray(array);
     private static getJsObject(object);

@@ -17,28 +17,27 @@
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
-
+	
 	<application
 		android:name="com.tns.NativeScriptApplication"
 		android:allowBackup="true"
 		android:icon="@drawable/icon"
 		android:label="@string/app_name"
-		android:theme="@style/AppTheme" >
+		android:theme="@style/AppTheme">
+
 		<activity
 			android:name="com.tns.NativeScriptActivity"
 			android:label="@string/title_activity_kimera"
-			android:configChanges="keyboardHidden|orientation|screenSize">
+			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:theme="@style/LaunchScreenTheme">
 
-				<intent-filter>
+			<meta-data android:name="SET_THEME_ON_LAUNCH" android:resource="@style/AppTheme" />
+
+			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 		<activity android:name="com.tns.ErrorReportActivity"/>
-
-		<!-- Background Geolocation License -->
-		<meta-data android:name="com.transistorsoft.locationmanager.license" android:value="5647026b5a15ced50fcd3adcb2b743ab32abf2374c40d0aff875e53b15f93b60" />
-
 	</application>
 </manifest>

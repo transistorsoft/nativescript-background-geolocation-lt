@@ -8,11 +8,14 @@
 			<string>fetch</string>
 		</array>
 
-		<key>NSLocationAlwaysUsageDescription</key>
-        <string>App requires background location tracking</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+        <string>[CHANGEME] Location AlwaysAndWhenInUse Description</string>
+
+        <key>NSLocationWhenInUseUsageDescription</key>
+        <string>[CHANGEME] Location WhenInUse Description</string>
 
         <key>NSMotionUsageDescription</key>
-        <string>Accelerometer increases battery efficiency by intelligently toggling location-services when device is stationary</string>
+        <string>[CHANGEME] Accelerometer increases battery efficiency by intelligently toggling location-services when device is stationary</string>
 
 	</dict>
 </plist>

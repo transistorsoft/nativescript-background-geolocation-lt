@@ -32,7 +32,6 @@ This repo hosts the **iOS** platform available in the **[Premium Version](http:/
 Install the following two plugins:
 ```bash
 $ tns plugin add nativescript-background-geolocation-lt
-$ tns plugin add nativescript-background-fetch
 ```
 
 #### From master (latest, greatest.)
@@ -56,6 +55,7 @@ Since iOS is more strict with apps running in the background, this plugin requir
 
 **`app.ts`**
 ```diff
+
 import * as app from 'application';
 
 +import {BackgroundFetch} from "nativescript-background-fetch";
@@ -63,12 +63,12 @@ import * as app from 'application';
 +if (app.ios) {
 +  class MyDelegate extends UIResponder implements UIApplicationDelegate {
 +    public static ObjCProtocols = [UIApplicationDelegate];
-+      // BackgroundFetch delegate method
-+      public applicationPerformFetchWithCompletionHandler(application: any, completionHandler:any) {
-+        BackgroundFetch.performFetchWithCompletionHandler(completionHandler);
-+      }
+
++    public applicationPerformFetchWithCompletionHandler(application: UIApplication, completionHandler:any) {
++      BackgroundFetch.performFetchWithCompletionHandler(application, completionHandler);
 +    }
-+    app.ios.delegate = MyDelegate;
++  }
++  app.ios.delegate = MyDelegate;
 +}
 
 app.start({ moduleName: 'main-page' });
@@ -150,7 +150,7 @@ export class HelloWorldModel extends observable.Observable {
   constructor() {
     super();
 
-    // Listen to events
+    // 1. Listen to events
     BackgroundGeolocation.on("location", this.onLocation.bind(this));
     BackgroundGeolocation.on("motionchange", this.onMotionChange.bind(this));
     BackgroundGeolocation.on("http", this.onHttp.bind(this));
@@ -158,7 +158,7 @@ export class HelloWorldModel extends observable.Observable {
     BackgroundGeolocation.on("schedule", this.onSchedule.bind(this));
     BackgroundGeolocation.on("error", this.onError.bind(this));
 
-    // Configure it.
+    // 2. Configure it.
     BackgroundGeolocation.configure({
       debug: true,
       desiredAccuracy: 0,
@@ -167,12 +167,15 @@ export class HelloWorldModel extends observable.Observable {
       activityRecognitionInterval: 10000,
       url: 'http://localhost:8080/locations',
       autoSync: true
-    }, function(state) {
-      // Plugin is ready
-      if (!this._state.enabled) {
+    }, (state) => {
+      // 3. Plugin is now ready to use.
+      if (!state.enabled) {
         BackgroundGeolocation.start();
       }
-    }.bind(this));
+    });
+    // NOTE:  Do not execute *any* method which access location-services until
+    //  the callback to #configure method executes:
+
   }
 ```
 

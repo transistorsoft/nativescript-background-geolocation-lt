@@ -1,6 +1,5 @@
 
-
-import {AbstractBackgroundGeolocation} from './background-geolocation.common';
+import {AbstractBackgroundGeolocation, Logger} from './background-geolocation.common';
 
 import * as utils from "utils/utils";
 
@@ -26,7 +25,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   /**
   * Configuration Methods
   */
-  public static on(event:any, success?:Function, failure?:Function) {
+  public static addListener(event:any, success?:Function, failure?:Function) {
     // Handle {Object} form #on({foo: fooHandler, bar: barHandler});
     if (typeof(event) === 'object') {
       var listener, key;
@@ -39,29 +38,99 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
       throw "Invalid event: " + event;
     }
     if (typeof(this.listeners[event]) === 'object') {
-      this.listeners[event].push({
-        success: success,
-        error: failure
-      });
+      let callback;
+      switch (event) {
+        case 'location':
+          callback = (tsLocation:any) => {
+            let location = this.getJsObjectFromNSDictionary(tsLocation.toDictionary());
+            success(location);
+          };          
+          this.getAdapter().onLocationFailure(callback, failure);
+          break;
+        case 'motionchange':
+          callback = (tsLocation:any) => {
+            let location = this.getJsObjectFromNSDictionary(tsLocation.toDictionary());
+            let isMoving = tsLocation.isMoving;
+            success(isMoving, location);
+          };
+          this.getAdapter().onMotionChange(callback);
+          break;
+        case 'activitychange':
+          callback = (event:any) => {
+            let params = {activity: event.activity, confidence: event.confidence};
+            success(params);
+          }
+          this.getAdapter().onActivityChange(callback);
+          break;
+        case 'heartbeat':
+          callback = (event:any) => {
+            let location = this.getJsObjectFromNSDictionary(event.location.toDictionary());
+            let params = {location: location};
+            success(params);
+          };
+          this.getAdapter().onHeartbeat(callback);
+          break;
+        case 'geofence':
+          callback = (event:any) => {
+            let params = event.toDictionary().mutableCopy();
+            params.setObjectForKey(event.location.toDictionary(), "location");
+            success(this.getJsObjectFromNSDictionary(params));
+          };
+          this.getAdapter().onGeofence(callback);
+          break;
+        case 'geofenceschange':
+          callback = (event:any) => {
+            let params = this.getJsObjectFromNSDictionary(event.toDictionary());
+            success(params);
+          };
+          this.getAdapter().onGeofencesChange(callback);
+          break;
+        case 'http':
+          callback = (event:any) => {
+            let params = {"status": event.statusCode, "responseText": event.responseText};
+            let callback = (event.isSuccess) ? success : failure;
+            success(params);
+          };
+          this.getAdapter().onHttp(callback);
+          break;
+        case 'providerchange':
+          callback = (event:any) => {
+            let params = this.getJsObjectFromNSDictionary(event.toDictionary());
+            success(params);
+          };
+          this.getAdapter().onProviderChange(callback);
+          break;
+        case 'schedule':
+          callback = (event:any) => {
+            let state = this.getJsObjectFromNSDictionary(event.state);
+            success(state);
+          };
+          this.getAdapter().onSchedule(callback);
+          break;
+        case 'powersavechange':
+          callback = (event:any) => {
+            success(event.isPowerSaveMode);
+          };
+          this.getAdapter().onPowerSaveChange(callback);
+          break;
+      }
+      if (callback) {
+        this.registerCallback(event, success, callback);
+      }
     } else {
-      this.getLocationManager().addListenerCallback(event, function(event) {
-        return success(this.getJsObjectFromNSDictionary(event));
-      }.bind(this));
-    }
-  }
+      console.warn('FAiled to find this.events.indexOf: ', event);
+    }    
+  }     
 
-  public static removeListeners() {
-    var key;
-    for (key in this.listeners) {
-      this.listeners[key] = [];
-    }
+  protected static removeNativeListener(event:string, callback:Function) {
+    this.getAdapter().removeListenerCallback(event, callback);
   }
 
   public static configure(config:Object, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
 
-    var locationManager = this.getLocationManager();
+    var locationManager = this.getAdapter();
     this.syncTaskId = null;
     this.state     = locationManager.configure(config);
     this.isMoving  = this.state.isMoving;
@@ -71,7 +140,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   public static setConfig(config:Object, success?:any, failure?:any) {
-    var locationManager = this.getLocationManager();
+    var locationManager = this.getAdapter();
     success = success || emptyFn;
     failure = failure || emptyFn;
     locationManager.setConfig(config);
@@ -79,7 +148,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   public static getState(success:Function) {
-    success(this.getJsObjectFromNSDictionary(this.getLocationManager().getState()));
+    success(this.getJsObjectFromNSDictionary(this.getAdapter().getState()));
   }
 
   /**
@@ -88,81 +157,83 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   public static start(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.getLocationManager().start();
+    this.getAdapter().start();
     this.getState(success);
   }
 
   public static stop(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.getLocationManager().stop();
+    this.getAdapter().stop();
+    this.getState(success);
+  }
+
+  public static startGeofences(success?:Function, failure?:Function) {
+    success = success || emptyFn;
+    failure = failure || emptyFn;
+    let adapter = this.getAdapter();
+    adapter.startGeofences();
     this.getState(success);
   }
 
   public static changePace(value: boolean, success?:any, failure?:any) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.locationManager.changePace(value);
+    this.getAdapter().changePace(value);
     success(value);
   }
 
   public static startSchedule(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.getLocationManager().startSchedule();
+    this.getAdapter().startSchedule();
     this.getState(success);
   }
 
   public static stopSchedule(success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.getLocationManager().stopSchedule();
+    this.getAdapter().stopSchedule();
     this.getState(success);
   }
 
   public static getCurrentPosition(success: Function, failure?:Function, options?:Object) {
     failure = failure || emptyFn;
-    var mySuccess = function(location:any) {
-      success(this.getJsObjectFromNSDictionary(location));
-    }.bind(this);
-    var myFailure = function(error:any) {
+    this.getAdapter().getCurrentPositionSuccessFailure(options||{}, (tsLocation:any) => {
+      success(this.getJsObjectFromNSDictionary(tsLocation.toDictionary()));
+    }, (error:any) => {
       failure(error.code);
-    }.bind(this)
-    this.getLocationManager().getCurrentPositionSuccessFailure(options||{}, mySuccess, myFailure);
+    });
   }
 
   public static watchPosition(success:Function, failure?:Function, options?:Object) {
     failure = failure || emptyFn;
-    var mySuccess = function(location:any) {
-      success(this.getJsObjectFromNSDictionary(location));
-    }.bind(this);
-    var myFailure = function(error:any) {
+    this.getAdapter().watchPositionSuccessFailure(options||{}, (tsLocation:any) => {
+      success(this.getJsObjectFromNSDictionary(tsLocation.toDictionary()));
+    }, (error:any) => {
       failure(error.code);
-    }.bind(this);
-    this.getLocationManager().watchPositionSuccessFailure(options||{}, mySuccess, myFailure);
+    });
   }
 
   public static stopWatchPosition(success?:Function, failure?:Function) {
-    this.getLocationManager().stopWatchPosition();
+    this.getAdapter().stopWatchPosition();
     if (success) {
       success(true);
     }
   }
 
   public static getOdometer(success:Function, failure?:Function) {
-    success(this.getLocationManager().getOdometer());
+    success(this.getAdapter().getOdometer());
   }
 
   public static setOdometer(value:number, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var mySuccess = function(location:any) {
-      success(this.getJsObjectFromNSDictionary(location));
-    }.bind(this);
-    var myFailure = function(error:any) {
+    this.getAdapter().setOdometerSuccessFailure(value, (tsLocation:any) => {
+      success(this.getJsObjectFromNSDictionary(tsLocation.toDictionary()));
+    }, (error:any) => {
       failure(error.code);
-    }.bind(this);
-    this.getLocationManager().setOdometerSuccessFailure(value, mySuccess, myFailure);
+    });
   }
   public static resetOdometer(success?:Function, failure?:Function) {
     this.setOdometer(0, success, failure);
@@ -170,60 +241,37 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   /**
   * HTTP & Persistence Methods
   */
-  public static sync(success?:Function, failure?:Function) {
-    if (this.syncCallback) {
-        failure("A sync action is already in progress");
-        return;
-    }
-    var locationManager = this.getLocationManager();
+  public static sync(success?:Function, failure?:Function) {    
     failure = failure || emptyFn;
 
-    // Important to set these before we execute #sync since this fires a *very fast* async NSNotification event!
-    this.syncTaskId = locationManager.createBackgroundTask();
-    var locations   = locationManager.sync();
-    if (locations == null) {
-        locationManager.stopBackgroundTask(this.syncTaskId);
-        this.syncCallback = null;
-        this.syncTaskId = null;
-        failure("Sync failed.  Is there a network connection or previous sync-task pending?");
-        return;
-    } else {
-      this.syncCallback = {
-        success: success,
-        error: failure || this.emptyFn
-      }
-    }
+    this.getAdapter().syncFailure((records) => {
+      success(this.getJsArrayFromNSArray(records));
+    }, (error:any) => {
+      failure(error.code);
+    });
   }
 
   public static getLocations(success:Function, failure?:Function) {
     failure = failure || emptyFn;
 
-    var rs = this.getJsArrayFromNSArray(this.getLocationManager().getLocations());
-    success(rs);
-    //success(this.getJsArrayFromNSArray(this.getLocationManager().getLocations()));
+    this.getAdapter().getLocationsFailure((rs:any) => {
+      success(this.getJsArrayFromNSArray(rs));
+    }, failure);
   }
 
   public static getCount(success: Function) {
-    success(this.getLocationManager().getCount());
+    success(this.getAdapter().getCount());
   }
 
   public static insertLocation(data:any, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    if (!data.timestamp) {
-      return failure('Must contain a timestamp');
-    } else if (!data.uuid) {
-      return failure('Must contain a UUID');
-    } else if (!data.latitude) {
-      return failure('Must contain a latitude');
-    } else if (!data.longitude) {
-      return failure('Must contain a longitude');
-    }
-    if (this.getLocationManager().insertLocation(data)) {
-      if (success) { success(true); }
-    } else if (failure) {
-      failure(false);
-    }
+
+    this.getAdapter().insertLocationSuccessFailure(data, (uuid:string) => {
+      success(uuid);
+    }, (error:string) => {
+      failure(error);
+    })
   }
 
   // @deprecated
@@ -232,11 +280,8 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   public static destroyLocations(success?:Function, failure?:Function) {
-    if (this.getLocationManager().destroyLocations()) {
-      if (success) { success();}
-    } else {
-      if (failure) { failure();}
-    }
+    failure = failure || emptyFn;
+    this.getAdapter().destroyLocationsFailure(success, failure);
   }
 
   /**
@@ -244,78 +289,66 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   */
   public static addGeofence(params:any, success?:Function, failure?:Function) {
     success = success || emptyFn;
-    failure = failure || emptyFn;
-
-    if (!params.identifier) {
-      throw "#addGeofence requires an 'identifier'";
-    }
-    if (!(params.latitude && params.longitude)) {
-        throw "#addGeofence requires a #latitude and #longitude";
-    } 
-    if (!params.radius) {
-        throw "#addGeofence requires a #radius";
-    }
-    if ( (typeof(params.notifyOnDwell) === 'undefined') && (typeof(params.notifyOnEntry) === 'undefined') && (typeof(params.notifyOnExit) === 'undefined') ) {
-        throw "#addGeofence requires at least notifyOnDwell {Boolean} and/or notifyOnEntry {Boolean} and/or #notifyOnExit {Boolean}";
-    }
-    if (typeof(params.notifyOnEntry) === 'undefined') {
-      params.notifyOnEntry = false;
-    }
-    if (typeof(params.notifyOnDwell) === 'undefined') {
-      params.notifyOnDwell = false;
-    }
-    if (typeof(params.notifyOnExit) === 'undefined') {
-      params.notifyOnEntry = false;
-    }
-    this.getLocationManager().addGeofenceSuccessError(params, success, failure);
+    failure = failure || emptyFn;    
+    this.getAdapter().addGeofenceSuccessFailure(params, success, failure);
   }
 
   public static removeGeofence(identifier:string, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.getLocationManager().removeGeofenceSuccessError(identifier, success, failure);
+    this.getAdapter().removeGeofenceSuccessFailure(identifier, success, failure);
   }
 
-  public static addGeofences(geofences:Array<Object>, success?:Function, failure?:Function) {
+  public static addGeofences(geofences?:Array<Object>, success?:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    this.getLocationManager().addGeofencesSuccessError(geofences, success, failure);
+    this.getAdapter().addGeofencesSuccessFailure(geofences, success, failure);
   }
 
   public static removeGeofences(geofences?:Array<string>, success?:Function, failure?:Function) {
+    if (typeof(geofences) === 'function') {
+      failure = success;
+      success = geofences;
+      geofences = [];
+    }
+    geofences = geofences || [];
     success = success || emptyFn;
     failure = failure || emptyFn;
-    var geofences = geofences || [];
-    this.getLocationManager().removeGeofencesSuccessError(geofences, success, failure);
+
+    this.getAdapter().removeGeofencesSuccessFailure(geofences, success, failure);
   }
 
   public static getGeofences(success:Function, failure?:Function) {
     success = success || emptyFn;
     failure = failure || emptyFn;
-    success(this.getJsArrayFromNSArray(this.getLocationManager().getGeofences()));
+    this.getAdapter().getGeofencesFailure((geofences:any) => {
+      success(this.getJsArrayFromNSArray(geofences));
+    }, (error:string) => {
+      failure(error);
+    });
   }
 
   public static startBackgroundTask(success:Function) {
-    success(this.getLocationManager().createBackgroundTask());
+    success(this.getAdapter().createBackgroundTask());
   }
 
   public static finish(taskId:number) {
-    this.getLocationManager().stopBackgroundTask(taskId);
+    this.getAdapter().stopBackgroundTask(taskId);
   }
 
   /**
   * Logging & Debug methods
   */
   public static playSound(soundId:number) {
-    this.getLocationManager().playSound(soundId);
+    this.getAdapter().playSound(soundId);
   }
 
   public static getLog(success:Function, failure?:Function) {
-    success(this.getLocationManager().getLog());
+    this.getAdapter().getLogFailure(success, failure);
   }
 
   public static destroyLog(success?:Function, failure?:Function) {
-    if (this.getLocationManager().destroyLog()) {
+    if (this.getAdapter().destroyLog()) {
       if (success) {
         success();
       }
@@ -324,170 +357,45 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     }
   }
 
-  public static emailLog(email:string) {
-    this.getLocationManager().emailLog(email);
+  public static emailLog(email:string, success?:Function, failure?:Function) {    
+    success = success || emptyFn;
+    failure = failure || emptyFn;
+
+    let app = utils.ios.getter(UIApplication, UIApplication.sharedApplication);
+    
+    this.getAdapter().emailLogSuccessFailure(email, success, failure);    
+  }
+
+  public static getSensors(success:Function, failure?:Function) {
+    failure = failure || emptyFn;
+    let adapter = this.getAdapter();
+    let result = {
+      "platform": "ios",
+      "accelerometer": adapter.isAccelerometerAvailable(),
+      "gyroscope": adapter.isGyroAvailable(),
+      "magnetometer": adapter.isMagnetometerAvailable(),      
+      "motion_hardware": adapter.isMotionHardwareAvailable()
+    };
+    success(result);
+  }
+
+  public static isPowerSaveMode(success: Function, failure?:Function) {
+    let isPowerSaveMode = this.getAdapter().isPowerSaveMode();
+    success(isPowerSaveMode);
   }
 
   /**
   * Private
-  */
-  private static onLocation(location:Object, type:any, isMoving:boolean) {
-    var callbacks = this.listeners.location;
-    var locationData = this.getJsObjectFromNSDictionary(location);
-    for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n].success(locationData);
-    }
-    if (type != TS_LOCATION_TYPE_SAMPLE && this.currentPositionCallbacks.length) {
-      for (var n=0,len=this.currentPositionCallbacks.length;n<len;n++) {
-        this.currentPositionCallbacks[n].success(locationData);
-      }
-      this.currentPositionCallbacks = [];
-    }
-  }
-
-  private static onMotionChange(location:Object, isMoving:boolean) {
-    var callbacks   = this.listeners.motionchange;
-    var locationData = this.getJsObjectFromNSDictionary(location);
-    for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n].success(isMoving, locationData);
-    }
-  }
-
-  private static onGeofence(ev:Object) {
-    let event         = this.getJsObjectFromNSDictionary(ev);
-    let callbacks     = this.listeners.geofence;
-    for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n].success(event);
-    }
-  }
-
-  private static onHttp(statusCode:number, requestData:any, responseData:any, error:any) {
-    var callbacks      = this.listeners.http;
-    var responseText   = "";
-    var callbackFn     = 'success';
-
-    if (error) {
-      responseText = error.localizedDescription;
-      callbackFn = 'error';
-    } else {
-      responseText = NSString.alloc().initWithDataEncoding(responseData, NSUTF8StringEncoding).toString();
-      callbackFn = 'success';
-    }
-    for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n][callbackFn]({
-        status: statusCode,
-        responseText: responseText
-      });
-    }
-  }
-
-  private static onError(type: string, error: any) {
-    if (type === 'location') {
-      var errorCode = error.code;
-      var listeners = this.currentPositionCallbacks;
-      if (listeners.length) {
-        for (var n=0,len=this.currentPositionCallbacks.length;n<len;n++) {
-          listeners[n].error(errorCode);
-        }
-        this.currentPositionCallbacks = [];
-      }
-      /* TODO broken
-      listeners = this.listeners.location;
-      for (var n=0,len=listeners.length;n<len;n++) {
-        listeners[n].error[n](errorCode);
-      }
-      */
-    }
-  }
-
-  private static onHeartbeat(motionType:string, location:Object) {
-    var params = {
-      motionType: motionType,
-      location: this.getJsObjectFromNSDictionary(location)
-    };
-    var callbacks = this.listeners.heartbeat;
-    for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n].success(params);
-    }
-  }
-
-  private static onSyncComplete(locations:Array<Object>) {
-    if (this.syncCallback == null) {
-      return;
-    }
-    this.syncCallback.success(this.getJsArrayFromNSArray(locations));
-    this.getLocationManager().stopBackgroundTask(this.syncTaskId);
-    this.syncCallback = null;
-    this.syncTaskId = null;
-  }
-
-  private static onActivityChange(activityName:string) {
-    var callbacks   = this.listeners.activitychange;
-    for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n].success(activityName);
-    }
-  }
-
-  private static onProviderChange(status:CLAuthorizationStatus) {
-    var state = this.getLocationManager().getState();
-    var authorizationRequest = state.objectForKey("locationAuthorizationRequest");
-    var enabled = false;
-    switch (status) {
-        case CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedAlways:
-            enabled = (authorizationRequest == "Always");
-            break;
-        case CLAuthorizationStatus.kCLAuthorizationStatusAuthorizedWhenInUse:
-            enabled = (authorizationRequest == "WhenInUse");
-            break;
-        case CLAuthorizationStatus.kCLAuthorizationStatusDenied:
-        case CLAuthorizationStatus.kCLAuthorizationStatusRestricted:
-        case CLAuthorizationStatus.kCLAuthorizationStatusNotDetermined:
-            enabled = false;
-            break;
-    }
-
-    var result = {
-      enabled: enabled,
-      gps: enabled,
-      network: enabled,
-      status: status
-    };
-    var callbacks   = this.listeners.providerchange;
-    for (var n=0,len=callbacks.length;n<len;n++) {
-      callbacks[n].success(result);
-    }
-  }
-
-  private static onSchedule(schedule: Object) {
-    var callbacks = this.listeners.schedule;
-    for (var n=0,len=callbacks.length;n<len;n++) {
-      this.getState(callbacks[n].success);
-    }
-  }
-
-  private static getAdapter() {
-
-  }
-  private static getLocationManager() {
-    if (!this.locationManager) {
+  */    
+  
+  protected static getAdapter() {
+    if (!this.adapter) {
       let app = utils.ios.getter(UIApplication, UIApplication.sharedApplication);
-
-      this.locationManager = TSLocationManager.sharedInstance();
-
-      this.locationManager.locationChangedBlock   = this.onLocation.bind(this);
-      this.locationManager.httpResponseBlock      = this.onHttp.bind(this);
-      this.locationManager.motionChangedBlock     = this.onMotionChange.bind(this);
-      this.locationManager.geofenceBlock          = this.onGeofence.bind(this);
-      this.locationManager.activityChangedBlock   = this.onActivityChange.bind(this);
-      this.locationManager.authorizationChangedBlock   = this.onProviderChange.bind(this);
-      this.locationManager.errorBlock             = this.onError.bind(this);
-      this.locationManager.heartbeatBlock         = this.onHeartbeat.bind(this);
-      this.locationManager.syncCompleteBlock      = this.onSyncComplete.bind(this);
-      this.locationManager.scheduleBlock          = this.onSchedule.bind(this);
-      this.locationManager.viewController         = app.keyWindow.rootViewController;
-
+      this.adapter = TSLocationManager.sharedInstance();
+      this.adapter.viewController = app.keyWindow.rootViewController;
+      this.logger = new Logger(this.adapter);
     }
-    return this.locationManager;
+    return this.adapter;
   }
 
   private static getJsObjectFromNSDictionary(dictionary:any) {
