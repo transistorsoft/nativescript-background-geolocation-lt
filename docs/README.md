@@ -1529,7 +1529,7 @@ It's when this list of monitored geofences *changes*, the plugin will fire the *
 #### `callbackFn` Paramters
 
 ##### `@param {Array} on` The list of geofences just activated.
-##### `@param {Array off` The list of geofences just de-activated
+##### `@param {Array} off` The list of geofences just de-activated
 
 ```javascript
 BackgroundGeolocation.on('geofenceschange', function(event) {
