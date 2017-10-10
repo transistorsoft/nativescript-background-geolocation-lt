@@ -272,14 +272,6 @@ export class HelloWorldModel extends Observable {
   public onGetCurrentPosition() {   
     BackgroundGeolocation.getCurrentPosition((location) => {
       console.log('[js] getCurrentPosition', location);
-      BackgroundGeolocation.watchPosition((location) => {
-        console.log('[event] watch');
-        this.location = JSON.stringify(location, null, 2);
-      }, (error) => {
-        console.log('[event] watch error: ', error);
-      }, {
-        interval: 5000
-      });
     }, (error) => {
       console.warn('[js] location error: ', error);
       BGService.getInstance().toast('Location error: ' + error);

@@ -161,7 +161,7 @@ export default class SettingsModel extends Observable {
   get watchPosition():boolean {
     return this._watchPosition;
   }  
-  set watchPosition(value:boolean) {    
+  set watchPosition(value:boolean) {
     if (this._watchPosition) {
       BackgroundGeolocation.stopWatchPosition();
     }
