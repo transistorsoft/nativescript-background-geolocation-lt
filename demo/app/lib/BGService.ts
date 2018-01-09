@@ -133,7 +133,6 @@ export default class BGService {
         // Initial boot.  Append default settings.
         state.url = 'http://tracker.transistorsoft.com/locations';
         state.params = {
-          company_token: 'transistor',
           device: {
             platform: Platform.device.os,
             manufacturer: Platform.device.manufacturer,

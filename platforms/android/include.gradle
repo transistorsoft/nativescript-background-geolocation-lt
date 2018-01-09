@@ -20,7 +20,11 @@ android {
 }
 
 dependencies {
-  compile 'com.google.android.gms:play-services-location:11.+'
+  def googlePlayServicesVersion = project.hasProperty('googlePlayServicesVersion') ? project.googlePlayServicesVersion : '11.8.0'
+  def appCompatV7Version = project.hasProperty('appCompatV7Version') ? project.appCompatV7Version : '26.1.0'
+
+  compile "com.google.android.gms:play-services-location:$googlePlayServicesVersion"
+  compile "com.android.support:appcompat-v7:$appCompatV7Version"
   compile 'com.squareup.okhttp3:okhttp:3.8.1'
   compile 'org.greenrobot:eventbus:3.0.0'  
   // logback-android

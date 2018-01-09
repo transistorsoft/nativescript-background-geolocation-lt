@@ -39,8 +39,8 @@
   },
   "homepage": "http://shop.transistorsoft.com/pages/nativescript-background-geolocation",
   "devDependencies": {
-    "tns-core-modules": "^3.0.0 || ^3.0.0-rc.1",
-    "tns-platform-declarations": "^3.2.0",
+    "tns-core-modules": "^3.4.0",
+    "tns-platform-declarations": "^3.4.0",
     "typescript": "^2.2.2"
   },
   "dependencies": {
@@ -48,6 +48,6 @@
     "nativescript-background-fetch": "~1.1.1"
   },
   "peerDependencies": {
-    "tns-core-modules": "^3.0.0 || ^3.0.0-rc.1"
+    "tns-core-modules": "^3.4.0"
   }
 }
