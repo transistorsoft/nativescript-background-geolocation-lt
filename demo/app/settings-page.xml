@@ -41,8 +41,7 @@
                 <Label text="Debug" class="group-title" />
                 <StackLayout id="debug">
                     <FlexboxLayout alignItems="stretch" justifyContent="center" class="item" width="100%">
-                        <Button text="Destroy logs" tap="{{onClickDestroyLogs}}" width="100%" class="btn btn-danger btn-rounded-sm btn-highlight" />
-                        <Button text="Email logs" tap="{{onClickEmailLogs}}" width="100%" class="btn btn-primary btn-rounded-sm btn-highlight" />
+                        <Button text="Destroy logs" tap="{{onClickDestroyLogs}}" width="100%" class="btn btn-danger btn-rounded-sm btn-highlight" />                        
                     </FlexboxLayout>
                     <StackLayout class="item">
                         <TextField text="{{email}}" hint="Email address" autocorrect="false" autocapitalizationType="none" class="text" />
