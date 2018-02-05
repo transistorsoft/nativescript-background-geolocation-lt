@@ -75,6 +75,8 @@ export class HelloWorldModel extends Observable {
     // Fetch current config settings.
     BGService.getInstance().getConfig(config => {
       // Configure BackgroundGeolocation
+      config.url = 'http://tracker.transistorsoft.com/locations/transistor-nativescript';
+      
       BackgroundGeolocation.configure(config, (state) => {
         console.log('[js] configure success: ', state);
         this.paceButtonIcon = (state.isMoving) ? ICONS.pause : ICONS.play;

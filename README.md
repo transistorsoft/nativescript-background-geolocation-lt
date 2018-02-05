@@ -103,7 +103,7 @@ This is because your app hasn't loaded the ios platform-declarations.  You can e
 
 ## Android Setup (Premium Users)
 
-A [License](http://www.transistorsoft.com/shop/products/nativescript-background-geolocation)) is required to unlock Android.
+A [License](http://www.transistorsoft.com/shop/products/nativescript-background-geolocation)) is required to unlock Android for `RELEASE` builds.  Without a license key, the plugin will only work for `DEBUG` builds.
 
 Edit the file **`app/App_Resources/Android/App_Resources/AndroidManifest.xml`**.  Copy the following `<meta-data />` tag containing your **YOUR LICENSE KEY** within the `<application>` element:
 
@@ -114,6 +114,21 @@ Edit the file **`app/App_Resources/Android/App_Resources/AndroidManifest.xml`**.
   </application>
 </manifest>
 ```
+
+### Google Play Services
+
+Since this plugin uses Google Play Services, it's very common to have Android build conflicts with other plugins using Play Services.  The key to solving build issues is to ensure that *all* plugins are aligned to the same version (eg: `11.8.0`) (Note:  Firebase dependencies must also be aligned to the same play-services version).
+
+You can specify your desired `play-services` version in the file:
+**`app/App_Resources/Android/app.gradle`**
+
+```gradle
+project.ext {
+  googlePlayServicesVersion = "11.2.0"
+}
+```
+
+:exclamation: The plugin requires a minimum play-services version of **`11.2.0`**.  
 
 ## Demo app
 

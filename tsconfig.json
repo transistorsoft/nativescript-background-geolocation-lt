@@ -2,35 +2,25 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
-        "lib": ["es6", "dom"],
+        "noImplicitAny": false,
+        "noLib": false,
+        "declaration": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "noEmitHelpers": true,
+        "noEmitOnError": false,
+        "lib": [
+            "es6",
+            "dom"
+        ],
         "baseUrl": ".",
         "paths": {
             "*": [
                 "./node_modules/tns-core-modules/*",
                 "./node_modules/*"
             ]
-        },
-        "sourceMap": false,
-        "noImplicitAny": false,
-        "noLib": false,
-        "lib": [
-            "es2016"
-        ],
-        "declaration": false,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "noEmitHelpers": true,
-        "noEmitOnError": false
-    },
-    "files": [
-        "node_modules/tns-core-modules/tns-core-modules.d.ts",
-        "node_modules/tns-platform-declarations/android/android17.d.ts",
-        "node_modules/tns-platform-declarations/android/org.nativescript.widgets.d.ts",
-        "background-geolocation.common.ts",
-        "background-geolocation.ios.ts",
-        "background-geolocation.android.ts",
-        "references.d.ts"
-    ],
+        }
+    },    
     "exclude": [
         "node_modules",
         "platforms",

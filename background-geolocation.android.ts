@@ -677,7 +677,7 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
   }
 
   private static init() {
-    this.intent = app.android.foregroundActivity.getIntent();
+    this.intent = app.android.startActivity.getIntent();
 
     // Handle Google Play Services errors
     this.getAdapter().onPlayServicesConnectError(new TSPlayServicesConnectErrorCallback({
@@ -688,11 +688,16 @@ export class BackgroundGeolocation extends AbstractBackgroundGeolocation {
     this.logger = new Logger(com.transistorsoft.locationmanager.logger.TSLog);
   }
 
+  protected static getIntent() {
+    let activity = (app.android.foregroundActivity) ? app.android.foregroundActivity : app.android.startActivity;
+    return (activity) ? activity.getIntent() : this.intent;
+  }
+
   protected static getAdapter(): any {
     if (!this.intent) {
       this.init();
     }
-    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context, this.intent);
+    return com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context, this.getIntent());
   }
 
   private static handleGooglePlayServicesConnectError(errorCode:number) {

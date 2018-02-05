@@ -69,6 +69,7 @@ export declare class BackgroundGeolocation extends AbstractBackgroundGeolocation
     private static createHeartbeatCallback(callback);
     private static createPowerSaveChangeCallback(callback);
     private static init();
+    protected static getIntent(): any;
     protected static getAdapter(): any;
     private static handleGooglePlayServicesConnectError(errorCode);
     private static hasPermission();
