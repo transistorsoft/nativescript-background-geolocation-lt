@@ -1,79 +1,21 @@
-<!--
-The markup in NativeScript apps contains a series of user interface components, each
-of which NativeScript renders with a platform-specific iOS or Android native control.
-You can find a full list of user interface components you can use in your app at
-https://docs.nativescript.org/ui/components.
--->
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" 
-    xmlns:FAB="nativescript-floatingactionbutton" 
-    xmlns:x="nativescript-statusbar"
-    navigatingTo="navigatingTo" 
-    class="page" 
-    actionBarHidden="true">
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" class="page">    
+    <Page.actionBar>
+        <ActionBar title="BG Geo" icon="" class="action-bar transistor-toolbar">
+            <ActionItem ios.position="right" android.position="actionBar">
+                <Switch checked="{{enabled}}" />                
+            </ActionItem>
+        </ActionBar>
+    </Page.actionBar>
 
-    <x:StatusBar ios:barStyle="light" ios:barColor="#fedd1e" />
+    <DockLayout stretchLastChild="true">
+        <DockLayout dock="bottom" stretchLastChild="true" class="transistor-toolbar">
+            <Button text="{{'ion-navigate' | fonticon}}" tap="{{ onGetCurrentPosition }}" class="btn btn-primary btn-active ion" dock="left"/>
+            <Button text="{{paceButtonIcon | fonticon}}" tap="{{ onChangePace }}" class="{{'btn btn-primary ion ' + paceButtonIcon}}" dock="right" />
+            <Label text="" class="text-center"/>
+        </DockLayout>
 
-    <StackLayout> 
-        <FlexboxLayout ios:height="46" android:height="60" alignItems="center" justifyContent="flex-start" class="top-toolbar transistor-toolbar">
-            <FAB:fab tap="fabTap"
-                icon="{{mainMenuIcon}}"
-                rippleColor="#fedd1e"
-                tap="{{onToggleMainMenu}}"
-                class="fab-button" />
-            <Label text="BG Geo" class="title" flexGrow="1" />
-            <Switch checked="{{enabled}}" marginRight="10"/>
-        </FlexboxLayout>
-        <GridLayout rows="auto, *">
-            <DockLayout row="1" stretchLastChild="true">
-                <DockLayout ios:height="46" android:height="55" dock="bottom" stretchLastChild="true" class="bottom-toolbar transistor-toolbar">
-                    <Button text="{{'ion-navigate' | fonticon}}" tap="{{ onGetCurrentPosition }}" class="btn btn-primary btn-active btn-rounded-sm ion" dock="left"/>
-                    <Button text="{{paceButtonIcon | fonticon}}" tap="{{ onChangePace }}" class="{{'btn btn-primary btn-rounded-sm ion ' + paceButtonIcon}}" dock="right" />
-                    <FlexboxLayout flexDirection="row" justifyContent="center" alignItems="center" class="status">
-                        <Label width="100%" text="{{motionActivity}}" class="activity" />
-                        <Label width="100%" text="{{odometer}}" class="odometer"/>                
-                    </FlexboxLayout>
-                </DockLayout>
-                <Border borderLeftWidth="{{isPowerSaveMode ? 5 : 0}}" borderRightWidth="{{isPowerSaveMode ? 5 : 0}}" borderColor="#ff0000">
-                    <TextView class="location" text="{{location}}" editable="false" />
-                </Border>
-            </DockLayout>
-
-            <StackLayout row="1" class="main-menu" visibility="{{mainMenuActivated ? 'visible' : 'collapse'}}">
-                <FAB:fab tap="fabTap"                
-                    itemId="settings"
-                    icon="res://gear_filled"
-                    rippleColor="#f1f1f1"
-                    tap="{{onClickMainMenu}}"
-                    class="fab-button" />
-                <FAB:fab tap="fabTap"
-                    itemId="resetOdometer"
-                    icon="res://speed_filled"
-                    rippleColor="#f1f1f1"
-                    tap="{{onClickMainMenu}}"
-                    class="fab-button" />
-                <FAB:fab tap="fabTap"
-                    itemId="emailLog"
-                    icon="res://mail_filled"
-                    rippleColor="#f1f1f1"
-                    tap="{{onClickMainMenu}}"
-                    class="fab-button" />
-                <FAB:fab tap="fabTap"
-                    itemId="sync"
-                    icon="res://upload_cloud_filled"
-                    rippleColor="#f1f1f1"
-                    tap="{{onClickMainMenu}}"
-                    class="fab-button" />
-                <FAB:fab tap="fabTap"
-                    itemId="destroyLocations"
-                    icon="res://trash_filled"
-                    rippleColor="#f1f1f1"
-                    tap="{{onClickMainMenu}}"
-                    class="fab-button" />
-
-            </StackLayout>
-
-        </GridLayout>
-    </StackLayout>
-    
-
+        <StackLayout class="p-20">
+            <TextView class="location" text="{{location}}" editable="false" />
+        </StackLayout>
+    </DockLayout>
 </Page>

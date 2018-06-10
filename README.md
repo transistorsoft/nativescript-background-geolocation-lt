@@ -117,14 +117,15 @@ Edit the file **`app/App_Resources/Android/App_Resources/AndroidManifest.xml`**.
 
 ### Google Play Services
 
-Since this plugin uses Google Play Services, it's very common to have Android build conflicts with other plugins using Play Services.  The key to solving build issues is to ensure that *all* plugins are aligned to the same version (eg: `11.8.0`) (Note:  Firebase dependencies must also be aligned to the same play-services version).
+Since this plugin uses Google Play Services, it's very common to have Android build conflicts with *other* plugins using Play Services / Android support libraries (eg: `com.android.support:appcompat-v7`).  The key to solving build issues is to ensure that *all* plugins are aligned to the same play-services version (eg: `15.0.1`) and support-library versions (eg: `26.1.0`).  **Note**:  Firebase dependencies must also be aligned to the same play-services version).
 
 You can specify your desired `play-services` version in the file:
 **`app/App_Resources/Android/app.gradle`**
 
 ```gradle
 project.ext {
-  googlePlayServicesVersion = "11.2.0"
+  googlePlayServicesVersion = "15.0.1"
+  supportLibVersion = "26.1.0"
 }
 ```
 
