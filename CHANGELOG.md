@@ -1,4 +1,6 @@
 # Change Log
+## [1.9.0-beta.2] - 2018-06-27
+- [Fixed] Android Headless mode was not properly configured.
 
 ## [1.9.0-beta.1] - 2018-06-27
 - [Added] iOS support for HTTP method `PATCH` (Android already supports it).
