@@ -1,32 +1,44 @@
-# nativescript-background-geolocation-lt
-Sophisticated, battery-conscious, cross-platform background-geolocation with motion-detection and geofencing
+Background Geolocation for NativeScript &middot;
+==============================================================================
 
-[Premium Version (iOS)](http://www.transistorsoft.com/shop/products/nativescript-background-geolocation)
-==========================
+[![](https://dl.dropboxusercontent.com/s/nm4s5ltlug63vv8/logo-150-print.png?dl=1)](https://www.transistorsoft.com)
 
-This repo hosts the **iOS** platform available in the **[Premium Version](http://www.transistorsoft.com/shop/products/nativescript-background-geolocation)**.  **Android** functionality is available only in the **[Premium Version](httphttp://www.transistorsoft.com/shop/products/nativescript-background-geolocation)**.
+-------------------------------------------------------------------------------
 
-![Home](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/screenshot-iphone5-geofences-framed-README.png)
-![Settings](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/screenshot-iphone5-settings-framed-README.png)
+The *most* sophisticated background **location-tracking & geofencing** module with battery-conscious motion-detection intelligence for **iOS** and **Android**.
 
-## [:books: API Documentation](./docs/README.md)
-- :wrench: [Configuration Options](./docs/README.md#wrench-configuration-options)
-  + [Geolocation Options](./docs/README.md#wrench-geolocation-options)
-  + [Activity Recognition Options](./docs/README.md#wrench-activity-recognition-options)
-  + [HTTP & Persistence Options](./docs/README.md#wrench-http--persistence-options)
-  + [Geofencing Options](./docs/README.md#wrench-geofencing-options)
-  + [Application Options](./docs/README.md#wrench-application-options)
-- :zap: [Events](./docs/README.md#zap-events)
-- :small_blue_diamond: [Methods](./docs/README.md#large_blue_diamond-methods)
-- :blue_book: Guides
-  + [Philosophy of Operation](../../wiki/Philosophy-of-Operation)
-  + [Geofencing](./docs/geofencing.md)
-  + [HTTP Features](./docs/http.md)
-  + [Location Data Schema](../../wiki/Location-Data-Schema)
-  + [Debugging](../../wiki/Debugging)
+The plugin's [Philosophy of Operation](../../wiki/Philosophy-of-Operation) is to use **motion-detection** APIs (using accelerometer, gyroscope and magnetometer) to detect when the device is *moving* and *stationary*.  
+
+- When the device is detected to be **moving**, the plugin will *automatically* start recording a location according to the configured `distanceFilter` (meters).  
+
+- When the device is detected be **stationary**, the plugin will automatically turn off location-services to conserve energy.
+
+Also available for [Cordova](https://github.com/transistorsoft/cordova-background-geolocation-lt), [ReactNative](https://github.com/transistorsoft/react-native-background-geolocation-lt) and [pure native apps](https://github.com/transistorsoft/background-geolocation-lt).
+
+----------------------------------------------------------------------------
+
+[![Google Play](https://dl.dropboxusercontent.com/s/80rf906x0fheb26/google-play-icon.png?dl=1)](https://play.google.com/store/apps/details?id=com.transistorsoft.backgroundgeolocation.react)
+
+![Home](https://dl.dropboxusercontent.com/s/wa43w1n3xhkjn0i/home-framed-350.png?dl=1)
+![Settings](https://dl.dropboxusercontent.com/s/8oad228siog49kt/settings-framed-350.png?dl=1)
+
+# Contents
+- ### :books: [API Documentation](./docs/README.md)
+  - :wrench: [Configuration Options](./docs/README.md#wrench-configuration-options-1)
+  - :zap: [Events](./docs/README.md#zap-events-1)
+  - :small_blue_diamond: [Methods](./docs/README.md#large_blue_diamond-methods)        
+- ### [Installing the Plugin](#large_blue_diamond-installing-the-plugin)
+- ### [Setup Guides](#large_blue_diamond-setup-guides)
+- ### [Configure your License](#large_blue_diamond-configure-your-license)
+- ### [Android SDK Setup](#large_blue_diamond-android-sdk)
+- ### [Using the plugin](#large_blue_diamond-using-the-plugin)
+- ### [Example](#large_blue_diamond-example)
+- ### [Debugging](../../wiki/Debugging)
+- ### [Demo Application](#large_blue_diamond-demo-application)
+- ### [Testing Server](#large_blue_diamond-simple-testing-server)
 
 
-## Installing the plugin ##
+## :large_blue_diamond: Installing the Plugin
 
 #### From npm 
 Install the following two plugins:
@@ -49,7 +61,9 @@ The plugin is compiled and ready to be added to your app:
 $ tns plugin add /path/to/nativescript-background-geolocation-lt
 ```
 
-## iOS Setup
+## :large_blue_diamond: Setup Guides
+
+### iOS Setup
 
 Since iOS is more strict with apps running in the background, this plugin requires you install [nativescript-background-fetch](https://github.com/transistorsoft/nativescript-background-fetch) (also created by [Transistor Software](http://transistorsoft.com)).  This plugin automatically awakens a suspended app in the background, providing *exactly* 30s of running-time.  Actually implementing **`background-fetch`** in your application code is **optional** -- `background-geolocation` uses it automatically under-the-hood for its own purposes.  However, you **must** perform the plugin's [setup process](https://github.com/transistorsoft/nativescript-background-fetch#setup) in your **`app.ts`**:
 
@@ -101,7 +115,26 @@ This is because your app hasn't loaded the ios platform-declarations.  You can e
 }
 ```
 
-## Android Setup (Premium Users)
+### Android Setup
+
+#### Google Play Services
+
+Since this plugin uses Google Play Services, it's very common to have Android build conflicts with *other* plugins using Play Services / Android support libraries (eg: `com.android.support:appcompat-v7`).  The key to solving build issues is to ensure that *all* plugins are aligned to the same play-services version (eg: `15.0.1`) and support-library versions (eg: `26.1.0`).  **Note**:  Firebase dependencies must also be aligned to the same play-services version).
+
+You can specify your desired `play-services` version in the file:
+**`app/App_Resources/Android/app.gradle`**
+
+```gradle
+project.ext {
+  googlePlayServicesVersion = "11.8.0"
+  supportLibVersion = "26.1.0"
+}
+```
+
+:exclamation: The plugin requires a minimum play-services version of **`11.2.0`**.  
+
+
+## :large_blue_diamond: Configure your license
 
 A [License](http://www.transistorsoft.com/shop/products/nativescript-background-geolocation)) is required to unlock Android for `RELEASE` builds.  Without a license key, the plugin will only work for `DEBUG` builds.
 
@@ -115,23 +148,17 @@ Edit the file **`app/App_Resources/Android/App_Resources/AndroidManifest.xml`**.
 </manifest>
 ```
 
-### Google Play Services
 
-Since this plugin uses Google Play Services, it's very common to have Android build conflicts with *other* plugins using Play Services / Android support libraries (eg: `com.android.support:appcompat-v7`).  The key to solving build issues is to ensure that *all* plugins are aligned to the same play-services version (eg: `15.0.1`) and support-library versions (eg: `26.1.0`).  **Note**:  Firebase dependencies must also be aligned to the same play-services version).
+## :large_blue_diamond: Android SDK
 
-You can specify your desired `play-services` version in the file:
-**`app/App_Resources/Android/app.gradle`**
+If building from your local machine (as you should be), ensure you have the following items installed or updated in Android SDK Manager
+#### SDK Tools
+![](https://dl.dropboxusercontent.com/s/qdscbas4krc27c4/android-sdk-tools.png?dl=1)
+#### SDK Platforms
+![](https://dl.dropboxusercontent.com/s/qetghugog00puz2/android-sdk-platforms.png?dl=1)
 
-```gradle
-project.ext {
-  googlePlayServicesVersion = "15.0.1"
-  supportLibVersion = "26.1.0"
-}
-```
 
-:exclamation: The plugin requires a minimum play-services version of **`11.2.0`**.  
-
-## Demo app
+## :large_blue_diamond: Demo Application
 
 The plugin hosts its own demo app in the `/demo` folder.  Install it like this:
 ```Bash
@@ -140,6 +167,7 @@ $ cd nativescript-background-geolocation-lt
 $ npm install
 $ npm run setup
 
+$ cd src
 $ npm run demo.android
 or
 $ npm run demo.ios
@@ -148,13 +176,13 @@ $ npm run demo.ios
 Simulating the location with `City Drive` works well:
 ![](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/simulate-location.png)
 
-## Using the plugin
+## :large_blue_diamond: Using the plugin ##
 
-```Javascript
-import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
+```javascript
+import BackgroundGeolocation from "nativescript-background-geolocation-lt";
 ```
 
-## Example
+## :large_blue_diamond: Example
 
 ```Javascript
 import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
@@ -175,7 +203,7 @@ export class HelloWorldModel extends observable.Observable {
     BackgroundGeolocation.on("error", this.onError.bind(this));
 
     // 2. Configure it.
-    BackgroundGeolocation.configure({
+    BackgroundGeolocation.ready({
       debug: true,
       desiredAccuracy: 0,
       stationaryRadius: 25,
@@ -195,26 +223,40 @@ export class HelloWorldModel extends observable.Observable {
   }
 ```
 
-## Help!  It doesn't work!
+:information_source: **NOTE:** The configuration **`{}`** provided to the `#ready` method is applied **only** when your app is **first booted** &mdash; for every launch thereafter, the plugin will automatically load the last known configuration from persistant storage.  If you wish to **force** the `#ready` method to *always* apply the supplied config `{}`, you can specify **`reset: true`**
 
-Yes it does.  [See the Wiki](https://github.com/transistorsoft/nativescript-background-geolocation-lt/wiki)
-
-- on iOS, background tracking won't be engaged until you travel about **2-3 city blocks**, so go for a walk or car-ride (or use the Simulator with ```Debug->Location->City Drive```)
-- When in doubt, **nuke everything**:  First delete the app from your device (or simulator)
-
-```
-$ tns plugin remove nativescript-background-geolocation-lt
-$ tns plugin add nativescript-background-geolocation-lt
-
+```javascript
+BackgroundGeolocation.ready({
+  reset: true,  // <-- true to always apply the supplied config
+  distanceFilter: 10
+}, (state) => {
+  console.log('- BackgroundGeolocation is ready: ', state);
+});
 ```
 
-## Simple Testing Server
+:warning: Do not execute *any* API method which will require accessing location-services until the callback to **`#ready*` executes (eg: `#getCurrentPosition`, `#watchPosition`, `#start`).
+
+### Promise API
+
+The `BackgroundGeolocation` Javascript API supports [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) for *nearly* every method (the exceptions are **`#watchPosition`** and adding event-listeners via **`#on`** method.  For more information, see the [API Documentation](docs/README.md#large_blue_diamond-methods)
+
+```javascript
+// Traditional API still works:
+BackgroundGeolocation.ready({desiredAccuracy: 0, distanceFilter: 50}).then(state => {
+  console.log('- BackgroundGeolocation is ready: ', state);
+}).catch(error => {
+  console.log('- BackgroundGeolocation error: ', error);
+});
+```
+
+
+## :large_blue_diamond: [Simple Testing Server](https://github.com/transistorsoft/background-geolocation-console)
 
 A simple Node-based [web-application](https://github.com/transistorsoft/background-geolocation-console) with SQLite database is available for field-testing and performance analysis.  If you're familiar with Node, you can have this server up-and-running in about **one minute**.
 
-![](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/background-geolocation-console-map.png)
+![](https://dl.dropboxusercontent.com/s/px5rzz7wybkv8fs/background-geolocation-console-map.png?dl=1)
 
-![](https://dl.dropboxusercontent.com/u/2319755/cordova-background-geolocaiton/background-geolocation-console-grid.png)
+![](https://dl.dropboxusercontent.com/s/tiy5b2oivt0np2y/background-geolocation-console-grid.png?dl=1)
 
 
 ## Licence ##
