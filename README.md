@@ -79,7 +79,7 @@ import * as app from 'application';
 +    public static ObjCProtocols = [UIApplicationDelegate];
 
 +    public applicationPerformFetchWithCompletionHandler(application: UIApplication, completionHandler:any) {
-+      BackgroundFetch.performFetchWithCompletionHandler(application, completionHandler);
++      BackgroundFetch.performFetchWithCompletionHandler(completionHandler, application.applicationState);
 +    }
 +  }
 +  app.ios.delegate = MyDelegate;
@@ -95,7 +95,19 @@ app/app.ts(6,51): error TS2304: Cannot find name 'UIApplicationDelegate'.
 app/app.ts(7,36): error TS2304: Cannot find name 'UIApplicationDelegate'.
 ```
 
-This is because your app hasn't loaded the ios platform-declarations.  You can either load those (if you know how ;)) or simply configure your `tsconfig.json` to ignore errors:
+This is because your app hasn't loaded the ios platform-declarations.
+
+```bash
+$ npm install --save-dev tns-platform-declarations
+```
+
+Add the following to the file **`references.d.ts`** in the root of your application (create the file if it doesn't yet exist):
+
+```
+/// <reference path="./node_modules/tns-platform-declarations/ios.d.ts" />
+/// <reference path="./node_modules/tns-platform-declarations/android.d.ts" />
+```
+
 
 ```diff
 {
