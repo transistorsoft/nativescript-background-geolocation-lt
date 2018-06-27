@@ -7,6 +7,9 @@ purpose of the file is to pass control to the app’s first module.
 import "./bundle-config";
 import * as application from 'application';
 
+import {BackgroundFetch} from "nativescript-background-fetch";
+import {BackgroundGeolocation} from "nativescript-background-geolocation-lt";
+
 // fonticon setup
 import {TNSFontIcon, fonticon} from 'nativescript-fonticon';
 TNSFontIcon.debug = false;
@@ -39,7 +42,7 @@ application.run({ moduleName: 'app-root' });
 if (application.android) {
     // BackgroundGeolocation Headless Setup
     BackgroundGeolocation.registerHeadlessTask((event, completionHandler) => {
-    console.log('[My Headless Task: ', event.name, event.params);
+    console.log('[My Headless BackgroundGeolocation Task: ', event.name, event.params);
     // Do stuff.
     completionHandler();  // <-- signal completion of your HeadlessTask
   });
