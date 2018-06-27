@@ -85,7 +85,8 @@ export class HelloWorldModel extends Observable {
       startOnBoot: true,
       foregroundService: true,
       heartbeatInterval: 60,
-      username: 'transistor-ns'
+      username: 'transistor-ns',
+      enableHeadless: true
     }, (state) => {
       console.log('[ready] success -', state);
       this.paceButtonIcon = (state.isMoving) ? ICONS.pause : ICONS.play;
