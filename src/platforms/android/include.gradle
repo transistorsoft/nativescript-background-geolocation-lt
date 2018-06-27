@@ -1,6 +1,3 @@
-def DEFAULT_PLAY_SERVICES_VERSION   = "15.0.1"
-def DEFAULT_SUPPORT_LIB_VERSION     = "26.1.0"
-
 repositories{    
   jcenter()
   maven {
@@ -13,6 +10,9 @@ android {
 }
 
 dependencies {
+  def DEFAULT_PLAY_SERVICES_VERSION   = "11.8.0"
+  def DEFAULT_SUPPORT_LIB_VERSION     = "26.1.0"
+
   def googlePlayServicesVersion = project.hasProperty('googlePlayServicesVersion') ? project.googlePlayServicesVersion : DEFAULT_PLAY_SERVICES_VERSION
   def supportLibVersion = project.hasProperty('supportLibVersion') ? project.supportLibVersion : DEFAULT_SUPPORT_LIB_VERSION
 
