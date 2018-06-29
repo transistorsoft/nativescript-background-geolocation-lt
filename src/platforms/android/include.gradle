@@ -1,20 +1,16 @@
-repositories{    
-  jcenter()
-  maven {
-    url 'https://maven.google.com'
-  }
-}
-
-android { 
-    
-}
 
 dependencies {
   def DEFAULT_PLAY_SERVICES_VERSION   = "11.8.0"
-  def DEFAULT_SUPPORT_LIB_VERSION     = "26.1.0"
+  def DEFAULT_SUPPORT_LIB_VERSION     = "27.0.1"
 
   def googlePlayServicesVersion = project.hasProperty('googlePlayServicesVersion') ? project.googlePlayServicesVersion : DEFAULT_PLAY_SERVICES_VERSION
-  def supportLibVersion = project.hasProperty('supportLibVersion') ? project.supportLibVersion : DEFAULT_SUPPORT_LIB_VERSION
+  def supportLibVersion = DEFAULT_SUPPORT_LIB_VERSION
+
+  if (project.hasProperty('supportLibVersion')) {
+    supportLibVersion = project.supportLibVersion
+  } else if (project.hasProperty('supportVersion')) {
+    supportLibVersion = project.supportVersion
+  }
 
   compile "com.google.android.gms:play-services-location:$googlePlayServicesVersion"
   compile "com.android.support:appcompat-v7:$supportLibVersion"
