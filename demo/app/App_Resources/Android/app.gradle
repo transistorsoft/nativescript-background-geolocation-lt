@@ -14,3 +14,8 @@ android {
     additionalParameters "--no-version-vectors"  
   }  
 } 
+
+project.ext {
+	supportVersion = "27.0.1"
+	googlePlayServicesVersion = "11.8.0"
+}
