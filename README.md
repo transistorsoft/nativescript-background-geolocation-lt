@@ -139,7 +139,7 @@ You can specify your desired `play-services` version in the file:
 ```gradle
 project.ext {
   googlePlayServicesVersion = "11.8.0"
-  supportLibVersion = "26.1.0"
+  supportVersion = "27.0.1"
 }
 ```
 

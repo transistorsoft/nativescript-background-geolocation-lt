@@ -12,6 +12,12 @@ dependencies {
     supportLibVersion = project.supportVersion
   }
 
+  println "******************************************************************"
+  println "* nativescript-background-geolocation"
+  println "* - googlePlayServicesVersion: $googlePlayServicesVersion"
+  println "* - supportLibVersion: $supportLibVersion"  
+  println "******************************************************************"
+  
   compile "com.google.android.gms:play-services-location:$googlePlayServicesVersion"
   compile "com.android.support:appcompat-v7:$supportLibVersion"
   compile 'com.squareup.okhttp3:okhttp:3.10.0'
