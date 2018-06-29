@@ -1,4 +1,7 @@
 # Change Log
+## [1.9.0-beta.3] - 2018-06-29
+- [Changed] Remove `repositories` block from `include.gradle`.  This file gets imported into nativescript context which already provides the required `repositories` block.
+
 ## [1.9.0-beta.2] - 2018-06-27
 - [Fixed] Android Headless mode was not properly configured.
 
