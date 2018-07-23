@@ -54,7 +54,7 @@ app.android.on(app.AndroidApplication.activityDestroyedEvent, function(args) {
 class Api {
 	private static forceReload: boolean;
   private static intent:android.content.Intent = null;
-  
+
   public static onActivityDestroyed(args) {
     com.transistorsoft.locationmanager.adapter.BackgroundGeolocation.getInstance(app.android.context.getApplicationContext()).onActivityDestroy();
     this.intent = null;
@@ -103,7 +103,7 @@ class Api {
       case 'powersavechange':
         cb = this.createPowerSaveChangeCallback(success);
         this.getAdapter().onPowerSaveChange(cb);
-        break;      
+        break;
       case 'enabledchange':
         cb = this.createEnabledChangeCallback(success);
         this.getAdapter().onEnabledChange(cb);
@@ -122,7 +122,7 @@ class Api {
       resolve();
     });
   }
-  
+
   public static removeListeners(event?:string) {
     return new Promise((resolve, reject) => {
       if (event) {
@@ -147,11 +147,11 @@ class Api {
         config.updateWithJSONObject(new org.json.JSONObject(JSON.stringify(this.applyHeadlessJobService(params))));
       }
       this.getAdapter().ready(new TSCallback({
-        onSuccess: () => { 
-          resolve(JSON.parse(config.toJson().toString())) 
+        onSuccess: () => {
+          resolve(JSON.parse(config.toJson().toString()))
         },
-        onError: (error:string) => { 
-          reject(error) 
+        onFailure: (error:string) => {
+          reject(error)
         }
       }));
     });
@@ -166,7 +166,7 @@ class Api {
         onSuccess: () => {
           resolve(JSON.parse(config.toJson().toString()));
         },
-        onError: (error:string) => {
+        onFailure: (error:string) => {
           reject(error);
         }
       }));
@@ -176,7 +176,7 @@ class Api {
   public static setConfig(params:any) {
     return new Promise((resolve, reject) => {
       let config = TSConfig.getInstance(this.getContext());
-      config.updateWithJSONObject(new org.json.JSONObject(JSON.stringify(this.applyHeadlessJobService(params))));      
+      config.updateWithJSONObject(new org.json.JSONObject(JSON.stringify(this.applyHeadlessJobService(params))));
       resolve(JSON.parse(config.toJson().toString()));
     });
   }
@@ -185,7 +185,7 @@ class Api {
     return new Promise((resolve, reject) => {
       let config = TSConfig.getInstance(this.getContext());
       config.reset();
-      config.updateWithJSONObject(new org.json.JSONObject(JSON.stringify(this.applyHeadlessJobService(params))));      
+      config.updateWithJSONObject(new org.json.JSONObject(JSON.stringify(this.applyHeadlessJobService(params))));
       resolve(JSON.parse(config.toJson().toString()));
     });
   }
@@ -216,7 +216,7 @@ class Api {
 	}
 
   public static stop() {
-    return new Promise((resolve, reject) => {      
+    return new Promise((resolve, reject) => {
       let adapter = this.getAdapter();
       let config = TSConfig.getInstance(this.getContext());
       adapter.stop(new TSCallback({
@@ -265,7 +265,7 @@ class Api {
 
   public static startGeofences() {
     return new Promise((resolve, reject) => {
-      let config = TSConfig.getInstance(this.getContext());      
+      let config = TSConfig.getInstance(this.getContext());
       this.getAdapter().startGeofences(new TSCallback({
         onSuccess: () => {
           resolve(JSON.parse(config.toJson().toString()));
@@ -284,7 +284,7 @@ class Api {
       if (typeof(options.samples) === 'number') {
         builder.setSamples(options.samples);
       }
-      if (typeof(options.extras) === 'object') {        
+      if (typeof(options.extras) === 'object') {
         builder.setExtras(new org.json.JSONObject(JSON.stringify(options.extras)));
       }
       if (typeof(options.persist) === 'boolean') {
@@ -317,12 +317,12 @@ class Api {
     if (typeof(options.interval) === 'number') {
       builder.setInterval(new java.lang.Long(options.interval));
     }
-    if (typeof(options.extras) === 'object') {        
+    if (typeof(options.extras) === 'object') {
       builder.setExtras(new org.json.JSONObject(JSON.stringify(options.extras)));
     }
     if (typeof(options.persist) === 'boolean') {
       builder.setPersist(options.persist);
-    }    
+    }
     if (typeof(options.desiredAccuracy) === 'number') {
       builder.setDesiredAccuracy(options.desiredAccuracy);
     }
@@ -339,12 +339,12 @@ class Api {
   }
 
   public static stopWatchPosition() {
-    return new Promise((resolve, reject) => {      
+    return new Promise((resolve, reject) => {
       this.getAdapter().stopWatchPosition(new TSCallback({
         onSuccess: () => {
           resolve();
         },
-        onError: (error: string) => {
+        onFailure: (error: string) => {
           reject(error);
         }
       }));
@@ -358,7 +358,7 @@ class Api {
   }
 
   public static setOdometer(value:number) {
-    return new Promise((resolve, reject) => {      
+    return new Promise((resolve, reject) => {
       this.getAdapter().setOdometer(new java.lang.Float(value), new TSLocationCallback({
         onLocation: (tsLocation:any) => {
           resolve(JSON.parse(tsLocation.toJson().toString()));
@@ -377,11 +377,11 @@ class Api {
   * HTTP & Persistence Methods
   */
   public static sync() {
-    return new Promise((resolve, reject) => {      
+    return new Promise((resolve, reject) => {
       this.getAdapter().sync(new TSSyncCallback({
         onSuccess: function(records:any) {
           let size = records.size();
-          let result = [];      
+          let result = [];
           for (let i=0;i<size;i++) {
             let record = records.get(i);
             result.push(JSON.parse(record.json.toString()));
@@ -401,7 +401,7 @@ class Api {
       this.getAdapter().getLocations(new TSGetLocationsCallback({
         onSuccess: (records:any) => {
           let size = records.size();
-          let result = [];      
+          let result = [];
           for (let i=0;i<size;i++) {
             let record = records.get(i);
             result.push(JSON.parse(record.json.toString()));
@@ -448,7 +448,7 @@ class Api {
   }
 
   public static destroyLocations() {
-    return new Promise((resolve, reject) => {      
+    return new Promise((resolve, reject) => {
       this.getAdapter().destroyLocations(new TSCallback({
         onSuccess: () => {
           resolve();
@@ -526,7 +526,7 @@ class Api {
       if (typeof(params.notifyOnDwell) === 'boolean') { builder.setNotifyOnDwell(params.notifyOnDwell); }
       if (typeof(params.loiteringDelay) === 'number') { builder.setLoiteringDelay(params.loiteringDelay); }
       if (typeof(params.extras) === 'object') { builder.setExtras(new org.json.JSONObject(JSON.stringify(params.extras))); }
-      
+
       return builder.build();
   }
 
@@ -534,7 +534,7 @@ class Api {
     return new Promise((resolve, reject) => {
       // Handle case where no geofences are provided (ie: remove all geofences).
       geofences = geofences || [];
-      
+
       let identifiers = new java.util.ArrayList();
       geofences.forEach((identifier) => { identifiers.add(identifier); });
       this.getAdapter().removeGeofences(identifiers, new TSCallback({
@@ -553,7 +553,7 @@ class Api {
       this.getAdapter().getGeofences(new TSGetGeofencesCallback({
         onSuccess: (records:any) => {
           let size = records.size();
-          let result = [];      
+          let result = [];
           for (let i=0;i<size;i++) {
             let geofence = records.get(i);
             result.push(JSON.parse(geofence.toJson()));
@@ -650,7 +650,7 @@ class Api {
 
   public static log(level, msg) {
     TSLog.log(level, msg);
-  }  
+  }
 
   private static createLocationCallback(success:Function, failure?:Function) {
     failure = failure || emptyFn;
@@ -691,7 +691,7 @@ class Api {
         }
       }
     });
-  } 
+  }
 
   private static createActivityChangeCallback(callback:Function) {
     return new TSActivityChangeCallback({
@@ -772,8 +772,8 @@ class Api {
   }
 
   private static init() {
-    if (!app.android.startActivity || (this.intent !== null)) { 
-      return; 
+    if (!app.android.startActivity || (this.intent !== null)) {
+      return;
     }
     this.intent = app.android.startActivity.getIntent();
 
@@ -805,7 +805,7 @@ class Api {
 
   private static handleGooglePlayServicesConnectError(errorCode:number) {
     com.google.android.gms.common.GoogleApiAvailability.getInstance().getErrorDialog(app.android.foregroundActivity, errorCode, 1001).show();
-  }  
+  }
 
 }
 
