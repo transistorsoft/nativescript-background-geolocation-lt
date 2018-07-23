@@ -1,4 +1,7 @@
 # Change Log
+## [1.9.0-beta.4] - 2018-07-23
+- [Fixed] Android several android `TSCallback` abstract instances were using incorrect signature `onError` instead of `onFailure`.
+
 ## [1.9.0-beta.3] - 2018-06-29
 - [Changed] Remove `repositories` block from `include.gradle`.  This file gets imported into nativescript context which already provides the required `repositories` block.
 
