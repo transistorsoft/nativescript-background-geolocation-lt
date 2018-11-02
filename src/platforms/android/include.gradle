@@ -2,9 +2,14 @@
 dependencies {
   def DEFAULT_PLAY_SERVICES_VERSION   = "11.8.0"
   def DEFAULT_SUPPORT_LIB_VERSION     = "27.0.1"
-
-  def googlePlayServicesVersion = project.hasProperty('googlePlayServicesVersion') ? project.googlePlayServicesVersion : DEFAULT_PLAY_SERVICES_VERSION
   def supportLibVersion = DEFAULT_SUPPORT_LIB_VERSION
+  def googlePlayServicesLocationVersion = DEFAULT_PLAY_SERVICES_VERSION
+
+  if (project.hasProperty('googlePlayServicesLocationVersion')){
+    googlePlayServicesLocationVersion = project.googlePlayServicesLocationVersion
+  } else if (project.hasProperty('googlePlayServicesVersion')){
+    googlePlayServicesLocationVersion = project.googlePlayServicesVersion
+  }
 
   if (project.hasProperty('supportLibVersion')) {
     supportLibVersion = project.supportLibVersion
@@ -14,11 +19,11 @@ dependencies {
 
   println "******************************************************************"
   println "* nativescript-background-geolocation"
-  println "* - googlePlayServicesVersion: $googlePlayServicesVersion"
+  println "* - googlePlayServicesLocationVersion: $googlePlayServicesLocationVersion"
   println "* - supportLibVersion: $supportLibVersion"  
   println "******************************************************************"
   
-  compile "com.google.android.gms:play-services-location:$googlePlayServicesVersion"
+  compile "com.google.android.gms:play-services-location:$googlePlayServicesLocationVersion"
   compile "com.android.support:appcompat-v7:$supportLibVersion"
   compile 'com.squareup.okhttp3:okhttp:3.10.0'
   compile 'org.greenrobot:eventbus:3.0.0'
