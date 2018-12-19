@@ -15,7 +15,7 @@ declare module android {
     }
   }
   module os {
-    export class PersistableBundle extends java.lang.Object implements android.os.IParcelable, java.lang.ICloneable {      
+    export class PersistableBundle extends java.lang.Object implements android.os.Parcelable, java.lang.Cloneable {
       public getString(key: string): string;
       public describeContents(): number;
       public writeToParcel(parcel: android.os.Parcel, flags: number): void;
