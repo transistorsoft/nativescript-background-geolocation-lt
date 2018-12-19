@@ -3,6 +3,9 @@ import 'nativescript-tslib';
 
 import {BackgroundGeolocation} from "./background-geolocation";
 
+import "./HeadlessJobService";
+import "./HeadlessBroadcastReceiver";
+
 import app = require('application');
 
 declare var com: any;

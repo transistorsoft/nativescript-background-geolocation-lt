@@ -1,6 +1,6 @@
 {
   "name": "nativescript-background-geolocation-lt",
-  "version": "1.9.0-beta.4",
+  "version": "1.9.0",
   "description": "Sophisticated, battery-conscious, cross-platform background-geolocation with motion-detection and geofencing",
   "main": "api",
   "typings": "background-geolocation.d.ts",
@@ -48,13 +48,13 @@
   },
   "homepage": "http://shop.transistorsoft.com/pages/nativescript-background-geolocation",
   "devDependencies": {
-    "tns-core-modules": "^4.1.0",
-    "tns-platform-declarations": "^4.1.0",
+    "tns-core-modules": "^5.1.0",
+    "tns-platform-declarations": "^5.1.0",
     "nativescript-dev-typescript": "~0.7.0",
     "typescript": "^2.7.2"
   },
   "dependencies": {
-    "nativescript-background-fetch": "~1.2.0",
+    "nativescript-background-fetch": "~1.2.1",
     "nativescript-tslib": "^1.9.1-r1"
   }
 }

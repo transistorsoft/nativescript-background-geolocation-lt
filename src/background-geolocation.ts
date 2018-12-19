@@ -58,7 +58,7 @@ export class Logger {
     this.log('ok', msg);
   }
   private log(level:string, msg:string) {
-    this.api.log(level, msg);    
+    this.api.log(level, msg);
   }
 }
 
@@ -96,7 +96,7 @@ export class BackgroundGeolocation {
   public static NOTIFICATION_PRIORITY_LOW:number          =-1;
   public static NOTIFICATION_PRIORITY_MAX:number           = 2;
   public static NOTIFICATION_PRIORITY_MIN:number           =-2;
-    
+
   public static mountNativeApi(api) {
     this.api = api;
     this.logger = new Logger(api);
@@ -197,24 +197,24 @@ export class BackgroundGeolocation {
     }
   }
 
-  private static registerCallback(event:string, clientCallback:Function, nativeCallback:Function) {    
+  private static registerCallback(event:string, clientCallback:Function, nativeCallback:Function) {
     this.listeners[event].push({
       clientCallback: clientCallback,
       nativeCallback: nativeCallback
-    });    
+    });
   }
 
   // @alias #addListener
   public static on(event:string, success:Function, failure?:Function) {
     this.addListener.apply(this, arguments);
-  }  
+  }
   /**
   * Remove a single plugin event-listener, supplying a reference to the handler initially supplied to #un
-  */  
+  */
   public static removeListener(event:string, clientCallback:Function, success?:Function, failure?:Function) {
     if (this.EVENTS.indexOf(event) < 0)      { throw "BackgroundGeolocation#un - Unknown event '" + event + "'" }
     let listeners = this.listeners[event];
-    
+
     let listener = listeners.find((i) => { return i.clientCallback === clientCallback; });
     if (listener) {
       listeners.splice(listeners.indexOf(listener), 1);
@@ -232,8 +232,8 @@ export class BackgroundGeolocation {
           reject(error);
         });
       } else {
-        failure(msg);
-      }      
+        failure(error);
+      }
     }
   }
 
@@ -244,7 +244,7 @@ export class BackgroundGeolocation {
 
   /**
   * Remove all event listeners
-  */  
+  */
   public static removeListeners(event?:any, success?:Function, failure?:Function) {
     if (!arguments.length) {
       return this.api.removeListeners();          // #removeListeners()
@@ -265,7 +265,7 @@ export class BackgroundGeolocation {
       this.api.removeListeners().then(success).catch(failure);
     }
   }
-  
+
   /**
   * Fetch current plugin configuration
   */
@@ -331,7 +331,7 @@ export class BackgroundGeolocation {
   */
   public static startBackgroundTask(success?:Function, failure?:Function) {
     if (!arguments.length) {
-      return this.api.startBackgroundTask();      
+      return this.api.startBackgroundTask();
     } else {
       if (typeof(success) !== 'function') {
         throw TAG + "#startBackgroundTask must be provided with a callback to recieve the taskId";
@@ -495,13 +495,13 @@ export class BackgroundGeolocation {
   * 1. removeGeofences() <-- Promise
   * 2. removeGeofences(['foo'])  <-- Promise
   *
-  * 3. removeGeofences(success, [failure])    
+  * 3. removeGeofences(success, [failure])
   * 4. removeGeofences(['foo'], success, [failure])
   */
   public static removeGeofences(success?:Function, failure?:Function) {
     if (!arguments.length)  {
       return this.api.removeGeofences();
-    } else {            
+    } else {
       this.api.removeGeofences().then(success).catch(failure);
     }
   }
@@ -616,7 +616,7 @@ export class BackgroundGeolocation {
       return this.api.playSound(soundId);
     } else {
       this.api.playSound(soundId).then(success).catch(failure);
-    }    
+    }
   }
 
   private static validate(config:any):any {
@@ -633,7 +633,7 @@ export class BackgroundGeolocation {
         }
       }
       delete config.username;
-    } 
+    }
     return config;
   }
 }
