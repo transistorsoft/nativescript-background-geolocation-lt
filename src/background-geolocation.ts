@@ -145,6 +145,7 @@ export class BackgroundGeolocation {
     if (!this.headlessTask) {
       console.log('[BackgroundGeolocation] invokeHeadlessTask ERROR - headlessTask is null.  Did you BackgroundGeolocation.registerHeadlessTask(myTask) in your app.ts?');
       completionHandler();
+      return;
     }
     this.headlessTask(event, completionHandler);
   }

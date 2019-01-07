@@ -1,4 +1,7 @@
 # Change Log
+## [1.9.1] - 2019-01-07
+- [Fixed] Android headless issue when used with webpack.
+
 ## [1.9.0-beta.4] - 2018-07-23
 - [Fixed] Android several android `TSCallback` abstract instances were using incorrect signature `onError` instead of `onFailure`.
 
