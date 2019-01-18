@@ -131,14 +131,14 @@ Add the following to the file **`references.d.ts`** in the root of your applicat
 
 #### Google Play Services
 
-Since this plugin uses Google Play Services, it's very common to have Android build conflicts with *other* plugins using Play Services / Android support libraries (eg: `com.android.support:appcompat-v7`).  The key to solving build issues is to ensure that *all* plugins are aligned to the same play-services version (eg: `15.0.1`) and support-library versions (eg: `26.1.0`).  **Note**:  Firebase dependencies must also be aligned to the same play-services version).
+Since this plugin uses Google Play Services Location, it's very common to have Android build conflicts with *other* plugins using Play Services Location (`com.google.android.gms:play-services-location`) / Android Support libraries (`com.android.support:appcompat-v7`). The key to solving build issues is to ensure that *all* plugins are aligned to the same play-services-location version (eg: `16.0.0`) and support-library versions (eg: `26.1.0`).
 
-You can specify your desired `play-services` version in the file:
+You can specify your desired `play-services-location` version in the file:
 **`app/App_Resources/Android/app.gradle`**
 
 ```gradle
 project.ext {
-  googlePlayServicesVersion = "11.8.0"
+  googlePlayServicesLocationVersion = "16.0.0"
   supportVersion = "27.0.1"
 }
 ```
